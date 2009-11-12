@@ -3,13 +3,26 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to golang_docjp's documentation!
+Programming Language Go Documents
 ========================================
 
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :hidden:
+   
+   go_tutorial
+   effective_go
+
+Tutorial
+--------
+
+:ref:`go_tutorial`
+
+Effective Go
+------------
+
+:ref:`effective_go`
 
 Indices and tables
 ==================
