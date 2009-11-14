@@ -391,7 +391,7 @@ make(T)はTの型を返すのに対してnew(T)はTのポインタ型を返す�
   assigned to an integer variable with too little precision to represent the value.
 
 Goでは多くの整数型サイズの変数がありますが、整数型定数はありません。
-:data:`0LL` や :data:`0x0UL` のような定数はありません。
+`0LL` や `0x0UL` のような定数はありません。
 その代わり、単精度変数に割り当てようとして桁溢れした場合には
 整数型定数は多精度変数として評価されます。
 
@@ -427,8 +427,8 @@ Goでは多くの整数型サイズの変数がありますが、整数型定数
     a few other simple cases. There are no automatic numeric conversions of
     any kind in Go, other than that of making constants have concrete size
     and type when assigned to a variable.
-型変換は、別のシンボルや他のサイズとの変換のような簡単なケースや、整数型と浮動小数点型の変換、
-そしてその他のいくつかの簡単なケースでのみ動作します。
+型変換は、 `整数配列` の別シンボルへの変換や他のサイズとの変換のような簡単なケースや、
+`整数配列` と `浮動小数点配列` の変換、 そしてその他のいくつかの簡単なケースでのみ動作します。
 Goでは具体的なサイズと型を割り当てられていない変数はどんな型でも自動で変換はされません。
 
 .. An I/O Package[Top]
