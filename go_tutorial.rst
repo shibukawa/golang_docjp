@@ -7,7 +7,7 @@ Let's Go
 .. Introduction
 
 イントロダクション
-===============
+==================
 
 .. This document is a tutorial introduction to the basics of the Go programming language, intended for programmers familiar with C or C++. It is not a comprehensive guide to the language; at the moment the document closest to that is the language specification. After you've read this tutorial, you might want to look at Effective Go, which digs deeper into how the language is used. Also, slides from a 3-day course about Go are available: Day 1, Day 2, Day 3.
 
@@ -70,7 +70,7 @@ funcキーワードを使用することで、関数を定義することが出�
    =========
 
 コンパイル
-========
+==========
 
 .. Go is a compiled language. At the moment there are two compilers. Gccgo is a Go compiler that uses the GCC back end. There is also a suite of compilers with different (and odd) names for each architecture: 6g for the 64-bit x86, 8g for the 32-bit x86, and more. These compilers run significantly faster but generate less efficient code than gccgo. At the time of writing (late 2009), they also have a more robust run-time system although gccgo is catching up.
 
@@ -106,6 +106,7 @@ Echo
 ====
 
 .. Next up, here's a version of the Unix utility echo(1)::
+
 次は、Unixコマンドのecho(1)と同じ動作をするサンプルです。
 
 .. code-block:: cpp
@@ -222,9 +223,12 @@ os.Stdout の WriteString メソッドを利用することで、文字列を出
 .. The os package contains other essentials for getting started; for instance, os.Args is a slice used by the flag package to access the command-line arguments.
 
 
+..
+   An Interlude about Types
+   ========================
 
-An Interlude about Types
-========================
+型
+===
 
 ..
    Go has some familiar types such as ``int`` and ``float``, which represent
@@ -306,7 +310,7 @@ Go では、配列は値の集まりで、配列へのポインタとして使�
 ..
    The size of the array is part of its type; however, one can declare a slice variable, to which one can assign a pointer to any array with the same element type or -- much more commonly -- a slice expression of the form `a[low : high]`, representing the subarray indexed by `low` through `high-1`. Slices look a lot like arrays but have no explicit size (`[]` vs. `[10]`) and they reference a segment of an underlying, often anonymous, regular array. Multiple slices can share data if they represent pieces of the same array; multiple arrays can never share data.
 
-この配列のサイズは型の一部なので、変数のスライスを宣言したり、 to which one can assign a pointer to any array with the same element type or -- much more commonly -- スライスは `a[low : high]` と言う風に表現し、これによって元の配列の `low` から `high-1` の要素を持つ部分配列となります。スライスはほとんど配列のように見えますが、明確なサイズ情報を持たず (`[]` vs. `[10]`) 、they reference a segment of an underlying, often anonymous, regular array. 複数のスライスは、元の配列が同じものであればデータを共有することができますが、異なる複数の配列がデータを共有することは決してありません。
+この配列のサイズは型の一部なので、変数のスライスを宣言したり、 to which one can assign a pointer to any array with the same element type -- もっと一般的な利用例として -- スライスは `a[low : high]` と言う風に表現し、これによって元の配列の `low` から `high-1` の要素を持つ部分配列となります。スライスはほとんど配列のように見えますが、明確なサイズ情報を持たず (`[]` vs. `[10]`) 、they reference a segment of an underlying, often anonymous, regular array. 複数のスライスは、元の配列が同じものであればデータを共有することができますが、異なる複数の配列がデータを共有することは決してありません。
 
 ..
    Slices are much more common in Go programs than regular arrays; they're more flexible, have reference semantics, and are efficient. What they lack is the precise control of storage layout of a regular array; if you want to have a hundred elements of an array stored within your structure, you should use a regular array.
@@ -383,7 +387,7 @@ An Interlude about Allocation
 =============================
 .. Most types in Go are values. If you have an int or a struct or an array, assignment copies the contents of the object. To allocate a new variable, use new(), which returns a pointer to the allocated storage.
 
-Goでは、ほとんどの型は値です。``int``や``struct``や``array``は代入時にオブジェクトの内容をコピーします。新しい変数を割り当てるためには``new()``を使います。``new()``は割り当てた記憶域へのポインタを返します。
+Goでは、ほとんどの型は値です。 ``int`` や ``struct`` や ``array`` は代入時にオブジェクトの内容をコピーします。新しい変数を割り当てるためには ``new()`` を使います。 ``new()`` は割り当てた記憶域へのポインタを返します。
 
 .. code-block:: cpp
 
@@ -400,7 +404,7 @@ Goでは、ほとんどの型は値です。``int``や``struct``や``array``は�
 
 .. Some types?maps, slices, and channels (see below)?have reference semantics. If you're holding a slice or a map and you modify its contents, other variables referencing the same underlying data will see the modification. For these three types you want to use the built-in function make():
 
-マップやスライスやチャンネル(下記参照)のような型は参照セマンティックです。スライスやマップの内容を変更すると、同じデータを参照している他の変数でも変更が反映されます。これらの型を生成するには組み込み関数``make()``を使います。
+マップやスライスやチャンネル(下記参照)のような型は参照セマンティックです。スライスやマップの内容を変更すると、同じデータを参照している他の変数でも変更が反映されます。これらの型を生成するには組み込み関数 ``make()`` を使います。
 
 .. code-block:: cpp
 
@@ -416,11 +420,11 @@ Goでは、ほとんどの型は値です。``int``や``struct``や``array``は�
 
 .. it creates a nil reference that cannot hold anything. To use the map, you must first initialize the using make() or by assignment from an existing map.
 
-ここではなにも保持していない``nil``参照を生成しています。マップを使うためには、まずはじめに``make()``を使って参照を初期化するか既存のマップを代入する必要があります。
+ここではなにも保持していない ``nil`` 参照を生成しています。マップを使うためには、まずはじめに ``make()`` を使って参照を初期化するか既存のマップを代入する必要があります。
 
 .. Note that new(T) returns type *T while make(T) returns type T. If you (mistakenly) allocate a reference object with new(), you receive a pointer to a nil reference, equivalent to declaring an uninitialized variable and taking its address.
 
-``make(T)``は``T``の型を返すのに対して``new(T)``は``*T``の型を返すことに注意してください。(間違えて)``new()``で参照オブジェクトの割り当てを行うとnil参照へのポインタが返されてしまいます。これは未初期化の変数を宣言してそのアドレスを受け取ることと同等です。
+``make(T)`` は ``T`` の型を返すのに対して ``new(T) `` は ``*T`` の型を返すことに注意してください。(間違えて) ``new()`` で参照オブジェクトの割り当てを行うとnil参照へのポインタが返されてしまいます。これは未初期化の変数を宣言してそのアドレスを受け取ることと同等です。
 
 .. An Interlude about Constants[Top]
 
@@ -444,6 +448,7 @@ Goでは多くの整数型サイズの変数がありますが、整数型定数
 ..
   There are nuances that deserve redirection to the legalese of the language specification
   but here are some illustrative examples:
+
 言語仕様には変換に関する記述がありますが、ここではいくつか実例を示します::
 
     var a uint64 = 0  // uint64型 値0の変数
@@ -469,6 +474,7 @@ Goでは多くの整数型サイズの変数がありますが、整数型定数
     a few other simple cases. There are no automatic numeric conversions of
     any kind in Go, other than that of making constants have concrete size
     and type when assigned to a variable.
+
 型変換は、 `整数配列` の別シンボルへの変換や他のサイズとの変換のような簡単なケースや、
 `整数配列` と `浮動小数点配列` の変換、 そしてその他のいくつかの簡単なケースでのみ動作します。
 Goでは具体的なサイズと型を割り当てられていない変数はどんな型でも自動で変換はされません。
@@ -518,7 +524,7 @@ In the case of File, all its fields are lower case and so invisible to users, bu
 
 First, though, here is a factory to create a File:
 
-.. code-block::
+.. code-block:: cpp
 
    17    func newFile(fd int, name string) *File {
    18        if fd < 0 {
@@ -529,7 +535,7 @@ First, though, here is a factory to create a File:
 
 This returns a pointer to a new File structure with the file descriptor and name filled in. This code uses Go's notion of a ''composite literal'', analogous to the ones used to build maps and arrays, to construct a new heap-allocated object. We could write
 
-.. code-block::
+.. code-block:: cpp
 
       n := new(File);
       n.fd = fd;
@@ -887,7 +893,7 @@ Printing
 
 具体的には例えば 、Cでは各フォーマットがそれに対応する引数の型と完全に一致している必要があります。多くの場合Goはもっと簡単です。例えば%llud を指定する代わりに、 %d とするだけでよいのです。Printfは整数型のサイズも符号の有無も知っており、あなたの代わりに常に正しい結果を導き出してくれるのです。スニペット:
 
- .. code-block::
+ .. code-block:: cpp
 
    10        var u64 uint64 = 1<<64-1;
    11        fmt.Printf("%d %d\n", u64, int64(u64));
@@ -900,7 +906,7 @@ Printing
 
 それでも面倒なら、%v を使えばどのような値でも（配列や構造体でも）、シンプルかつ適切なかたちで出力されます。
 
- .. code-block::
+ .. code-block:: cpp
 
    14        type T struct { a int; b string };
    15        t := T{77, "Sunset Strip"};
@@ -917,7 +923,7 @@ Printing
 
 Printfの代わりにPrintやPrintlnを使えば、フォーマットは必要ありません。これらは自動的にフォーマット処理を行います。具体的には引数の要素に対し%vに相当する処理を行い、Printが結果をそのまま出力するのに対してPrintlnは各要素の間にスペースを追加し、末尾に改行を加えます。
 
-.. code-block:: 
+.. code-block:: cpp
 
    18        fmt.Print(u64, " ", t, " ", a, "\n");
    19        fmt.Println(u64, t, a);
@@ -926,7 +932,7 @@ Printfの代わりにPrintやPrintlnを使えば、フォーマットは必要�
 
 もしあなたが独自の型をPrintfやPrintにフォーマットさせたければ、string型の返り値を持つString()メソッドを用意しておくだけでよいのです。printのルーティンはフォーマットする値にメソッドが実装されているかどうかを検査し、もしそうであれば他のどのフォーマット処理でもなくそのメソッドを使います。わかりやすい例を示します。
 
-.. code-block::
+.. code-block:: cpp
  
    09    type testType struct { a int; b string }
    
@@ -942,7 +948,7 @@ Printfの代わりにPrintやPrintlnを使えば、フォーマットは必要�
 
 .. Since *testType has a String() method, the default formatter for that type will use it and produce the output
 
-*testTypeはString()メソッドを持っているので、その型のデフォルトフォーマッタはこのメソッドを使って出力を行うことになります。
+``*testType`` はString()メソッドを持っているので、その型のデフォルトフォーマッタはこのメソッドを使って出力を行うことになります。
 
     77 Sunset Strip
 
