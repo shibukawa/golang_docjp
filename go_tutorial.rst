@@ -39,7 +39,7 @@ Hello, World
   10        fmt.Printf("Hello, world; or Καλημ?ρα κ?σμε; or こんにちは 世界\n");
   11    }
 
-  07    import fmt "fmt"  // Package implementing formatted I/O.
+.. 07    import fmt "fmt"  // Package implementing formatted I/O.
 
 .. Every Go source file declares, using a package statement, which package it's part of. It may also import other packages to use their facilities. This program imports the package fmt to gain access to our old, now capitalized and package-qualified, friend, fmt.Printf.
 
@@ -244,8 +244,7 @@ Go には多くの ``int`` や ``float`` のような型がありますが、こ
 ところで、以下は不正なコード例です。これは ``string`` の値を書き換えようと
 しているからです::
 
-..
-   In C++ terms, Go strings are a bit like ``const strings``, while pointers to
+.. In C++ terms, Go strings are a bit like ``const strings``, while pointers to
    strings are analogous to ``const string`` references.
 
 C++ の言い方で言えば、 Go の文字列は ``const strings`` と言えます。また、
