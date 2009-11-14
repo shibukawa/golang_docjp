@@ -20,12 +20,20 @@
 チュートリアル
 ---------------
 
-:ref:`go_tutorial`
+.. toctree::
+   :maxdepth: 2
+   
+   go_tutorial
+
 
 Effective Go
 ------------
 
-:ref:`effective_go`
+.. toctree::
+   :maxdepth: 2
+   
+   effective_go
+
 
 Programming
 ---------------
