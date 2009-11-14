@@ -28,7 +28,7 @@ Hello, World
 
 それでは、いつもの入門コードから始めます:
 
-.. code-block::
+.. code-block:: cpp
 
   05    package main
   
@@ -45,11 +45,11 @@ Hello, World
 
 すべてのGoのソースファイルは、そのファイルが属しているパッケージを宣言するために、package文の宣言を行います。また、他のパッケージに含まれる機能を利用するために、他のパッケージをインポートすることもあります。このプログラムでは、パッケージ名付きで先頭の大文字化はされているという違いはありますが、C/C++プログラマにはおなじみの、古くからの友人である、\ :func:`fmt.Printf`\ を使用するために、\ :mod:`fmt`\ パッケージをインポートしています。
 
-Functions are introduced with the func keyword. The main package's main function is where the program starts running (after any initialization).
+.. Functions are introduced with the func keyword. The main package's main function is where the program starts running (after any initialization).
 
 funcキーワードを使用することで、関数を定義することが出来ます。mainパッケージのmain関数は、いくつかの初期化の後に最初に呼ばれるプログラムの入り口になります。
 
-String constants can contain Unicode characters, encoded in UTF-8. (In fact, Go source files are defined to be encoded in UTF-8.)
+.. String constants can contain Unicode characters, encoded in UTF-8. (In fact, Go source files are defined to be encoded in UTF-8.)
 
 文字列定数はUTF-8でエンコードされていて、ユニコード文字を含むことができます。実際に仕様上でも、GoのソースファイルはUTF-8でエンコードされると定義されています。
 
@@ -57,7 +57,7 @@ String constants can contain Unicode characters, encoded in UTF-8. (In fact, Go 
 
 コメントの書き方は、C++で行われている慣習と同じです。
 
-.. code-block::
+.. code-block:: cpp
 
     /* ... */
     // ...
