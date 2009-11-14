@@ -735,66 +735,93 @@ Interfaces are a distinctive feature of Go. An interface is implemented by a typ
     type Empty interface {}
 Every type implements the empty interface, which makes it useful for things like containers.
 
-Sorting[Top]
-Interfaces provide a simple form of polymorphism. They completely separate the definition of what an object does from how it does it, allowing distinct implementations to be represented at different times by the same interface variable.
+.. Sorting
+   =======
 
-As an example, consider this simple sort algorithm taken from progs/sort.go:
+ソート
+======
 
- 
-13    func Sort(data Interface) {
-14        for i := 1; i < data.Len(); i++ {
-15            for j := i; j > 0 && data.Less(j, j-1); j-- {
-16                data.Swap(j, j-1);
-17            }
-18        }
-19    }
-The code needs only three methods, which we wrap into sort's Interface:
+.. Interfaces provide a simple form of polymorphism. They completely separate the definition of what an object does from how it does it, allowing distinct implementations to be represented at different times by the same interface variable.
 
- 
-07    type Interface interface {
-08        Len() int;
-09        Less(i, j int) bool;
-10        Swap(i, j int);
-11    }
-We can apply Sort to any type that implements Len, Less, and Swap. The sort package includes the necessary methods to allow sorting of arrays of integers, strings, etc.; here's the code for arrays of int
+インターフェースはポリモルフィズムを簡単な形式で提供します。これはオブジェクトが行うことの定義といかにそれを行うかを分離し、同じインターフェース変数で時に応じて異なる実装を使わせることが可能となります。
 
- 
-33    type IntArray []int
+.. As an example, consider this simple sort algorithm taken from progs/sort.go:
 
-35    func (p IntArray) Len() int            { return len(p); }
-36    func (p IntArray) Less(i, j int) bool  { return p[i] < p[j]; }
-37    func (p IntArray) Swap(i, j int)       { p[i], p[j] = p[j], p[i]; }
+例として、progs/sort.goから取ってきた簡単なソートアルゴリズムを見てみましょう。
 
-Here we see methods defined for non-struct types. You can define methods for any type you define and name in your package.
+.. code-block:: guess
 
-And now a routine to test it out, from progs/sortmain.go. This uses a function in the sort package, omitted here for brevity, to test that the result is sorted.
-
- 
-12    func ints() {
-13        data := []int{74, 59, 238, -784, 9845, 959, 905, 0, 0, 42, 7586, -5467984, 7586};
-14        a := sort.IntArray(data);
-15        sort.Sort(a);
-16        if !sort.IsSorted(a) {
-17            panic()
-18        }
-19    }
-If we have a new type we want to be able to sort, all we need to do is to implement the three methods for that type, like this:
-
- 
-30    type day struct {
-31        num        int;
-32        shortName  string;
-33        longName   string;
-34    }
-
-36    type dayArray struct {
-37        data []*day;
-38    }
+   13    func Sort(data Interface) {
+   14        for i := 1; i < data.Len(); i++ {
+   15            for j := i; j > 0 && data.Less(j, j-1); j-- {
+   16                data.Swap(j, j-1);
+   17            }
+   18        }
+   19    }
 
 
-40    func (p *dayArray) Len() int            { return len(p.data); }
-41    func (p *dayArray) Less(i, j int) bool  { return p.data[i].num < p.data[j].num; }
-42    func (p *dayArray) Swap(i, j int)       { p.data[i], p.data[j] = p.data[j], p.data[i]; }
+.. The code needs only three methods, which we wrap into sort's Interface:
+
+このコードは3つのメソッドを必要とします。これをソートのインターフェースにラップしてみましょう。
+
+.. code-block:: guess  
+
+    07    type Interface interface {
+    08        Len() int;
+    09        Less(i, j int) bool;
+    10        Swap(i, j int);
+    11    }
+
+.. We can apply Sort to any type that implements Len, Less, and Swap. The sort package includes the necessary methods to allow sorting of arrays of integers, strings, etc.; here's the code for arrays of int
+
+Len, Less, Swapを実装したものであれば、どんな型でもSortを適用することが可能です。ソートパッケージは整数、文字列などの配列をソートするために必要となるメソッドを含んでいます。次に整数の配列をソートするコードを見てみましょう。
+
+.. code-block:: guess
+
+   33    type IntArray []int
+   
+   35    func (p IntArray) Len() int            { return len(p); }
+   36    func (p IntArray) Less(i, j int) bool  { return p[i] < p[j]; }
+   37    func (p IntArray) Swap(i, j int)       { p[i], p[j] = p[j], p[i]; }
+
+.. Here we see methods defined for non-struct types. You can define methods for any type you define and name in your package.
+
+ここではnon-struct型のためのメソッド定義を見てきました。パッケージに定義したどんな型のメソッドも定義することが可能です。
+
+.. And now a routine to test it out, from progs/sortmain.go. This uses a function in the sort package, omitted here for brevity, to test that the result is sorted.
+
+progs/sortmain.gから、ここまでのコードをテストするルーチンを見てみます。
+
+.. code-block:: guess
+
+   12    func ints() {
+   13        data := []int{74, 59, 238, -784, 9845, 959, 905, 0, 0, 42, 7586, -5467984, 7586};
+   14        a := sort.IntArray(data);
+   15        sort.Sort(a);
+   16        if !sort.IsSorted(a) {
+   17            panic()
+   18        }
+   19    }
+
+.. If we have a new type we want to be able to sort, all we need to do is to implement the three methods for that type, like this:
+
+ある型をソートするためにしなければいけないことは次のように3つのメソッドを定義するだけです。
+
+.. code-block:: guess
+
+   30    type day struct {
+   31        num        int;
+   32        shortName  string;
+   33        longName   string;
+   34    }
+
+   36    type dayArray struct {
+   37        data []*day;
+   38    }
+
+   40    func (p *dayArray) Len() int            { return len(p.data); }
+   41    func (p *dayArray) Less(i, j int) bool  { return p.data[i].num < p.data[j].num; }
+   42    func (p *dayArray) Swap(i, j int)       { p.data[i], p.data[j] = p.data[j], p.data[i]; }
 
 Printing
 =========
@@ -1102,95 +1129,143 @@ sieve(ふるい)関数のメインループは、呼ばれる側の関数をフ�
    50        }
    51    }
 
-Multiplexing[Top]
-With channels, it's possible to serve multiple independent client goroutines without writing an explicit multiplexer. The trick is to send the server a channel in the message, which it will then use to reply to the original sender. A realistic client-server program is a lot of code, so here is a very simple substitute to illustrate the idea. It starts by defining a request type, which embeds a channel that will be used for the reply.
+.. Multiplexing
+   ============
 
- 
-09    type request struct {
-10        a, b    int;
-11        replyc  chan int;
-12    }
-The server will be trivial: it will do simple binary operations on integers. Here's the code that invokes the operation and responds to the request:
+多重化
+======
 
- 
-14    type binOp func(a, b int) int
+.. With channels, it's possible to serve multiple independent client goroutines without writing an explicit multiplexer. The trick is to send the server a channel in the message, which it will then use to reply to the original sender. A realistic client-server program is a lot of code, so here is a very simple substitute to illustrate the idea. It starts by defining a request type, which embeds a channel that will be used for the reply.
 
-16    func run(op binOp, req *request) {
-17        reply := op(req.a, req.b);
-18        req.replyc <- reply;
-19    }
+.. FIXME:
+channelを使うことによって複数の独立したgoroutineをmultiplexerを書くことなく処理することが出来ます。channelをメッセージに含めてサーバーに送信し、それを使って送信元に返事をします。現実的なクライアントサーバープログラムはコード量が多いので、ここでは簡略化したものを使って説明を行います。これはリクエスト型の定義から始まり、その中には返事するために使用するchannelが組込まれています。
 
-Line 18 defines the name binOp to be a function taking two integers and returning a third.
+.. code-block:: guess
 
-The server routine loops forever, receiving requests and, to avoid blocking due to a long-running operation, starting a goroutine to do the actual work.
+    09    type request struct {
+    10        a, b    int;
+    11        replyc  chan int;
+    12    }
 
- 
-21    func server(op binOp, service chan *request) {
-22        for {
-23            req := <-service;
-24            go run(op, req);  // don't wait for it
-25        }
-26    }
-We construct a server in a familiar way, starting it and returning a channel connected to it:
+.. The server will be trivial: it will do simple binary operations on integers. Here's the code that invokes the operation and responds to the request:
 
- 
-28    func startServer(op binOp) chan *request {
-29        req := make(chan *request);
-30        go server(op, req);
-31        return req;
-32    }
-Here's a simple test. It starts a server with an addition operator and sends out N requests without waiting for the replies. Only after all the requests are sent does it check the results.
+サーバーは簡単なもので、整数のバイナリ操作を行います。ここで処理をしてリクエストに返事を返すコードを見ていきます。
 
- 
-34    func main() {
-35        adder := startServer(func(a, b int) int { return a + b });
-36        const N = 100;
-37        var reqs [N]request;
-38        for i := 0; i < N; i++ {
-39            req := &reqs[i];
-40            req.a = i;
-41            req.b = i + N;
-42            req.replyc = make(chan int);
-43            adder <- req;
-44        }
-45        for i := N-1; i >= 0; i-- {   // doesn't matter what order
-46            if <-reqs[i].replyc != N + 2*i {
-47                fmt.Println("fail at", i);
-48            }
-49        }
-50        fmt.Println("done");
-51    }
-One annoyance with this program is that it doesn't shut down the server cleanly; when main returns there are a number of lingering goroutines blocked on communication. To solve this, we can provide a second, quit channel to the server:
+.. code-block:: guess 
 
- 
-32    func startServer(op binOp) (service chan *request, quit chan bool) {
-33        service = make(chan *request);
-34        quit = make(chan bool);
-35        go server(op, service, quit);
-36        return service, quit;
-37    }
-It passes the quit channel to the server function, which uses it like this:
+    14    type binOp func(a, b int) int
+    
+    16    func run(op binOp, req *request) {
+    17        reply := op(req.a, req.b);
+    18        req.replyc <- reply;
+    19    }
 
- 
-21    func server(op binOp, service chan *request, quit chan bool) {
-22        for {
-23            select {
-24            case req := <-service:
-25                go run(op, req);  // don't wait for it
-26            case <-quit:
-27                return;
-28            }
-29        }
-30    }
-Inside server, the select statement chooses which of the multiple communications listed by its cases can proceed. If all are blocked, it waits until one can proceed; if multiple can proceed, it chooses one at random. In this instance, the select allows the server to honor requests until it receives a quit message, at which point it returns, terminating its execution.
+.. Line 18 defines the name binOp to be a function taking two integers and returning a third.
 
-All that's left is to strobe the quit channel at the end of main:
+18行目でbinOpを整数値を2つ取り、3つ目のものを返す関数として定義しています。
 
- 
-40        adder, quit := startServer(func(a, b int) int { return a + b });
+.. The server routine loops forever, receiving requests and, to avoid blocking due to a long-running operation, starting a goroutine to do the actual work.
+
+サーバールーチンは延々とループし続け、リクエストを受けとり、処理をブロックさせないようにgoroutineを開始して実際の処理をさせます。
+
+.. code-block:: guess
+
+    21    func server(op binOp, service chan *request) {
+    22        for {
+    23            req := <-service;
+    24            go run(op, req);  // don't wait for it
+    25        }
+    26    }
+
+.. We construct a server in a familiar way, starting it and returning a channel connected to it:
+
+サーバーを見慣れた方法で組み立てます。サーバーを開始してそれに接続したchannelを返します。
+
+.. code-block:: guess
+
+    28    func startServer(op binOp) chan *request {
+    29        req := make(chan *request);
+    30        go server(op, req);
+    31        return req;
+    32    }
+
+.. Here's a simple test. It starts a server with an addition operator and sends out N requests without waiting for the replies. Only after all the requests are sent does it check the results.
+
+次に簡単なテストです。これはサーバーをオペレーターを付加して開始し、Nリクエストを返事を待たずに送信します。すべてのリクエストの送信が終わった時点で結果のチェックを行います。
+
+.. code-block:: guess
+
+    34    func main() {
+    35        adder := startServer(func(a, b int) int { return a + b });
+    36        const N = 100;
+    37        var reqs [N]request;
+    38        for i := 0; i < N; i++ {
+    39            req := &reqs[i];
+    40            req.a = i;
+    41            req.b = i + N;
+    42            req.replyc = make(chan int);
+    43            adder <- req;
+    44        }
+    45        for i := N-1; i >= 0; i-- {   // doesn't matter what order
+    46            if <-reqs[i].replyc != N + 2*i {
+    47                fmt.Println("fail at", i);
+    48            }
+    49        }
+    50        fmt.Println("done");
+    51    }
+
+.. One annoyance with this program is that it doesn't shut down the server cleanly; when main returns there are a number of lingering goroutines blocked on communication. To solve this, we can provide a second, quit channel to the server:
+
+このプログラムの厄介なところはサーバーがきれいにシャットダウンされないことです。mainが返る時にいくつかのgoroutineが通信中のままブロックされて残ってしまいます。これを解決するためにquit channelをサーバーに渡します。
+
+.. code-block:: guess
+
+    32    func startServer(op binOp) (service chan *request, quit chan bool) {
+    33        service = make(chan *request);
+    34        quit = make(chan bool);
+    35        go server(op, service, quit);
+    36        return service, quit;
+    37    }
+
+.. It passes the quit channel to the server function, which uses it like this:
+
+quit channelをサーバー関数に渡し、サーバーはそれを次のようにして使います。
+
+.. code-block:: guess
+
+    21    func server(op binOp, service chan *request, quit chan bool) {
+    22        for {
+    23            select {
+    24            case req := <-service:
+    25                go run(op, req);  // don't wait for it
+    26            case <-quit:
+    27                return;
+    28            }
+    29        }
+    30    }
+
+.. Inside server, the select statement chooses which of the multiple communications listed by its cases can proceed. If all are blocked, it waits until one can proceed; if multiple can proceed, it chooses one at random. In this instance, the select allows the server to honor requests until it receives a quit message, at which point it returns, terminating its execution.
+
+サーバー内でselect文はcaseで並んでいる複数の通信のうち開始出来るものを選択します。もしすべてブロックされていれば、そのうちの1つが開始出来る状態になるまで待ちます。複数のものが開始出来る状態となれば、ランダムでそのうちの1つが選択されます。この例では、selectを使うことでquitメッセージを受けとるまでサーバーにリクエストを待たせ、受け取った時点で実行を終了させることが出来ます。
+
+.. All that's left is to strobe the quit channel at the end of main:
+
+.. FIXME
+あとはmainの終わりにあるquit channelをstrobeするだけです。
+
+.. code-block:: guess
+
+    40        adder, quit := startServer(func(a, b int) int { return a + b });
+
 ...
- 
-55        quit <- true;
-There's a lot more to Go programming and concurrent programming in general but this quick tour should give you some of the basics.
+
+.. code-block:: guess
+
+    55        quit <- true;
+
+.. There's a lot more to Go programming and concurrent programming in general but this quick tour should give you some of the basics.
+
+Goプログラミングや一般的な並列処理プログラミングはこれだけではありませんが、基礎的なところはは理解いただけたでしょう。
+
 
 Except as noted, this content is licensed under Creative Commons Attribution 3.0.
