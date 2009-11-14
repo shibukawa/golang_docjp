@@ -108,7 +108,7 @@ Echo
 .. Next up, here's a version of the Unix utility echo(1)::
 次は、Unixコマンドのecho(1)と同じ動作をするサンプルです。
 
-.. code-block::
+.. code-block:: cpp
 
    05    package main
    07    import (
@@ -138,20 +138,42 @@ Echo
 
 .. This program is small but it's doing a number of new things. In the last example, we saw func introduce a function. The keywords var, const, and type (not used yet) also introduce declarations, as does import. Notice that we can group declarations of the same sort into parenthesized, semicolon-separated lists if we want, as on lines 7-10 and 14-17. But it's not necessary to do so; we could have said::
 
-このプログラムは小さいですが、多くの新しいことが出てきます。 最後の例で、"func"を確認しました。 今回は、"var", "const", "type(まだ使いませんが)", パッケージ利用前に宣言する"import"を使用します。 注意点として、7-10, 14-17行目のように、セミコロンで区切りことにより、同じ種類の宣言を並べて記述することができます。 しかし、必ずしもそう記述する必要はありません。
+このプログラムは小さいですが、多くの新しいことが出てきます。 最後の例で、"func"を確認しました。 今回は、"var", "const", "type(まだ使いませんが)", パッケージ利用前に宣言する"import"を使用します。 注意点として、7-10, 14-17行目のように、セミコロンで区切りことにより、同じ種類の宣言を並べて記述することができます。 しかし、必ずしもそう記述する必要はありません。 次のコードでも良いと言ったのですが、
 
-.. code-block::
+.. code-block:: cpp
 
    const Space = " "
    const Newline = "\n"
 
 .. Semicolons aren't needed here; in fact, semicolons are unnecessary after any top-level declaration, although they are needed as separators within a parenthesized list of declarations.
 
-.. This program imports the "os" package to access its Stdout variable, of type `*os.File.` The import statement is actually a declaration: in its general form, as used in our ``hello world'' program, it names the identifier (fmt) that will be used to access members of the package imported from the file ("fmt"), found in the current directory or in a standard location. In this program, though, we've dropped the explicit name from the imports; by default, packages are imported using the name defined by the imported package, which by convention is of course the file name itself. Our ``hello world'' program could have said just import "fmt".
+セミコロンはここで必要ではありません。 事実上、セミコロンはどんなトップレベル宣言の後にも不要です。 "()"を利用し複数宣言する場合に区切り文字として必要です。
+
+.. You can use semicolons just the way you would in C, C++, or Java, but if you prefer you can also leave them out in many cases. They separate statements rather than terminate them, so they aren't needed (but are still OK) at the end of the last statement in a block. They're also optional after braces, as in C.
+
+C、C++、またはJavaと同じようにセミコロンを使用できますが、多くの場合、れらを省くことができます。セパレータステートメントの処理の前に処理自体を切り離すため、ブロックの最後にセミコロンは必要ではありません （まだOKです）。Cのように、ブレス後につけることは任意です。
+
+.. Have a look at the source to echo. The only necessary semicolons in that program are on lines 8, 15, and 21 and of course between the elements of the for loop on line 22. The ones on line 9, 16, 26, and 31 are optional but are there because a semicolon on the end of a list of statements makes it easier to edit the list later. 
+
+echoサンプルのソースコードを見てみましょう。プログラム中にセミコロンが必要な箇所は、8,15,21行目にあり、22行目は、forループの要素間の記述のため必要です。9,16,26,31行目のものは任意ですが、リストの最後、ステートメントの最後が簡単にわかるようにするために付けています。
+
+
+.. This program imports the "os" package to access its Stdout variable, of type `*os.File.`  The import statement is actually a declaration:  in its general form, as used in our ``hello world'' program, it names the identifier (fmt) that will be used to access members of the package imported from the file ("fmt"), found in the current directory or in a standard location. 
+.. In this program, though, we've dropped the explicit name from the imports; 
+.. by default, packages are imported using the name defined by the imported package, 
+.. which by convention is of course the file name itself. 
+.. Our ``hello world'' program could have said just import "fmt".
+
+このプログラムは、Stdout変数にアクセスするために、"os"をインポートしています。, of type `*os.File.` "import"句は、パッケージを利用する場合に明示的に宣言します。 
+"hello,world"のサンプルでは、見つけられたファイル("fmt")からインポートされたパッケージのメンバーにアクセスするための識別子を(fmt)と命名しています。インポート対象は、カレントディレクトリか、標準の位置にある必要があります。
+もっとも、このプログラムでは、インポート時に明白な名前を落としました。
+識別子を指定しない場合は、ファイル名を利用してインポートします。
 
 .. You can specify your own import names if you want but it's only necessary if you need to resolve a naming conflict.
 
 .. Given os.Stdout we can use its WriteString method to print the string.
+
+os.Stdout の WriteString メソッドを利用することで、文字列を出力することができます。
 
 .. Having imported the flag package, line 12 creates a global variable to hold the value of echo's -n flag. The variable omitNewline has type *bool, pointer to bool.
 
@@ -159,7 +181,7 @@ Echo
 
 .. The declaration statement has the form::
 
-.. code-block::
+.. code-block:: cpp
 
    var s string = "";
 
@@ -167,19 +189,21 @@ Echo
 
 .. Go tries to be terse, and this declaration could be shortened. Since the string constant is of type string, we don't have to tell the compiler that. We could write::
 
-.. code-block::
+.. code-block:: cpp
 
    var s = "";
 
 .. or we could go even shorter and write the idiom::
 
-.. code-block::
+変数は以下のように、短く記述することもできます。
+
+.. code-block:: cpp
 
    s := "";
 
 .. The := operator is used a lot in Go to represent an initializing declaration. There's one in the for clause on the next line::
 
-.. code-block::
+.. code-block:: cpp
 
    22        for i := 0; i < flag.NArg(); i++ {
 
@@ -191,11 +215,13 @@ Echo
 
 .. Notice that main.main is a niladic function with no return type. It's defined that way. Falling off the end of main.main means ''success''; if you want to signal an erroneous return, call::
 
-.. code-block::
+.. code-block:: cpp
 
    os.Exit(1)
 
 .. The os package contains other essentials for getting started; for instance, os.Args is a slice used by the flag package to access the command-line arguments.
+
+
 
 An Interlude about Types
 ========================
