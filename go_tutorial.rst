@@ -383,7 +383,7 @@ An Interlude about Allocation
 =============================
 .. Most types in Go are values. If you have an int or a struct or an array, assignment copies the contents of the object. To allocate a new variable, use new(), which returns a pointer to the allocated storage.
 
-Goのほとんどの型は値です。int型やstruct型やarray型は代入時にオブジェクトの内容をコピーします。新しい変数を割り当てるためにはnew()を使います。new()は割り当てられたストレージのポインタを返します。
+Goでは、ほとんどの型は値です。``int``や``struct``や``array``は代入時にオブジェクトの内容をコピーします。新しい変数を割り当てるためには``new()``を使います。``new()``は割り当てた記憶域へのポインタを返します。
 
 .. code-block:: cpp
 
@@ -400,7 +400,7 @@ Goのほとんどの型は値です。int型やstruct型やarray型は代入時�
 
 .. Some types?maps, slices, and channels (see below)?have reference semantics. If you're holding a slice or a map and you modify its contents, other variables referencing the same underlying data will see the modification. For these three types you want to use the built-in function make():
 
-mapやsliceやchannelsのような型は参照セマンティックです。sliceやmapが参照している内容を変更するとこれらを参照している他の変数からも同じように内容の変更が反映されます。これらの型には
+マップやスライスやチャンネル(下記参照)のような型は参照セマンティックです。スライスやマップの内容を変更すると、同じデータを参照している他の変数でも変更が反映されます。これらの型を生成するには組み込み関数``make()``を使います。
 
 .. code-block:: cpp
 
@@ -408,19 +408,19 @@ mapやsliceやchannelsのような型は参照セマンティックです。slic
 
 .. This statement initializes a new map ready to store entries. If you just declare the map, as in
 
-この文では新しいmap型を初期化しています。mapを宣言するためには次のようにします。
+この文ではエントリーを格納する新しいマップを初期化しています。マップを宣言するためには次のようにします。
 
 .. code-block:: cpp
 
     var m map[string]int;
 
-.. it creates a nil reference that cannot hold anything. To use the map, you must first initialize the reference using make() or by assignment from an existing map.
+.. it creates a nil reference that cannot hold anything. To use the map, you must first initialize the using make() or by assignment from an existing map.
 
-ここではなにも保持していないnil参照を生成しています。map型を使うためにはじめにmake()を使って参照を初期化するか既存のmapをassignする必要があります。
+ここではなにも保持していない``nil``参照を生成しています。マップを使うためには、まずはじめに``make()``を使って参照を初期化するか既存のマップを代入する必要があります。
 
 .. Note that new(T) returns type *T while make(T) returns type T. If you (mistakenly) allocate a reference object with new(), you receive a pointer to a nil reference, equivalent to declaring an uninitialized variable and taking its address.
 
-make(T)はTの型を返すのに対してnew(T)はTのポインタ型を返すことに気をつけてください。(間違えて)new()で参照オブジェクトを割り当ててしまうと、nilリファレンスへのポインタが返されてしまいます。これは未初期化の変数を宣言してそのアドレスを獲得することに相当します。
+``make(T)``は``T``の型を返すのに対して``new(T)``は``*T``の型を返すことに注意してください。(間違えて)``new()``で参照オブジェクトの割り当てを行うとnil参照へのポインタが返されてしまいます。これは未初期化の変数を宣言してそのアドレスを受け取ることと同等です。
 
 .. An Interlude about Constants[Top]
 
