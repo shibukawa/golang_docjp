@@ -3,10 +3,10 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Programming Language Go Documents
-========================================
+プログラミング言語 Go ドキュメント
+==================================
 
-Contents:
+目次:
 
 .. toctree::
    :hidden:
@@ -14,8 +14,8 @@ Contents:
    go_tutorial
    effective_go
 
-Tutorial
---------
+チュートリアル
+---------------
 
 :ref:`go_tutorial`
 
@@ -24,8 +24,8 @@ Effective Go
 
 :ref:`effective_go`
 
-Indices and tables
-==================
+索引とテーブル
+==============
 
 * :ref:`genindex`
 * :ref:`modindex`
