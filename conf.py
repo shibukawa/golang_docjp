@@ -38,7 +38,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'golang_docjp'
-copyright = u'2009, SHIBUKAWA Yoshiki'
+copyright = u'2009, The Go Authors(Translated by pyspa.org)'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
