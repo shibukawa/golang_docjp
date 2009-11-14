@@ -13,6 +13,9 @@
    
    go_tutorial
    effective_go
+   
+   command_documentation
+   package_documentation
 
 チュートリアル
 ---------------
@@ -24,8 +27,20 @@ Effective Go
 
 :ref:`effective_go`
 
+<<<<<<< local
+Programming
+---------------
+
+:ref:`command_documentation`
+:ref:`package_documentation`
+
+
+Indices and tables
+==================
+=======
 索引とテーブル
 ==============
+>>>>>>> other
 
 * :ref:`genindex`
 * :ref:`modindex`
