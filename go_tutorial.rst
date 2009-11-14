@@ -66,22 +66,34 @@ funcキーワードを使用することで、関数を定義することが出�
 
 後の方の説明では、画面表示に関しても、もっと詳しく説明していきます。
 
-Compiling
-=========
+.. Compiling
+   =========
 
-Go is a compiled language. At the moment there are two compilers. Gccgo is a Go compiler that uses the GCC back end. There is also a suite of compilers with different (and odd) names for each architecture: 6g for the 64-bit x86, 8g for the 32-bit x86, and more. These compilers run significantly faster but generate less efficient code than gccgo. At the time of writing (late 2009), they also have a more robust run-time system although gccgo is catching up.
+コンパイル
+========
 
-Here's how to compile and run our program. With 6g, say:
+.. Go is a compiled language. At the moment there are two compilers. Gccgo is a Go compiler that uses the GCC back end. There is also a suite of compilers with different (and odd) names for each architecture: 6g for the 64-bit x86, 8g for the 32-bit x86, and more. These compilers run significantly faster but generate less efficient code than gccgo. At the time of writing (late 2009), they also have a more robust run-time system although gccgo is catching up.
+
+Goはコンパイル型言語です。現状のところコンパイラが2つあります。GccgoはGCCバックエンドを利用するコンパイラです。またアーキテクチャーごとに異なる(そしておかしな)名前のコンパイラーが一式あります。64-bit x86用の6g、32-bit x86用の8などです。これらはとても高速ですが、gccgoより非効率なコードを生成します。執筆時点(2009後半)では、gccgoも追い上げていますが、より堅牢なランタイムシステムを持ちます。
+
+.. Here's how to compile and run our program. With 6g, say:
+
+プログラムをコンパイルして走らせる方法を紹介します。6gだと
 
 .. code-block:: bash
 
-    $ 6g helloworld.go  # compile; object goes into helloworld.6
-    $ 6l helloworld.6   # link; output goes into 6.out
+    $ 6g helloworld.go  # コンパイル; オブジェクトはhelloworld.6となる
+    $ 6l helloworld.6   # リンク; 出力は6.outとなる
     $ 6.out
     Hello, world; or Καλημ?ρα κ?σμε; or こんにちは 世界
     $
 
-With gccgo it looks a little more traditional:
+..  $ 6g helloworld.go  # compile; object goes into helloworld.6
+    $ 6l helloworld.6   # link; output goes into 6.out
+
+.. With gccgo it looks a little more traditional:
+
+gccgoだともう少し従来のやりかたに似ています。
 
 .. code-block:: bash
 
@@ -126,22 +138,14 @@ Echo
 
 .. This program is small but it's doing a number of new things. In the last example, we saw func introduce a function. The keywords var, const, and type (not used yet) also introduce declarations, as does import. Notice that we can group declarations of the same sort into parenthesized, semicolon-separated lists if we want, as on lines 7-10 and 14-17. But it's not necessary to do so; we could have said::
 
-<<<<<<< local
-This program imports the "os" package to access its Stdout variable, of type *os.File. The import statement is actually a declaration: in its general form, as used in our ``hello world'' program, it names the identifier (fmt) that will be used to access members of the package imported from the file ("fmt"), found in the current directory or in a standard location. In this program, though, we've dropped the explicit name from the imports; by default, packages are imported using the name defined by the imported package, which by convention is of course the file name itself. Our ``hello world'' program could have said just import "fmt".
-=======
 このプログラムは小さいですが、多くの新しいことが出てきます。 最後の例で、"func"を確認しました。 今回は、"var", "const", "type(まだ使いませんが)", パッケージ利用前に宣言する"import"を使用します。 注意点として、7-10, 14-17行目のように、セミコロンで区切りことにより、同じ種類の宣言を並べて記述することができます。 しかし、必ずしもそう記述する必要はありません。
->>>>>>> other
 
 .. code-block::
 
    const Space = " "
    const Newline = "\n"
 
-<<<<<<< local
-Having imported the flag package, line 12 creates a global variable to hold the value of echo's -n flag. The variable omitNewline has type *bool, pointer to bool.
-=======
 .. Semicolons aren't needed here; in fact, semicolons are unnecessary after any top-level declaration, although they are needed as separators within a parenthesized list of declarations.
->>>>>>> other
 
 .. This program imports the "os" package to access its Stdout variable, of type `*os.File.` The import statement is actually a declaration: in its general form, as used in our ``hello world'' program, it names the identifier (fmt) that will be used to access members of the package imported from the file ("fmt"), found in the current directory or in a standard location. In this program, though, we've dropped the explicit name from the imports; by default, packages are imported using the name defined by the imported package, which by convention is of course the file name itself. Our ``hello world'' program could have said just import "fmt".
 
@@ -175,21 +179,10 @@ Having imported the flag package, line 12 creates a global variable to hold the 
 
 .. The := operator is used a lot in Go to represent an initializing declaration. There's one in the for clause on the next line::
 
-<<<<<<< local
-An Interlude about Types
-========================
-=======
 .. code-block::
->>>>>>> other
 
-<<<<<<< local
-Go has some familiar types such as int and float, which represent values of the ''appropriate'' size for the machine. It also defines explicitly-sized types such as int8, float64, and so on, plus unsigned integer types such as uint, uint32, etc. These are distinct types; even if int and int32 are both 32 bits in size, they are not the same type. There is also a byte synonym for uint8, which is the element type for strings.
-=======
    22        for i := 0; i < flag.NArg(); i++ {
->>>>>>> other
 
-<<<<<<< local
-=======
 .. The flag package has parsed the arguments and left the non-flag arguments in a list that can be iterated over in the obvious way.
 
 .. The Go for statement differs from that of C in a number of ways. First, it's the only looping construct; there is no while or do. Second, there are no parentheses on the clause, but the braces on the body are mandatory. The same applies to the if and switch statements. Later examples will show some other ways for can be written.
@@ -207,32 +200,79 @@ Go has some familiar types such as int and float, which represent values of the 
 An Interlude about Types
 ========================
 
-Go has some familiar types such as int and float, which represent values of the ''appropriate'' size for the machine. It also defines explicitly-sized types such as int8, float64, and so on, plus unsigned integer types such as uint, uint32, etc. These are distinct types; even if int and int32 are both 32 bits in size, they are not the same type. There is also a byte synonym for uint8, which is the element type for strings.
+..
+   Go has some familiar types such as ``int`` and ``float``, which represent
+   values of the ''appropriate'' size for the machine. It also defines
+   explicitly-sized types such as ``int8``, ``float64``, and so on, plus
+   unsigned integer types such as ``uint``, ``uint32``, etc. These are distinct
+   types; even if ``int`` and ``int32`` are both 32 bits in size, they are not
+   the same type. There is also a ``byte`` synonym for ``uint8``, which is the
+   element type for strings.
 
->>>>>>> other
-Speaking of string, that's a built-in type as well. Strings are immutable values?they are not just arrays of byte values. Once you've built a string value, you can't change it, although of course you can change a string variable simply by reassigning it. This snippet from strings.go is legal code::
+Go には多くの ``int`` や ``float`` のような型がありますが、これらの値の
+サイズは実行するマシンで ''適切'' なサイズになります。このため、サイズが
+明示的な型として ``int8``, ``float64`` などの型や、負数のない整数型といった
+``uint``, ``uint32`` なども定義されています。
+型名が異なる型は、明確に別の型としてあつかわれるので、 ``int`` と ``int32``
+はどちらもサイズが32ビットですが、異なる型となります。
+他に、 ``uint8`` の別名である ``byte`` という型があり、これは文字列の要素
+のための型です。
 
+..
+   Speaking of ``string``, that's a built-in type as well. Strings are
+   *immutable values* -- they are not just arrays of ``byte`` values. Once
+   you've built a string *value*, you can't change it, although of course you
+   can change a string *variable* simply by reassigning it. This snippet from
+   ``strings.go`` is legal code::
  
+``string`` 型という組み込み型もあります。文字列は *変更不可能な値* で、
+単なる ``byte`` 型の配列ではありません。一度、文字列型の値を作ると、
+この値を変更する事は出来ず、文字列を変更は出来ますが実質的には、別の
+文字列型の値が割り当てられることになります。以下は ``strings.go`` の
+ソースコードの一部です::
+
   11        s := "hello";
   12        if s[1] != 'e' { os.Exit(1) }
   13        s = "good bye";
   14        var p *string = &s;
   15        *p = "ciao";
 
-However the following statements are illegal because they would modify a string value::
+..
+   However the following statements are illegal because they would modify a
+   ``string`` value::
 
-    s[0] = 'x';
-    (*p)[1] = 'y';
+ところで、以下は不正なコード例です。これは ``string`` の値を書き換えようと
+しているからです::
 
-In C++ terms, Go strings are a bit like const strings, while pointers to strings are analogous to const string references.
+..
+   In C++ terms, Go strings are a bit like ``const strings``, while pointers to
+   strings are analogous to ``const string`` references.
 
-Yes, there are pointers. However, Go simplifies their use a little; read on.
+C++ の言い方で言えば、 Go の文字列は ``const strings`` と言えます。また、
+これを参照するポインタも同じように ``const strings`` への参照と言えます。
 
-Arrays are declared like this::
+..
+   Yes, there are pointers. However, Go simplifies their use a little; read on.
+
+そう、ポインタがあります。でも Go のポインタは少し使いやすく簡単になって
+います。見ていきましょう。
+
+..
+   Arrays are declared like this::
+
+配列は以下のように宣言されます::
 
     var arrayOfInt [10]int;
 
-Arrays, like strings, are values, but they are mutable. This differs from C, in which arrayOfInt would be usable as a pointer to int. In Go, since arrays are values, it's meaningful (and useful) to talk about pointers to arrays.
+..
+   Arrays, like strings, are values, but they are mutable. This differs from C,
+   in which ``arrayOfInt`` would be usable as a pointer to ``int``. In Go,
+   since arrays are values, it's meaningful (and useful) to talk about
+   pointers to arrays.
+
+配列は文字列のような、値の集まりですが、これらは変更可能です。 ``arrayOfInt``
+と C との違いは、 ``int`` へのポインタとして使う事が出来るところです。
+Go では、配列は値の集まりで、配列へのポインタとして使えるという意味になります。
 
 The size of the array is part of its type; however, one can declare a slice variable, to which one can assign a pointer to any array with the same element type or?much more commonly?a slice expression of the form a[low : high], representing the subarray indexed by low through high-1. Slices look a lot like arrays but have no explicit size ([] vs. [10]) and they reference a segment of an underlying, often anonymous, regular array. Multiple slices can share data if they represent pieces of the same array; multiple arrays can never share data.
 
