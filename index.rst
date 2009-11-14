@@ -27,7 +27,6 @@ Effective Go
 
 :ref:`effective_go`
 
-<<<<<<< local
 Programming
 ---------------
 
