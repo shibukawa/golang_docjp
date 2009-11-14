@@ -39,7 +39,7 @@ Hello, World
   10        fmt.Printf("Hello, world; or Καλημ?ρα κ?σμε; or こんにちは 世界\n");
   11    }
 
-  07    import fmt "fmt"  // Package implementing formatted I/O.
+.. 07    import fmt "fmt"  // Package implementing formatted I/O.
 
 .. Every Go source file declares, using a package statement, which package it's part of. It may also import other packages to use their facilities. This program imports the package fmt to gain access to our old, now capitalized and package-qualified, friend, fmt.Printf.
 
@@ -244,8 +244,7 @@ Go には多くの ``int`` や ``float`` のような型がありますが、こ
 ところで、以下は不正なコード例です。これは ``string`` の値を書き換えようと
 しているからです::
 
-..
-   In C++ terms, Go strings are a bit like ``const strings``, while pointers to
+.. In C++ terms, Go strings are a bit like ``const strings``, while pointers to
    strings are analogous to ``const string`` references.
 
 C++ の言い方で言えば、 Go の文字列は ``const strings`` と言えます。また、
@@ -310,18 +309,24 @@ There are also maps, which you can initialize like this:
     m := map[string]int{"one":1 , "two":2}
 The built-in function len(), which returns number of elements, makes its first appearance in sum. It works on strings, arrays, slices, maps, and channels.
 
+.. An Interlude about Allocation[Top]
+
 An Interlude about Allocation
 =============================
 .. Most types in Go are values. If you have an int or a struct or an array, assignment copies the contents of the object. To allocate a new variable, use new(), which returns a pointer to the allocated storage.
 
 Goのほとんどの型は値です。int型やstruct型やarray型は代入時にオブジェクトの内容をコピーします。新しい変数を割り当てるためにはnew()を使います。new()は割り当てられたストレージのポインタを返します。
 
+.. code-block:: cpp
+
     type T struct { a, b int }
     var t *T = new(T);
 
 .. or the more idiomatic
 
-より慣用的には次のようになります。
+またはより慣用的には次のようになります。
+
+.. code-block:: cpp
 
     t := new(T);
 
@@ -329,10 +334,15 @@ Goのほとんどの型は値です。int型やstruct型やarray型は代入時�
 
 mapやsliceやchannelsのような型は参照セマンティックです。sliceやmapが参照している内容を変更するとこれらを参照している他の変数からも同じように内容の変更が反映されます。これらの型には
 
+.. code-block:: cpp
+
     m := make(map[string]int);
+
 .. This statement initializes a new map ready to store entries. If you just declare the map, as in
 
 この文では新しいmap型を初期化しています。mapを宣言するためには次のようにします。
+
+.. code-block:: cpp
 
     var m map[string]int;
 
