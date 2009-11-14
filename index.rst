@@ -34,12 +34,8 @@ Programming
 :ref:`package_documentation`
 
 
-Indices and tables
-==================
-=======
 索引とテーブル
 ==============
->>>>>>> other
 
 * :ref:`genindex`
 * :ref:`modindex`
