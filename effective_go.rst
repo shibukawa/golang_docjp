@@ -1,20 +1,32 @@
-﻿.. _effective_go:
+.. _effective_go:
 
 ============
 Effective Go
 ============
 
-Introduction
-============
+.. Introduction
+   ============
 
-Go is a new language. Although it borrows ideas from existing languages, it has unusual properties that make effective Go programs different in character from programs written in its relatives. A straightforward translation of a C++ or Java program into Go is unlikely to produce a satisfactory result?Java programs are written in Java, not Go. On the other hand, thinking about the problem from a Go perspective could produce a successful but quite different program. In other words, to write Go well, it's important to understand its properties and idioms. It's also important to know the established conventions for programming in Go, such as naming, formatting, program construction, and so on, so that programs you write will be easy for other Go programmers to understand.
+イントロダクション
+==================
 
-This document gives tips for writing clear, idiomatic Go code. It augments the language specification and the tutorial, both of which you should read first.
+.. Go is a new language. Although it borrows ideas from existing languages, it has unusual properties that make effective Go programs different in character from programs written in its relatives. A straightforward translation of a C++ or Java program into Go is unlikely to produce a satisfactory result?Java programs are written in Java, not Go. On the other hand, thinking about the problem from a Go perspective could produce a successful but quite different program. In other words, to write Go well, it's important to understand its properties and idioms. It's also important to know the established conventions for programming in Go, such as naming, formatting, program construction, and so on, so that programs you write will be easy for other Go programmers to understand.
 
-Examples
+Goは新しい言語です。既存の言語からいろいろなアイディアを借りてきていますが、効果的なGoプログラムは、関連するような言語のプログラムとはかなり異なる性質を持っています。C++やJavaなどのプログラムをそのままGoに変換しても、満足できるような結果にはなりません。所詮はJavaで書かれたプログラムであって、Goらしいプログラムにはなりません。一方、Goの視点からプログラムについて考えてみると、うまくいく可能性はありますが、既存のプログラムとは違う結果になるでしょう。言い換えると、Goらしいプログラムをうまく書くためには、Goの特性やイディオムを理解することが重要になります。また、命名規則、フォーマット、プログラムの構造などの、Goでプログラミングをするための適切な習慣を知ることも大切になります。そうすることで、他のGoプログラマが簡単にあなたのプログラムを読むことができるようになります。
+
+.. This document gives tips for writing clear, idiomatic Go code. It augments the language specification and the tutorial, both of which you should read first.
+
+このドキュメントは明快で、Goらしいコードを書くためのティップスを提供します。このドキュメントは言語仕様と、チュートリアルの知識を補完するものです。先にその両方のドキュメントを読んでください。
+
+.. Examples
+   --------
+
+サンプル
 --------
 
 The Go package sources are intended to serve not only as the core library but also as examples of how to use the language. If you have a question about how to approach a problem or how something might be implemented, they can provide answers, ideas and background.
+
+Goのパッケージのソースは、機能を提供するコアライブラリというだけではなく、Goを使用するためのサンプルにもなっています。問題に対して、どのようにアプローチをしようか疑問をもったり、これはどのように実装されているのか疑問を持った場合には、パッケージのソースを読むとその答え、アイディア、背景などが分かるでしょう。
 
 Formatting
 ==========
