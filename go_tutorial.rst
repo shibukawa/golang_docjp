@@ -28,10 +28,10 @@ Hello, World
 
 それでは、いつもの入門コードから始めます:
 
-.. code-block::
+.. code-block:: cpp
 
   05    package main
-  
+
   07    import fmt "fmt"  // フォーマット付き入出力を実装したパッケージ
   
   
@@ -45,11 +45,11 @@ Hello, World
 
 すべてのGoのソースファイルは、そのファイルが属しているパッケージを宣言するために、package文の宣言を行います。また、他のパッケージに含まれる機能を利用するために、他のパッケージをインポートすることもあります。このプログラムでは、パッケージ名付きで先頭の大文字化はされているという違いはありますが、C/C++プログラマにはおなじみの、古くからの友人である、\ :func:`fmt.Printf`\ を使用するために、\ :mod:`fmt`\ パッケージをインポートしています。
 
-Functions are introduced with the func keyword. The main package's main function is where the program starts running (after any initialization).
+.. Functions are introduced with the func keyword. The main package's main function is where the program starts running (after any initialization).
 
 funcキーワードを使用することで、関数を定義することが出来ます。mainパッケージのmain関数は、いくつかの初期化の後に最初に呼ばれるプログラムの入り口になります。
 
-String constants can contain Unicode characters, encoded in UTF-8. (In fact, Go source files are defined to be encoded in UTF-8.)
+.. String constants can contain Unicode characters, encoded in UTF-8. (In fact, Go source files are defined to be encoded in UTF-8.)
 
 文字列定数はUTF-8でエンコードされていて、ユニコード文字を含むことができます。実際に仕様上でも、GoのソースファイルはUTF-8でエンコードされると定義されています。
 
@@ -57,7 +57,7 @@ String constants can contain Unicode characters, encoded in UTF-8. (In fact, Go 
 
 コメントの書き方は、C++で行われている慣習と同じです。
 
-.. code-block::
+.. code-block:: cpp
 
     /* ... */
     // ...
@@ -66,34 +66,22 @@ String constants can contain Unicode characters, encoded in UTF-8. (In fact, Go 
 
 後の方の説明では、画面表示に関しても、もっと詳しく説明していきます。
 
-.. Compiling
-   =========
+Compiling
+=========
 
-コンパイル
-========
+Go is a compiled language. At the moment there are two compilers. Gccgo is a Go compiler that uses the GCC back end. There is also a suite of compilers with different (and odd) names for each architecture: 6g for the 64-bit x86, 8g for the 32-bit x86, and more. These compilers run significantly faster but generate less efficient code than gccgo. At the time of writing (late 2009), they also have a more robust run-time system although gccgo is catching up.
 
-.. Go is a compiled language. At the moment there are two compilers. Gccgo is a Go compiler that uses the GCC back end. There is also a suite of compilers with different (and odd) names for each architecture: 6g for the 64-bit x86, 8g for the 32-bit x86, and more. These compilers run significantly faster but generate less efficient code than gccgo. At the time of writing (late 2009), they also have a more robust run-time system although gccgo is catching up.
-
-Goはコンパイル型言語です。現状のところコンパイラが2つあります。GccgoはGCCバックエンドを利用するコンパイラです。またアーキテクチャーごとに異なる(そしておかしな)名前のコンパイラーが一式あります。64-bit x86用の6g、32-bit x86用の8などです。これらはとても高速ですが、gccgoより非効率なコードを生成します。執筆時点(2009後半)では、gccgoも追い上げていますが、より堅牢なランタイムシステムを持ちます。
-
-.. Here's how to compile and run our program. With 6g, say:
-
-プログラムをコンパイルして走らせる方法を紹介します。6gだと
+Here's how to compile and run our program. With 6g, say:
 
 .. code-block:: bash
 
-    $ 6g helloworld.go  # コンパイル; オブジェクトはhelloworld.6となる
-    $ 6l helloworld.6   # リンク; 出力は6.outとなる
+    $ 6g helloworld.go  # compile; object goes into helloworld.6
+    $ 6l helloworld.6   # link; output goes into 6.out
     $ 6.out
     Hello, world; or Καλημ?ρα κ?σμε; or こんにちは 世界
     $
 
-..  $ 6g helloworld.go  # compile; object goes into helloworld.6
-    $ 6l helloworld.6   # link; output goes into 6.out
-
-.. With gccgo it looks a little more traditional:
-
-gccgoだともう少し従来のやりかたに似ています。
+With gccgo it looks a little more traditional:
 
 .. code-block:: bash
 
@@ -138,14 +126,22 @@ Echo
 
 .. This program is small but it's doing a number of new things. In the last example, we saw func introduce a function. The keywords var, const, and type (not used yet) also introduce declarations, as does import. Notice that we can group declarations of the same sort into parenthesized, semicolon-separated lists if we want, as on lines 7-10 and 14-17. But it's not necessary to do so; we could have said::
 
+<<<<<<< local
+This program imports the "os" package to access its Stdout variable, of type *os.File. The import statement is actually a declaration: in its general form, as used in our ``hello world'' program, it names the identifier (fmt) that will be used to access members of the package imported from the file ("fmt"), found in the current directory or in a standard location. In this program, though, we've dropped the explicit name from the imports; by default, packages are imported using the name defined by the imported package, which by convention is of course the file name itself. Our ``hello world'' program could have said just import "fmt".
+=======
 このプログラムは小さいですが、多くの新しいことが出てきます。 最後の例で、"func"を確認しました。 今回は、"var", "const", "type(まだ使いませんが)", パッケージ利用前に宣言する"import"を使用します。 注意点として、7-10, 14-17行目のように、セミコロンで区切りことにより、同じ種類の宣言を並べて記述することができます。 しかし、必ずしもそう記述する必要はありません。
+>>>>>>> other
 
 .. code-block::
 
    const Space = " "
    const Newline = "\n"
 
+<<<<<<< local
+Having imported the flag package, line 12 creates a global variable to hold the value of echo's -n flag. The variable omitNewline has type *bool, pointer to bool.
+=======
 .. Semicolons aren't needed here; in fact, semicolons are unnecessary after any top-level declaration, although they are needed as separators within a parenthesized list of declarations.
+>>>>>>> other
 
 .. This program imports the "os" package to access its Stdout variable, of type `*os.File.` The import statement is actually a declaration: in its general form, as used in our ``hello world'' program, it names the identifier (fmt) that will be used to access members of the package imported from the file ("fmt"), found in the current directory or in a standard location. In this program, though, we've dropped the explicit name from the imports; by default, packages are imported using the name defined by the imported package, which by convention is of course the file name itself. Our ``hello world'' program could have said just import "fmt".
 
@@ -179,10 +175,21 @@ Echo
 
 .. The := operator is used a lot in Go to represent an initializing declaration. There's one in the for clause on the next line::
 
+<<<<<<< local
+An Interlude about Types
+========================
+=======
 .. code-block::
+>>>>>>> other
 
+<<<<<<< local
+Go has some familiar types such as int and float, which represent values of the ''appropriate'' size for the machine. It also defines explicitly-sized types such as int8, float64, and so on, plus unsigned integer types such as uint, uint32, etc. These are distinct types; even if int and int32 are both 32 bits in size, they are not the same type. There is also a byte synonym for uint8, which is the element type for strings.
+=======
    22        for i := 0; i < flag.NArg(); i++ {
+>>>>>>> other
 
+<<<<<<< local
+=======
 .. The flag package has parsed the arguments and left the non-flag arguments in a list that can be iterated over in the obvious way.
 
 .. The Go for statement differs from that of C in a number of ways. First, it's the only looping construct; there is no while or do. Second, there are no parentheses on the clause, but the braces on the body are mandatory. The same applies to the if and switch statements. Later examples will show some other ways for can be written.
@@ -202,6 +209,7 @@ An Interlude about Types
 
 Go has some familiar types such as int and float, which represent values of the ''appropriate'' size for the machine. It also defines explicitly-sized types such as int8, float64, and so on, plus unsigned integer types such as uint, uint32, etc. These are distinct types; even if int and int32 are both 32 bits in size, they are not the same type. There is also a byte synonym for uint8, which is the element type for strings.
 
+>>>>>>> other
 Speaking of string, that's a built-in type as well. Strings are immutable values?they are not just arrays of byte values. Once you've built a string value, you can't change it, although of course you can change a string variable simply by reassigning it. This snippet from strings.go is legal code::
 
  
