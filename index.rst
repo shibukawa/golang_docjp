@@ -13,6 +13,9 @@
    
    go_tutorial
    effective_go
+   
+   command_documentation
+   package_documentation
 
 チュートリアル
 ---------------
@@ -23,6 +26,13 @@ Effective Go
 ------------
 
 :ref:`effective_go`
+
+Programming
+---------------
+
+:ref:`command_documentation`
+:ref:`package_documentation`
+
 
 索引とテーブル
 ==============
