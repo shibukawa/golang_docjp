@@ -424,7 +424,7 @@ Goでは、ほとんどの型は値です。 ``int`` や ``struct`` や ``array`
 
 .. Note that new(T) returns type *T while make(T) returns type T. If you (mistakenly) allocate a reference object with new(), you receive a pointer to a nil reference, equivalent to declaring an uninitialized variable and taking its address.
 
-``make(T)`` は ``T`` の型を返すのに対して ``new(T) `` は ``*T`` の型を返すことに注意してください。(間違えて) ``new()`` で参照オブジェクトの割り当てを行うとnil参照へのポインタが返されてしまいます。これは未初期化の変数を宣言してそのアドレスを受け取ることと同等です。
+``make(T)`` は ``T`` の型を返すのに対して ``new(T)`` は ``*T`` の型を返すことに注意してください。(間違えて) ``new()`` で参照オブジェクトの割り当てを行うとnil参照へのポインタが返されてしまいます。これは未初期化の変数を宣言してそのアドレスを受け取ることと同等です。
 
 .. An Interlude about Constants[Top]
 
