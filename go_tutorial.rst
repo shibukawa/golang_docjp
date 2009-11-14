@@ -328,12 +328,39 @@ it creates a nil reference that cannot hold anything. To use the map, you must f
 
 Note that new(T) returns type *T while make(T) returns type T. If you (mistakenly) allocate a reference object with new(), you receive a pointer to a nil reference, equivalent to declaring an uninitialized variable and taking its address.
 
-An Interlude about Constants[Top]
-Although integers come in lots of sizes in Go, integer constants do not. There are no constants like 0LL or 0x0UL. Instead, integer constants are evaluated as large-precision values that can overflow only when they are assigned to an integer variable with too little precision to represent the value.
+.. An Interlude about Constants[Top]
 
-    const hardEight = (1 << 100) >> 97  // legal
-There are nuances that deserve redirection to the legalese of the language specification but here are some illustrative examples:
+定数
+==========
+..
+  Although integers come in lots of sizes in Go, integer constants do not.
+  There are no constants like 0LL or 0x0UL. Instead, integer constants are
+  evaluated as large-precision values that can overflow only when they are
+  assigned to an integer variable with too little precision to represent the value.
 
+Goでは多くの整数型サイズの変数がありますが、整数型定数はありません。
+:data:`0LL` や :data:`0x0UL` のような定数はありません。
+その代わり、単精度変数に割り当てようとして桁溢れした場合には
+整数型定数は多精度変数として評価されます。
+
+.. code-block:: python
+
+    const hardEight = (1 << 100) >> 97  // これは正しい
+
+..
+  There are nuances that deserve redirection to the legalese of the language specification
+  but here are some illustrative examples:
+言語仕様には変換に関する記述がありますが、ここではいくつか実例を示します::
+
+    var a uint64 = 0  // uint64型 値0の変数
+    a := uint64(0)    // "conversion"に相当する使い方です
+    i := 0x1234       // iのデフォルト型はintとなります
+    var j int = 1e6   // 正しい - 整数型では1000000に置き換えられます
+    x := 1.5          // 浮動小数点型
+    i3div2 := 3/2     // 整数型の除算 - 結果は1となります
+    f3div2 := 3./2.   // 浮動小数点型の除算 - 結果は1.5となります
+
+..
     var a uint64 = 0  // a has type uint64, value 0
     a := uint64(0)    // equivalent; uses a "conversion"
     i := 0x1234       // i gets default type: int
@@ -341,7 +368,16 @@ There are nuances that deserve redirection to the legalese of the language speci
     x := 1.5          // a float
     i3div2 := 3/2     // integer division - result is 1
     f3div2 := 3./2.   // floating point division - result is 1.5
-Conversions only work for simple cases such as converting ints of one sign or size to another, and between ints and floats, plus a few other simple cases. There are no automatic numeric conversions of any kind in Go, other than that of making constants have concrete size and type when assigned to a variable.
+
+..
+    Conversions only work for simple cases such as converting ints of
+    one sign or size to another, and between ints and floats, plus
+    a few other simple cases. There are no automatic numeric conversions of
+    any kind in Go, other than that of making constants have concrete size
+    and type when assigned to a variable.
+型変換は、別のシンボルや他のサイズとの変換のような簡単なケースや、整数型と浮動小数点型の変換、
+そしてその他のいくつかの簡単なケースでのみ動作します。
+Goでは具体的なサイズと型を割り当てられていない変数はどんな型でも自動で変換はされません。
 
 .. An I/O Package[Top]
 
