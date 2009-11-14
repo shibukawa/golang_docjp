@@ -4,39 +4,67 @@
 Let's Go
 ========
 
-Introduction
+.. Introduction
+
+イントロダクション
+===============
+
+.. This document is a tutorial introduction to the basics of the Go programming language, intended for programmers familiar with C or C++. It is not a comprehensive guide to the language; at the moment the document closest to that is the language specification. After you've read this tutorial, you might want to look at Effective Go, which digs deeper into how the language is used. Also, slides from a 3-day course about Go are available: Day 1, Day 2, Day 3.
+
+このドキュメントはGoプログラミング言語の基本を紹介するチュートリアルです。CやC++に親しんだプログラマを対象にしています。このドキュメントは包括的なドキュメントではありません。そのような目的に一番近いのは言語仕様のドキュメントになります。このチュートリアルを読むと、言語をどのように使うのかという詳細を掘り下げるために、次にEffective Goが読みたくなるでしょう。また、Goに関する3日コースのスライドも入手することができます。 `1日目 <http://golang.org/doc/GoCourseDay1.pdf>`_ `2日目 <http://golang.org/doc/GoCourseDay2.pdf>`_ `3日目 <http://golang.org/doc/GoCourseDay3.pdf>`_
+
+.. The presentation here proceeds through a series of modest programs to illustrate key features of the language. All the programs work (at time of writing) and are checked into the repository in the directory /doc/progs/.
+
+このプレゼンテーションの中のシンプルなサンプルプログラムを通して、この言語のキーとなる機能について、説明していきます。すべてのプログラムは自分で書いてみても動作しますし、 :file:`/doc/progs/` の中に置いてあります。
+
+.. Program snippets are annotated with the line number in the original file; for cleanliness, blank lines remain blank.
+
+プログラムのコードはオリジナルのファイルの行番号付きで表示しています。見やすさのために、空行はブランクのまま残してあります。
+
+Hello, World
 ============
 
-This document is a tutorial introduction to the basics of the Go programming language, intended for programmers familiar with C or C++. It is not a comprehensive guide to the language; at the moment the document closest to that is the language specification. After you've read this tutorial, you might want to look at Effective Go, which digs deeper into how the language is used. Also, slides from a 3-day course about Go are available: Day 1, Day 2, Day 3.
+.. Let's start in the usual way:
 
-The presentation here proceeds through a series of modest programs to illustrate key features of the language. All the programs work (at time of writing) and are checked into the repository in the directory /doc/progs/.
+それでは、いつもの入門コードから始めます:
 
-Program snippets are annotated with the line number in the original file; for cleanliness, blank lines remain blank.
-
-Hello, World[Top]
-Let's start in the usual way::
+.. code-block::
 
   05    package main
   
-  07    import fmt "fmt"  // Package implementing formatted I/O.
+  07    import fmt "fmt"  // フォーマット付き入出力を実装したパッケージ
   
   
   09    func main() {
   10        fmt.Printf("Hello, world; or Καλημ?ρα κ?σμε; or こんにちは 世界\n");
   11    }
 
-Every Go source file declares, using a package statement, which package it's part of. It may also import other packages to use their facilities. This program imports the package fmt to gain access to our old, now capitalized and package-qualified, friend, fmt.Printf.
+  07    import fmt "fmt"  // Package implementing formatted I/O.
+
+.. Every Go source file declares, using a package statement, which package it's part of. It may also import other packages to use their facilities. This program imports the package fmt to gain access to our old, now capitalized and package-qualified, friend, fmt.Printf.
+
+すべてのGoのソースファイルは、そのファイルが属しているパッケージを宣言するために、package文の宣言を行います。また、他のパッケージに含まれる機能を利用するために、他のパッケージをインポートすることもあります。このプログラムでは、パッケージ名付きで先頭の大文字化はされているという違いはありますが、C/C++プログラマにはおなじみの、古くからの友人である、\ :func:`fmt.Printf`\ を使用するために、\ :mod:`fmt`\ パッケージをインポートしています。
 
 Functions are introduced with the func keyword. The main package's main function is where the program starts running (after any initialization).
 
+funcキーワードを使用することで、関数を定義することが出来ます。mainパッケージのmain関数は、いくつかの初期化の後に最初に呼ばれるプログラムの入り口になります。
+
 String constants can contain Unicode characters, encoded in UTF-8. (In fact, Go source files are defined to be encoded in UTF-8.)
 
-The comment convention is the same as in C++::
+文字列定数はUTF-8でエンコードされていて、ユニコード文字を含むことができます。実際に仕様上でも、GoのソースファイルはUTF-8でエンコードされると定義されています。
+
+.. The comment convention is the same as in C++::
+
+コメントの書き方は、C++で行われている慣習と同じです。
+
+.. code-block::
 
     /* ... */
     // ...
 
-Later we'll have much more to say about printing.
+.. Later we'll have much more to say about printing.
+
+後の方の説明では、画面表示に関しても、もっと詳しく説明していきます。
 
 .. Compiling
    =========
