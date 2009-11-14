@@ -343,28 +343,42 @@ There are nuances that deserve redirection to the legalese of the language speci
     f3div2 := 3./2.   // floating point division - result is 1.5
 Conversions only work for simple cases such as converting ints of one sign or size to another, and between ints and floats, plus a few other simple cases. There are no automatic numeric conversions of any kind in Go, other than that of making constants have concrete size and type when assigned to a variable.
 
-An I/O Package[Top]
-Next we'll look at a simple package for doing file I/O with the usual sort of open/close/read/write interface. Here's the start of file.go:
+.. An I/O Package[Top]
 
- 
-05    package file
+I/O Package
+=================
 
-07    import (
-08        "os";
-09        "syscall";
-10    )
+.. Next we'll look at a simple package for doing file I/O with the usual sort of open/close/read/write interface. Here's the start of file.go:
 
+次に、ファイルのオープン、クローズ、読み込み、書き込みを行うインターフェイスを含んだシンプルなパッケージを見てみましょう。以下は\ ``file.go``\ の書き出しの部分です。
 
-12    type File struct {
-13        fd      int;    // file descriptor number
-14        name    string; // file name at Open time
-15    }
+.. code-block:
 
-The first few lines declare the name of the package?file?and then import two packages. The os package hides the differences between various operating systems to give a consistent view of files and so on; here we're going to use its error handling utilities and reproduce the rudiments of its file I/O.
+   05    package file
 
-The other item is the low-level, external syscall package, which provides a primitive interface to the underlying operating system's calls.
+   07    import (
+   08        "os";
+   09        "syscall";
+   10    )
 
-Next is a type definition: the type keyword introduces a type declaration, in this case a data structure called File. To make things a little more interesting, our File includes the name of the file that the file descriptor refers to.
+   12    type File struct {
+.. 13        fd      int;    // file descriptor number
+   13        fd      int;    // ファイルディスクリプタ番号
+.. 14        name    string; // file name at Open time
+   14        name    string; // ファイルを開く時の名前
+   15    }
+
+.. The first few lines declare the name of the package?file?and then import two packages. The os package hides the differences between various operating systems to give a consistent view of files and so on; here we're going to use its error handling utilities and reproduce the rudiments of its file I/O.
+
+最初の数行でパッケージ名-ファイル名を宣言してから、2つのパッケージをインポートしています。\ ``os`` \パッケージは様々なオペレーティングシステム間の違いを吸収して、ファイルなどを一貫して利用できる様にします。ここで、エラー制御ユーティリティを使用し、ファイルI/Oの基本を再生します。
+
+.. The other item is the low-level, external syscall package, which provides a primitive interface to the underlying operating system's calls.
+
+もう一方のパッケージは、基本的なオペレーティングシステムの呼び出しに原始的なインターフェイスを提供する、低レベルな外部\ ``syscall``\ パッケージです。
+
+.. Next is a type definition: the type keyword introduces a type declaration, in this case a data structure called File. To make things a little more interesting, our File includes the name of the file that the file descriptor refers to.
+
+次は、型の定義です。\ ``File``\ というデータ構造を定義している様に、\ ``type``\ キーワードは型の宣言をする時に使用します。
 
 Because File starts with a capital letter, the type is available outside the package, that is, by users of the package. In Go the rule about visibility of information is simple: if a name (of a top-level type, function, method, constant or variable, or of a structure field or method) is capitalized, users of the package may see it. Otherwise, the name and hence the thing being named is visible only inside the package in which it is declared. This is more than a convention; the rule is enforced by the compiler. In Go, the term for publicly visible names is ''exported''.
 
