@@ -105,100 +105,104 @@ gccgoだともう少し従来のやりかたに似ています。
 Echo
 ====
 
-Next up, here's a version of the Unix utility echo(1)::
+.. Next up, here's a version of the Unix utility echo(1)::
+次は、Unixコマンドのecho(1)と同じ動作をするサンプルです。
 
- 
-  05    package main
-  07    import (
-  08        "os";
-  09        "flag";  // command line option parser
-  10    )
-  12    var omitNewline = flag.Bool("n", false, "don't print final newline")
-  14    const (
-  15        Space = " ";
-  16        Newline = "\n";
-  17    )
-  19    func main() {
-  20        flag.Parse();   // Scans the arg list and sets up flags
-  21        var s string = "";
-  22        for i := 0; i < flag.NArg(); i++ {
-  23            if i > 0 {
-  24                s += Space
-  25            }
-  26            s += flag.Arg(i)
-  27        }
-  28        if !*omitNewline {
-  29            s += Newline
-  30        }
-  31        os.Stdout.WriteString(s);
-  32    }
+.. code-block::
 
-This program is small but it's doing a number of new things. In the last example, we saw func introduce a function. The keywords var, const, and type (not used yet) also introduce declarations, as does import. Notice that we can group declarations of the same sort into parenthesized, semicolon-separated lists if we want, as on lines 7-10 and 14-17. But it's not necessary to do so; we could have said::
-
-    const Space = " "
-    const Newline = "\n"
-
-Semicolons aren't needed here; in fact, semicolons are unnecessary after any top-level declaration, although they are needed as separators within a parenthesized list of declarations.
-
-This program imports the "os" package to access its Stdout variable, of type ``*os.File`` . The import statement is actually a declaration: in its general form, as used in our 'hello world' program, it names the identifier (fmt) that will be used to access members of the package imported from the file ("fmt"), found in the current directory or in a standard location. In this program, though, we've dropped the explicit name from the imports; by default, packages are imported using the name defined by the imported package, which by convention is of course the file name itself. Our 'hello world' program could have said just import "fmt".
-
-You can specify your own import names if you want but it's only necessary if you need to resolve a naming conflict.
-
-Given os.Stdout we can use its WriteString method to print the string.
-
-Having imported the flag package, line 12 creates a global variable to hold the value of echo's -n flag. The variable omitNewline has type ``*bool``, pointer to bool.
-
-In main.main, we parse the arguments (line 20) and then create a local string variable we will use to build the output.
-
-The declaration statement has the form::
-
-    var s string = "";
-
-    
-This is the var keyword, followed by the name of the variable, followed by its type, followed by an equals sign and an initial value for the variable.
-
-Go tries to be terse, and this declaration could be shortened. Since the string constant is of type string, we don't have to tell the compiler that. We could write::
-
-    var s = "";
-
-or we could go even shorter and write the idiom::
-
-    s := "";
-
-The := operator is used a lot in Go to represent an initializing declaration. There's one in the for clause on the next line::
-
- 
-  22        for i := 0; i < flag.NArg(); i++ {
-
-          
-The flag package has parsed the arguments and left the non-flag arguments in a list that can be iterated over in the obvious way.
-
-The Go for statement differs from that of C in a number of ways. First, it's the only looping construct; there is no while or do. Second, there are no parentheses on the clause, but the braces on the body are mandatory. The same applies to the if and switch statements. Later examples will show some other ways for can be written.
-
-The body of the loop builds up the string s by appending (using +=) the flags and separating spaces. After the loop, if the -n flag is not set, the program appends a newline. Finally, it writes the result.
-
-Notice that main.main is a niladic function with no return type. It's defined that way. Falling off the end of main.main means ''success''; if you want to signal an erroneous return, call::
-
-    os.Exit(1)
-
-The os package contains other essentials for getting started; for instance, os.Args is a slice used by the flag package to access the command-line arguments.
+   05    package main
+   07    import (
+   08        "os";
+   09        "flag";  // command line option parser
+   10    )
+   12    var omitNewline = flag.Bool("n", false, "don't print final newline")
+   14    const (
+   15        Space = " ";
+   16        Newline = "\n";
+   17    )
+   19    func main() {
+   20        flag.Parse();   // Scans the arg list and sets up flags
+   21        var s string = "";
+   22        for i := 0; i < flag.NArg(); i++ {
+   23            if i > 0 {
+   24                s += Space
+   25            }
+   26            s += flag.Arg(i)
+   27        }
+   28        if !*omitNewline {
+   29            s += Newline
+   30        }
+   31        os.Stdout.WriteString(s);
+   32    }
 
 
-脇道: 型
-========
+.. This program is small but it's doing a number of new things. In the last example, we saw func introduce a function. The keywords var, const, and type (not used yet) also introduce declarations, as does import. Notice that we can group declarations of the same sort into parenthesized, semicolon-separated lists if we want, as on lines 7-10 and 14-17. But it's not necessary to do so; we could have said::
 
-Go has some familiar types such as int and float, which represent values of
-the ''appropriate'' size for the machine. It also defines explicitly-sized
-types such as int8, float64, and so on, plus unsigned integer types such as
-uint, uint32, etc. These are distinct types; even if int and int32 are both
-32 bits in size, they are not the same type. There is also a byte synonym
-for uint8, which is the element type for strings.
+このプログラムは小さいですが、多くの新しいことが出てきます。 最後の例で、"func"を確認しました。 今回は、"var", "const", "type(まだ使いませんが)", パッケージ利用前に宣言する"import"を使用します。 注意点として、7-10, 14-17行目のように、セミコロンで区切りことにより、同じ種類の宣言を並べて記述することができます。 しかし、必ずしもそう記述する必要はありません。
 
-Speaking of string, that's a built-in type as well. Strings are immutable
-values?they are not just arrays of byte values. Once you've built a string
-value, you can't change it, although of course you can change a string
-variable simply by reassigning it. This snippet from strings.go is legal
-code::
+.. code-block::
+
+   const Space = " "
+   const Newline = "\n"
+
+.. Semicolons aren't needed here; in fact, semicolons are unnecessary after any top-level declaration, although they are needed as separators within a parenthesized list of declarations.
+
+.. This program imports the "os" package to access its Stdout variable, of type `*os.File.` The import statement is actually a declaration: in its general form, as used in our ``hello world'' program, it names the identifier (fmt) that will be used to access members of the package imported from the file ("fmt"), found in the current directory or in a standard location. In this program, though, we've dropped the explicit name from the imports; by default, packages are imported using the name defined by the imported package, which by convention is of course the file name itself. Our ``hello world'' program could have said just import "fmt".
+
+.. You can specify your own import names if you want but it's only necessary if you need to resolve a naming conflict.
+
+.. Given os.Stdout we can use its WriteString method to print the string.
+
+.. Having imported the flag package, line 12 creates a global variable to hold the value of echo's -n flag. The variable omitNewline has type *bool, pointer to bool.
+
+.. In main.main, we parse the arguments (line 20) and then create a local string variable we will use to build the output.
+
+.. The declaration statement has the form::
+
+.. code-block::
+
+   var s string = "";
+
+.. This is the var keyword, followed by the name of the variable, followed by its type, followed by an equals sign and an initial value for the variable.
+
+.. Go tries to be terse, and this declaration could be shortened. Since the string constant is of type string, we don't have to tell the compiler that. We could write::
+
+.. code-block::
+
+   var s = "";
+
+.. or we could go even shorter and write the idiom::
+
+.. code-block::
+
+   s := "";
+
+.. The := operator is used a lot in Go to represent an initializing declaration. There's one in the for clause on the next line::
+
+.. code-block::
+
+   22        for i := 0; i < flag.NArg(); i++ {
+
+.. The flag package has parsed the arguments and left the non-flag arguments in a list that can be iterated over in the obvious way.
+
+.. The Go for statement differs from that of C in a number of ways. First, it's the only looping construct; there is no while or do. Second, there are no parentheses on the clause, but the braces on the body are mandatory. The same applies to the if and switch statements. Later examples will show some other ways for can be written.
+
+.. The body of the loop builds up the string s by appending (using +=) the flags and separating spaces. After the loop, if the -n flag is not set, the program appends a newline. Finally, it writes the result.
+
+.. Notice that main.main is a niladic function with no return type. It's defined that way. Falling off the end of main.main means ''success''; if you want to signal an erroneous return, call::
+
+.. code-block::
+
+   os.Exit(1)
+
+.. The os package contains other essentials for getting started; for instance, os.Args is a slice used by the flag package to access the command-line arguments.
+
+An Interlude about Types
+========================
+
+Go has some familiar types such as int and float, which represent values of the ''appropriate'' size for the machine. It also defines explicitly-sized types such as int8, float64, and so on, plus unsigned integer types such as uint, uint32, etc. These are distinct types; even if int and int32 are both 32 bits in size, they are not the same type. There is also a byte synonym for uint8, which is the element type for strings.
+
+Speaking of string, that's a built-in type as well. Strings are immutable values?they are not just arrays of byte values. Once you've built a string value, you can't change it, although of course you can change a string variable simply by reassigning it. This snippet from strings.go is legal code::
 
  
   11        s := "hello";
@@ -207,14 +211,12 @@ code::
   14        var p *string = &s;
   15        *p = "ciao";
 
-However the following statements are illegal because they would modify a
-string value::
+However the following statements are illegal because they would modify a string value::
 
     s[0] = 'x';
     (*p)[1] = 'y';
 
-In C++ terms, Go strings are a bit like const strings, while pointers to
-strings are analogous to const string references.
+In C++ terms, Go strings are a bit like const strings, while pointers to strings are analogous to const string references.
 
 Yes, there are pointers. However, Go simplifies their use a little; read on.
 
@@ -222,28 +224,13 @@ Arrays are declared like this::
 
     var arrayOfInt [10]int;
 
-Arrays, like strings, are values, but they are mutable. This differs from C,
-in which arrayOfInt would be usable as a pointer to int. In Go, since arrays
-are values, it's meaningful (and useful) to talk about pointers to arrays.
+Arrays, like strings, are values, but they are mutable. This differs from C, in which arrayOfInt would be usable as a pointer to int. In Go, since arrays are values, it's meaningful (and useful) to talk about pointers to arrays.
 
-The size of the array is part of its type; however, one can declare a slice
-variable, to which one can assign a pointer to any array with the same element
-type or?much more commonly?a slice expression of the form a[low : high],
-representing the subarray indexed by low through high-1. Slices look a lot
-like arrays but have no explicit size ([] vs. [10]) and they reference a
-segment of an underlying, often anonymous, regular array. Multiple slices can
-share data if they represent pieces of the same array; multiple arrays can
-never share data.
+The size of the array is part of its type; however, one can declare a slice variable, to which one can assign a pointer to any array with the same element type or?much more commonly?a slice expression of the form a[low : high], representing the subarray indexed by low through high-1. Slices look a lot like arrays but have no explicit size ([] vs. [10]) and they reference a segment of an underlying, often anonymous, regular array. Multiple slices can share data if they represent pieces of the same array; multiple arrays can never share data.
 
-Slices are much more common in Go programs than regular arrays; they're more
-flexible, have reference semantics, and are efficient. What they lack is the
-precise control of storage layout of a regular array; if you want to have a
-hundred elements of an array stored within your structure, you should use a
-regular array.
+Slices are much more common in Go programs than regular arrays; they're more flexible, have reference semantics, and are efficient. What they lack is the precise control of storage layout of a regular array; if you want to have a hundred elements of an array stored within your structure, you should use a regular array.
 
-When passing an array to a function, you almost always want to declare the
-formal parameter to be a slice. When you call the function, take the address
-of the array and Go will create (efficiently) a slice reference and pass that.
+When passing an array to a function, you almost always want to declare the formal parameter to be a slice. When you call the function, take the address of the array and Go will create (efficiently) a slice reference and pass that.
 
 Using slices one can write this function (from sum.go)::
 
@@ -261,33 +248,19 @@ and invoke it like this::
  
    19        s := sum(&[3]int{1,2,3});  // a slice of the array is passed to sum
 
-Note how the return type (int) is defined for sum() by stating it after the
-parameter list. The expression [3]int{1,2,3}?a type followed by a
-brace-bounded expression?is a constructor for a value, in this case an array
-of 3 ints. Putting an & in front gives us the address of a unique instance of
-the value. We pass the pointer to sum() by (implicitly) promoting it to a
-slice.
+Note how the return type (int) is defined for sum() by stating it after the parameter list. The expression [3]int{1,2,3}?a type followed by a brace-bounded expression?is a constructor for a value, in this case an array of 3 ints. Putting an & in front gives us the address of a unique instance of the value. We pass the pointer to sum() by (implicitly) promoting it to a slice.
 
-If you are creating a regular array but want the compiler to count the
-elements for you, use ... as the array size::
+If you are creating a regular array but want the compiler to count the elements for you, use ... as the array size:
 
     s := sum(&[...]int{1,2,3});
 
-In practice, though, unless you're meticulous about storage layout within a
-data structure, a slice itself?using empty brackets and no &?is all you need::
+In practice, though, unless you're meticulous about storage layout within a data structure, a slice itself?using empty brackets and no &?is all you need:
 
     s := sum([]int{1,2,3});
-
-There are also maps, which you can initialize like this::
+There are also maps, which you can initialize like this:
 
     m := map[string]int{"one":1 , "two":2}
-
-The built-in function len(), which returns number of elements, makes its first
-appearance in sum. It works on strings, arrays, slices, maps, and channels.
-
-..
-  ここまで `脇道: 型`
-
+The built-in function len(), which returns number of elements, makes its first appearance in sum. It works on strings, arrays, slices, maps, and channels.
 
 An Interlude about Allocation[Top]
 Most types in Go are values. If you have an int or a struct or an array, assignment copies the contents of the object. To allocate a new variable, use new(), which returns a pointer to the allocated storage.
