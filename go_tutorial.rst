@@ -270,7 +270,11 @@ Go には多くの ``int`` や ``float`` のような型がありますが、こ
 ところで、以下は不正なコード例です。これは ``string`` の値を書き換えようと
 しているからです::
 
-.. In C++ terms, Go strings are a bit like ``const strings``, while pointers to
+    s[0] = 'x';
+    (*p)[1] = 'y';
+
+..
+   In C++ terms, Go strings are a bit like ``const strings``, while pointers to
    strings are analogous to ``const string`` references.
 
 C++ の言い方で言えば、 Go の文字列は ``const strings`` と言えます。また、
@@ -299,16 +303,36 @@ C++ の言い方で言えば、 Go の文字列は ``const strings`` と言え�
 と C との違いは、 ``int`` へのポインタとして使う事が出来るところです。
 Go では、配列は値の集まりで、配列へのポインタとして使えるという意味になります。
 
-The size of the array is part of its type; however, one can declare a slice variable, to which one can assign a pointer to any array with the same element type or?much more commonly?a slice expression of the form a[low : high], representing the subarray indexed by low through high-1. Slices look a lot like arrays but have no explicit size ([] vs. [10]) and they reference a segment of an underlying, often anonymous, regular array. Multiple slices can share data if they represent pieces of the same array; multiple arrays can never share data.
+..
+   The size of the array is part of its type; however, one can declare a slice variable, to which one can assign a pointer to any array with the same element type or -- much more commonly -- a slice expression of the form `a[low : high]`, representing the subarray indexed by `low` through `high-1`. Slices look a lot like arrays but have no explicit size (`[]` vs. `[10]`) and they reference a segment of an underlying, often anonymous, regular array. Multiple slices can share data if they represent pieces of the same array; multiple arrays can never share data.
 
-Slices are much more common in Go programs than regular arrays; they're more flexible, have reference semantics, and are efficient. What they lack is the precise control of storage layout of a regular array; if you want to have a hundred elements of an array stored within your structure, you should use a regular array.
+この配列のサイズは型の一部なので、変数のスライスを宣言したり、 to which one can assign a pointer to any array with the same element type or -- much more commonly -- スライスは `a[low : high]` と言う風に表現し、これによって元の配列の `low` から `high-1` の要素を持つ部分配列となります。スライスはほとんど配列のように見えますが、明確なサイズ情報を持たず (`[]` vs. `[10]`) 、they reference a segment of an underlying, often anonymous, regular array. 複数のスライスは、元の配列が同じものであればデータを共有することができますが、異なる複数の配列がデータを共有することは決してありません。
 
-When passing an array to a function, you almost always want to declare the formal parameter to be a slice. When you call the function, take the address of the array and Go will create (efficiently) a slice reference and pass that.
+..
+   Slices are much more common in Go programs than regular arrays; they're more flexible, have reference semantics, and are efficient. What they lack is the precise control of storage layout of a regular array; if you want to have a hundred elements of an array stored within your structure, you should use a regular array.
 
-Using slices one can write this function (from sum.go)::
+スライスは Go のプログラムでは正規の配列よりもずっと一般的で、フレキシブルで、参照の記法があり、効率的です。スライスに欠けているのは記憶域における正確なデータ構成の制御で、もしあなたが100個の配列要素を構造体の中に格納しようとするなら、正規の配列を使わなければいけません。
 
+..
+   When passing an array to a function, you almost always want to declare the formal parameter to be a slice. When you call the function, take the address of the array and Go will create (efficiently) a slice reference and pass that.
+
+配列を関数に渡すとき、大体の場合、スライスを受け取るように宣言したいと思います。こうすれば関数を呼び出すとき、関数は配列のアドレスを受け取って、 Go はスライスの参照を作って(効率的に)渡すでしょう。
+
+..
+   Using slices one can write this function (from sum.go)::
+
+..
+    09    func sum(a []int) int {   // returns an int
+    10        s := 0;
+    11        for i := 0; i < len(a); i++ {
+    12            s += a[i]
+    13        }
+    14        return s
+    15    }
+
+スライスの使い方として以下のように関数を書けます(sum.goより)::
  
-  09    func sum(a []int) int {   // returns an int
+  09    func sum(a []int) int {   // intを返す
   10        s := 0;
   11        for i := 0; i < len(a); i++ {
   12            s += a[i]
@@ -316,24 +340,42 @@ Using slices one can write this function (from sum.go)::
   14        return s
   15    }
 
-and invoke it like this::
+..
+   and invoke it like this::
 
- 
+..
    19        s := sum(&[3]int{1,2,3});  // a slice of the array is passed to sum
 
-Note how the return type (int) is defined for sum() by stating it after the parameter list. The expression [3]int{1,2,3}?a type followed by a brace-bounded expression?is a constructor for a value, in this case an array of 3 ints. Putting an & in front gives us the address of a unique instance of the value. We pass the pointer to sum() by (implicitly) promoting it to a slice.
+そして呼び出し側は以下のようになります::
+ 
+   19        s := sum(&[3]int{1,2,3});  // 配列のスライスをsumに渡す
 
-If you are creating a regular array but want the compiler to count the elements for you, use ... as the array size:
+..
+   Note how the return type (int) is defined for sum() by stating it after the parameter list. The expression [3]int{1,2,3}?a type followed by a brace-bounded expression?is a constructor for a value, in this case an array of 3 ints. Putting an & in front gives us the address of a unique instance of the value. We pass the pointer to sum() by (implicitly) promoting it to a slice.
+
+``sum()`` の返値の型 (``int``) がパラメータリストの後ろに定義されていることに注意してください。 ``[3]int{1,2,3}`` という表現 -- 型の後ろにブレースに囲まれた表現がある -- は値のコンストラクタで、この例では3つの ``int`` 値を持つ配列を作っています。 ``&`` を前に置くことで、値のインスタンスの唯一のアドレスを取得することが出来ます。 ``sum()`` 関数にポインタを渡すことで (暗黙的に) 配列をスライスに変形させています。
+
+.. If you are creating a regular array but want the compiler to count the elements for you, use ... as the array size::
+
+もし正規の配列を作るときにコンパイラに要素の数を数えさせるようにするには、 ... を配列のサイズとして使います::
 
     s := sum(&[...]int{1,2,3});
 
-In practice, though, unless you're meticulous about storage layout within a data structure, a slice itself?using empty brackets and no &?is all you need:
+.. In practice, though, unless you're meticulous about storage layout within a data structure, a slice itself?using empty brackets and no &?is all you need::
+
+慣習として、もし記憶域でのデータ構成を気にしないのであれば、スライスをそのまま -- 空のブラケットに ``&`` 無しで -- 渡せば良いことになります::
 
     s := sum([]int{1,2,3});
-There are also maps, which you can initialize like this:
+
+.. There are also maps, which you can initialize like this::
+
+マップを使う場合は、以下のように初期化出来ます::
 
     m := map[string]int{"one":1 , "two":2}
-The built-in function len(), which returns number of elements, makes its first appearance in sum. It works on strings, arrays, slices, maps, and channels.
+
+.. The built-in function len(), which returns number of elements, makes its first appearance in sum. It works on strings, arrays, slices, maps, and channels.
+
+組み込み関数 ``len()`` は要素数を返しますが、最初にお見せした ``sum()`` 関数の中で使っています。これは文字列、配列、スライス、マップ、そしてチャンネルでも動作します。
 
 .. An Interlude about Allocation[Top]
 
