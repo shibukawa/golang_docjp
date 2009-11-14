@@ -200,31 +200,79 @@ Echo
 An Interlude about Types
 ========================
 
-Go has some familiar types such as int and float, which represent values of the ''appropriate'' size for the machine. It also defines explicitly-sized types such as int8, float64, and so on, plus unsigned integer types such as uint, uint32, etc. These are distinct types; even if int and int32 are both 32 bits in size, they are not the same type. There is also a byte synonym for uint8, which is the element type for strings.
+..
+   Go has some familiar types such as ``int`` and ``float``, which represent
+   values of the ''appropriate'' size for the machine. It also defines
+   explicitly-sized types such as ``int8``, ``float64``, and so on, plus
+   unsigned integer types such as ``uint``, ``uint32``, etc. These are distinct
+   types; even if ``int`` and ``int32`` are both 32 bits in size, they are not
+   the same type. There is also a ``byte`` synonym for ``uint8``, which is the
+   element type for strings.
 
-Speaking of string, that's a built-in type as well. Strings are immutable values?they are not just arrays of byte values. Once you've built a string value, you can't change it, although of course you can change a string variable simply by reassigning it. This snippet from strings.go is legal code::
+Go には多くの ``int`` や ``float`` のような型がありますが、これらの値の
+サイズは実行するマシンで ''適切'' なサイズになります。このため、サイズが
+明示的な型として ``int8``, ``float64`` などの型や、負数のない整数型といった
+``uint``, ``uint32`` なども定義されています。
+型名が異なる型は、明確に別の型としてあつかわれるので、 ``int`` と ``int32``
+はどちらもサイズが32ビットですが、異なる型となります。
+他に、 ``uint8`` の別名である ``byte`` という型があり、これは文字列の要素
+のための型です。
 
+..
+   Speaking of ``string``, that's a built-in type as well. Strings are
+   *immutable values* -- they are not just arrays of ``byte`` values. Once
+   you've built a string *value*, you can't change it, although of course you
+   can change a string *variable* simply by reassigning it. This snippet from
+   ``strings.go`` is legal code::
  
+``string`` 型という組み込み型もあります。文字列は *変更不可能な値* で、
+単なる ``byte`` 型の配列ではありません。一度、文字列型の値を作ると、
+この値を変更する事は出来ず、文字列を変更は出来ますが実質的には、別の
+文字列型の値が割り当てられることになります。以下は ``strings.go`` の
+ソースコードの一部です::
+
   11        s := "hello";
   12        if s[1] != 'e' { os.Exit(1) }
   13        s = "good bye";
   14        var p *string = &s;
   15        *p = "ciao";
 
-However the following statements are illegal because they would modify a string value::
+..
+   However the following statements are illegal because they would modify a
+   ``string`` value::
 
-    s[0] = 'x';
-    (*p)[1] = 'y';
+ところで、以下は不正なコード例です。これは ``string`` の値を書き換えようと
+しているからです::
 
-In C++ terms, Go strings are a bit like const strings, while pointers to strings are analogous to const string references.
+..
+   In C++ terms, Go strings are a bit like ``const strings``, while pointers to
+   strings are analogous to ``const string`` references.
 
-Yes, there are pointers. However, Go simplifies their use a little; read on.
+C++ の言い方で言えば、 Go の文字列は ``const strings`` と言えます。また、
+これを参照するポインタも同じように ``const strings`` への参照と言えます。
 
-Arrays are declared like this::
+..
+   Yes, there are pointers. However, Go simplifies their use a little; read on.
+
+そう、ポインタがあります。でも Go のポインタは少し使いやすく簡単になって
+います。見ていきましょう。
+
+..
+   Arrays are declared like this::
+
+配列は以下のように宣言されます::
 
     var arrayOfInt [10]int;
 
-Arrays, like strings, are values, but they are mutable. This differs from C, in which arrayOfInt would be usable as a pointer to int. In Go, since arrays are values, it's meaningful (and useful) to talk about pointers to arrays.
+..
+   Arrays, like strings, are values, but they are mutable. This differs from C,
+   in which ``arrayOfInt`` would be usable as a pointer to ``int``. In Go,
+   since arrays are values, it's meaningful (and useful) to talk about
+   pointers to arrays.
+
+配列は文字列のような、値の集まりですが、これらは変更可能です。 ``arrayOfInt``
+と C との違いは、 ``int`` へのポインタとして使う事が出来るところです。
+Go では、配列は値の集まりで、配列へのポインタとして使えるという意味になります。
 
 The size of the array is part of its type; however, one can declare a slice variable, to which one can assign a pointer to any array with the same element type or?much more commonly?a slice expression of the form a[low : high], representing the subarray indexed by low through high-1. Slices look a lot like arrays but have no explicit size ([] vs. [10]) and they reference a segment of an underlying, often anonymous, regular array. Multiple slices can share data if they represent pieces of the same array; multiple arrays can never share data.
 
