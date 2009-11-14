@@ -867,13 +867,14 @@ progs/sortmain.gから、ここまでのコードをテストするルーチン�
 
 Printing
 =========
+
 .. The examples of formatted printing so far have been modest. In this section we'll talk about how formatted I/O can be done well in Go.
 
 これまでに挙げた出力フォーマットの例は、比較的単純なものでした。この章では、Goを用いてもう少し上手くI/Oを整形する方法を紹介します。
 
 .. We've seen simple uses of the package fmt, which implements Printf, Fprintf, and so on. Within the fmt package, Printf is declared with this signature:
 
-これまでに、fmtパッケージの簡単な使用方法を見てきました。fmtパッケージにはPrintfやFprintfなどが実装されていますが、例えばPrintfは以下のように宣言します:
+PrintfやFprintfなどが含まれるパッケージfmtについて簡単な使い方を見てきましたが、fmtパッケージにおいてPrintfは内部的に以下ように宣言されています:
 
 .. code-block:: cpp
 
@@ -881,26 +882,26 @@ Printing
 
 .. That ... represents the variadic argument list that in C would be handled using the stdarg.h macros but in Go is passed using an empty interface variable (interface {}) and then unpacked using the reflection library. It's off topic here but the use of reflection helps explain some of the nice properties of Go's Printf, due to the ability of Printf to discover the type of its arguments dynamically.
 
-これは可変長引数のリストを表しています。Cであればstdarg.hマクロを使って処理されるところですが、Goの場合は空のインターフェイス（interface {}）を通して、リフレクションライブラリによって展開されます。少しオフトピック気味ですが、GoのPrintfが持つすばらしい特性について説明するのにリフレクションはうってつけです。Printfは自身の引数の型を動的に見つけ出す事ができるのです。
+この3つのドット ... は可変長引数のリストを表しています。Cであればstdarg.hマクロを使って処理されるところですが、Goの場合は空のインターフェイス変数（interface {}）を通して、リフレクションライブラリによって展開されます。少しオフトピック気味ですが、GoのPrintfが持つすばらしい特性について説明するのにリフレクションはうってつけです。Printfは自身の引数の型を動的に見つけ出す事ができるのです。
 
 .. For example, in C each format must correspond to the type of its argument. It's easier in many cases in Go. Instead of %llud you can just say %d; Printf knows the size and signedness of the integer and can do the right thing for you. The snippet
 
-具体的には例えば 、Cでは各フォーマットがそれに対応する引数の型と完全に一致している必要があります。多くの場合Goはもっと簡単です。例えば%llud を指定する代わりに、 %d とするだけでよいのです。Printfは整数型のサイズも符号の有無も知っており、あなたの代わりに常に正しい結果を導き出してくれるのです。スニペット:
+具体的には例えば 、Cでは各フォーマットがそれに対応する引数の型と完全に一致している必要があります。多くの場合Goはもっと簡単です。例えば%lludを指定する代わりに、%dとするだけでよいのです。Printfは整数型のサイズも符号の有無も知っており、あなたの代わりに常に正しい結果を導き出してくれるのです。スニペット:
 
- .. code-block::
+ .. code-block:: cpp
 
    10        var u64 uint64 = 1<<64-1;
    11        fmt.Printf("%d %d\n", u64, int64(u64));
-   prints
 
-   18446744073709551615 -1
+これは以下のように出力されます。
 
+ 18446744073709551615 -1
 
 .. In fact, if you're lazy the format %v will print, in a simple appropriate style, any value, even an array or structure. The output of
 
-それでも面倒なら、%v を使えばどのような値でも（配列や構造体でも）、シンプルかつ適切なかたちで出力されます。
+それでも面倒なら、%vを使えばどのような値でも（配列や構造体でも）、分かりやすく適切なかたちで出力されます。
 
- .. code-block::
+ .. code-block:: cpp
 
    14        type T struct { a int; b string };
    15        t := T{77, "Sunset Strip"};
@@ -911,44 +912,44 @@ Printing
 
 これは以下のように出力されます。
 
-    18446744073709551615 {77 Sunset Strip} [1 2 3 4]
+  18446744073709551615 {77 Sunset Strip} [1 2 3 4]
 
 .. You can drop the formatting altogether if you use Print or Println instead of Printf. Those routines do fully automatic formatting. The Print function just prints its elements out using the equivalent of %v while Println inserts spaces between arguments and adds a newline. The output of each of these two lines is identical to that of the Printf call above.
 
 Printfの代わりにPrintやPrintlnを使えば、フォーマットは必要ありません。これらは自動的にフォーマット処理を行います。具体的には引数の要素に対し%vに相当する処理を行い、Printが結果をそのまま出力するのに対してPrintlnは各要素の間にスペースを追加し、末尾に改行を加えます。
 
-.. code-block:: 
+.. code-block:: cpp
 
-   18        fmt.Print(u64, " ", t, " ", a, "\n");
-   19        fmt.Println(u64, t, a);
+  18        fmt.Print(u64, " ", t, " ", a, "\n");
+  19        fmt.Println(u64, t, a);
 
 .. If you have your own type you'd like Printf or Print to format, just give it a String() method that returns a string. The print routines will examine the value to inquire whether it implements the method and if so, use it rather than some other formatting. Here's a simple example.
 
 もしあなたが独自の型をPrintfやPrintにフォーマットさせたければ、string型の返り値を持つString()メソッドを用意しておくだけでよいのです。printのルーティンはフォーマットする値にメソッドが実装されているかどうかを検査し、もしそうであれば他のどのフォーマット処理でもなくそのメソッドを使います。わかりやすい例を示します。
 
-.. code-block::
+.. code-block:: cpp
  
-   09    type testType struct { a int; b string }
-   
-   11    func (t *testType) String() string {
-   12        return fmt.Sprint(t.a) + " " + t.b
-   13    }
-   
-   
-   15    func main() {
-   16        t := &testType{77, "Sunset Strip"};
-   17        fmt.Println(t)
-   18    }
+  09    type testType struct { a int; b string }
+  
+  11    func (t *testType) String() string {
+  12        return fmt.Sprint(t.a) + " " + t.b
+  13    }
+     
+     
+  15    func main() {
+  16        t := &testType{77, "Sunset Strip"};
+  17        fmt.Println(t)
+  18    }
 
 .. Since *testType has a String() method, the default formatter for that type will use it and produce the output
 
 *testTypeはString()メソッドを持っているので、その型のデフォルトフォーマッタはこのメソッドを使って出力を行うことになります。
 
-    77 Sunset Strip
+   77 Sunset Strip
 
 .. Observe that the String() method calls Sprint (the obvious Go variant that returns a string) to do its formatting; special formatters can use the fmt library recursively.
 
-String()メソッドがそのフォーマットを行う為にSprint（stringを返す明らかなGoの異形です）をコールしていることに着目してください。特別なフォーマッタはfmtライブラリを再帰的に使うことが出来ます。
+String()メソッドがそのフォーマットを行う為にSprint（stringを返す明らかなGoの異形です）をコールしていることに注目してください。特別なフォーマッタはfmtライブラリを再帰的に使うことが出来ます。
 
 .. Another feature of Printf is that the format %T will print a string representation of the type of a value, which can be handy when debugging polymorphic code.
 
@@ -956,9 +957,13 @@ Printfがもつその他の機能としては、対象の値の型を出力す�
 
 .. It's possible to write full custom print formats with flags and precisions and such, but that's getting a little off the main thread so we'll leave it as an exploration exercise.
 
-
+フラグや精度を用いて完全なカスタムフォーマットを指定することも可能ですが、本題から少しそれるので、探求する余地を残しておくつもりです。
 
 .. You might ask, though, how Printf can tell whether a type implements the String() method. Actually what it does is ask if the value can be converted to an interface variable that implements the method. Schematically, given a value v, it does this:
+
+もっとも、あなたはString()が実装している型をPrintfがどうやって判断しているのかをを知りたいかもしれません。 実際には、対象となる値がメソッドを実装するインターフェイス変数に変換できるかどうかを調べています。概念的には、与えられた値vに対して以下のような処理がなされます:
+
+.. code-block:: cpp
 
     type Stringer interface {
         String() string
@@ -972,15 +977,25 @@ Printfがもつその他の機能としては、対象の値の型を出力す�
 
 .. The code uses a ``type assertion'' (v.(Stringer)) to test if the value stored in v satisfies the Stringer interface; if it does, s will become an interface variable implementing the method and ok will be true. We then use the interface variable to call the method. (The ''comma, ok'' pattern is a Go idiom used to test the success of operations such as type conversion, map update, communications, and so on, although this is the only appearance in this tutorial.) If the value does not satisfy the interface, ok will be false.
 
+このコードはvに格納された値がStringerインターフェイスの要件を満たすかどうかをテストするために``type assertion'' （v.(Stringer)）を使っています。要件を満たす場合、sはメソッドを実装したインターフェイス変数となり、okはtrueとなります。（この”カンマ, ok”というパターンはGoにおけるイディオムのひとつで、型の変換・マップアップデート・コミュニケーション等によく使われますが、このチュートリアルではここでしか登場しません。）反対に要件が満たされない場合、okはfalseとなります。
+
 .. In this snippet the name Stringer follows the convention that we add ''[e]r'' to interfaces describing simple method sets like this.
 
+このスニペットにおけるStringerという名前は、このようにシンプルなメソッドセットを表現するインターフェイスに"[e]r"を付加するという慣習に倣っています。
+
 .. One last wrinkle. To complete the suite, besides Printf etc. and Sprintf etc., there are also Fprintf etc. Unlike in C, Fprintf's first argument is not a file. Instead, it is a variable of type io.Writer, which is an interface type defined in the io library:
+
+最後にもう一つ助言を。PrintfやSprintfの他にも、Fprintfなどがあります。但しCとは違い、第一引数はファイルではありません。代わりにio.Wirter型の変数をとります。それはioライブラリ内で定義されているインターフェイス型です:
+
+.. code-block:: cpp
 
     type Writer interface {
         Write(p []byte) (n int, err os.Error);
     }
 
 .. (This interface is another conventional name, this time for Write; there are also io.Reader, io.ReadWriter, and so on.) Thus you can call Fprintf on any type that implements a standard Write() method, not just files but also network channels, buffers, whatever you want.
+
+（このインターフェイスはもう一つの慣習的な命名規則を用いています。ここではWiteですが、他にもio.Readerやio.ReadWriter等があります。）この事によって、たとえそれがどんな型であっても標準的なWrite()メソッドを実装していさえすれば、ファイルのみにとどまらずネットワークチャンネルやバッファ等からFprintfをコールする事が出来ます。
 
 .. Prime numbers
 
