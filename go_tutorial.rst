@@ -1,4 +1,4 @@
-﻿.. _go_tutorial:
+.. _go_tutorial:
 
 ========
 Let's Go
@@ -310,23 +310,39 @@ There are also maps, which you can initialize like this:
     m := map[string]int{"one":1 , "two":2}
 The built-in function len(), which returns number of elements, makes its first appearance in sum. It works on strings, arrays, slices, maps, and channels.
 
-An Interlude about Allocation[Top]
-Most types in Go are values. If you have an int or a struct or an array, assignment copies the contents of the object. To allocate a new variable, use new(), which returns a pointer to the allocated storage.
+An Interlude about Allocation
+=============================
+.. Most types in Go are values. If you have an int or a struct or an array, assignment copies the contents of the object. To allocate a new variable, use new(), which returns a pointer to the allocated storage.
+
+Goのほとんどの型は値です。int型やstruct型やarray型は代入時にオブジェクトの内容をコピーします。新しい変数を割り当てるためにはnew()を使います。new()は割り当てられたストレージのポインタを返します。
 
     type T struct { a, b int }
     var t *T = new(T);
-or the more idiomatic
+
+.. or the more idiomatic
+
+より慣用的には次のようになります。
 
     t := new(T);
-Some types?maps, slices, and channels (see below)?have reference semantics. If you're holding a slice or a map and you modify its contents, other variables referencing the same underlying data will see the modification. For these three types you want to use the built-in function make():
+
+.. Some types?maps, slices, and channels (see below)?have reference semantics. If you're holding a slice or a map and you modify its contents, other variables referencing the same underlying data will see the modification. For these three types you want to use the built-in function make():
+
+mapやsliceやchannelsのような型は参照セマンティックです。sliceやmapが参照している内容を変更するとこれらを参照している他の変数からも同じように内容の変更が反映されます。これらの型には
 
     m := make(map[string]int);
-This statement initializes a new map ready to store entries. If you just declare the map, as in
+.. This statement initializes a new map ready to store entries. If you just declare the map, as in
+
+この文では新しいmap型を初期化しています。mapを宣言するためには次のようにします。
 
     var m map[string]int;
-it creates a nil reference that cannot hold anything. To use the map, you must first initialize the reference using make() or by assignment from an existing map.
 
-Note that new(T) returns type *T while make(T) returns type T. If you (mistakenly) allocate a reference object with new(), you receive a pointer to a nil reference, equivalent to declaring an uninitialized variable and taking its address.
+.. it creates a nil reference that cannot hold anything. To use the map, you must first initialize the reference using make() or by assignment from an existing map.
+
+ここではなにも保持していないnil参照を生成しています。map型を使うためにはじめにmake()を使って参照を初期化するか既存のmapをassignする必要があります。
+
+.. Note that new(T) returns type *T while make(T) returns type T. If you (mistakenly) allocate a reference object with new(), you receive a pointer to a nil reference, equivalent to declaring an uninitialized variable and taking its address.
+
+make(T)はTの型を返すのに対してnew(T)はTのポインタ型を返すことに気をつけてください。(間違えて)new()で参照オブジェクトを割り当ててしまうと、nilリファレンスへのポインタが返されてしまいます。これは未初期化の変数を宣言してそのアドレスを獲得することに相当します。
 
 .. An Interlude about Constants[Top]
 
