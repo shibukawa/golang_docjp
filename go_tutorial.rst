@@ -778,122 +778,195 @@ One last wrinkle. To complete the suite, besides Printf etc. and Sprintf etc., t
     }
 (This interface is another conventional name, this time for Write; there are also io.Reader, io.ReadWriter, and so on.) Thus you can call Fprintf on any type that implements a standard Write() method, not just files but also network channels, buffers, whatever you want.
 
-Prime numbers[Top]
-Now we come to processes and communication?concurrent programming. It's a big subject so to be brief we assume some familiarity with the topic.
+.. Prime numbers
 
-A classic program in the style is a prime sieve. (The sieve of Eratosthenes is computationally more efficient than the algorithm presented here, but we are more interested in concurrency than algorithmics at the moment.) It works by taking a stream of all the natural numbers and introducing a sequence of filters, one for each prime, to winnow the multiples of that prime. At each step we have a sequence of filters of the primes so far, and the next number to pop out is the next prime, which triggers the creation of the next filter in the chain.
+素数の計算
+==========
 
-Here's a flow diagram; each box represents a filter element whose creation is triggered by the first number that flowed from the elements before it.
+.. Now we come to processes and communication?concurrent programming. It's a big subject so to be brief we assume some familiarity with the topic.
+
+それでは、並列プログラミングのプロセスとコミュニケーションの話しを始めたいと思います。この話題はとても大きな話題なので、ある程度、並列プログラミングについて知っているという仮定で手短に説明してきます。
+
+.. A classic program in the style is a prime sieve. (The sieve of Eratosthenes is computationally more efficient than the algorithm presented here, but we are more interested in concurrency than algorithmics at the moment.) It works by taking a stream of all the natural numbers and introducing a sequence of filters, one for each prime, to winnow the multiples of that prime. At each step we have a sequence of filters of the primes so far, and the next number to pop out is the next prime, which triggers the creation of the next filter in the chain.
+
+古典的な素数計算のプログラムは、素数のふるいとして実装されます。計算上はここで説明するものよりも、エラトステネスのふるいの方が効率がいいのですが、ここではアルゴリズムよりも並列計算にフォーカスしています。これは、すべての自然数を含むストリームを受け取り、それぞれの素数ごとに、その倍数を排除していくフィルタが列状に連なっています。それぞれのステップでは、それまでに計算された素数のフィルタの列がある状態から始まり、そのフィルタを通り抜けた次の数が、次の素数ということになります。その素数によって、次のフィルタが作成されます。
+
+.. Here's a flow diagram; each box represents a filter element whose creation is triggered by the first number that flowed from the elements before it.
+
+以下の画像はフローを表した図になります。それぞれの箱はフィルタを表し、その前のフィルタから出てきた最初の数値を使って作られます。
+
+.. Image:: sieve.gif
+
+.. To create a stream of integers, we use a Go channel, which, borrowing from CSP's descendants, represents a communications channel that can connect two concurrent computations. In Go, channel variables are references to a run-time object that coordinates the communication; as with maps and slices, use make to create a new channel.
+
+整数のストリームを作成するには、Goのチャンネルを使用します。これはCSP(Communicating Sequential Processes?)の子孫から借りてきた機能で、２つの並列計算プログラムをつなぐ、通信チャンネルとして表現されます。Goでは、チャンネル変数はコミュニケーションの面倒を見る実行時オブジェクトへの参照になっています。マップやスライスを使用するのと同じように、使用すると、新しいチャンネルを作成します。
+
+.. Here is the first function in progs/sieve.go:
+
+以下のコードは、 :file:`progs/sieve.go` の最初の関数です。
 
 
-     
+.. code-block:: cpp 
 
+   09    // チャンネル'ch'に対して、2, 3, 4, ... という数値の列を順番に送信します
+   10    func generate(ch chan int) {
+   11        for i := 2; ; i++ {
+   12            ch <- i  // 'i'をチャンネル'ch'に送信
+   13        }
+   14    }
 
-To create a stream of integers, we use a Go channel, which, borrowing from CSP's descendants, represents a communications channel that can connect two concurrent computations. In Go, channel variables are references to a run-time object that coordinates the communication; as with maps and slices, use make to create a new channel.
+.. 09    // Send the sequence 2, 3, 4, ... to channel 'ch'.
+   12            ch <- i  // Send 'i' to channel 'ch'.
 
-Here is the first function in progs/sieve.go:
+.. The generate function sends the sequence 2, 3, 4, 5, ... to its argument channel, ch, using the binary communications operator <-. Channel operations block, so if there's no recipient for the value on ch, the send operation will wait until one becomes available.
 
- 
-09    // Send the sequence 2, 3, 4, ... to channel 'ch'.
-10    func generate(ch chan int) {
-11        for i := 2; ; i++ {
-12            ch <- i  // Send 'i' to channel 'ch'.
-13        }
-14    }
-The generate function sends the sequence 2, 3, 4, 5, ... to its argument channel, ch, using the binary communications operator <-. Channel operations block, so if there's no recipient for the value on ch, the send operation will wait until one becomes available.
+この生成関数は、 2, 3, 4, 5という数値の列を、引数で渡されたチャンネル'ch'に送信します。送信するときは、バイナリ通信演算子の ``<-`` を使用します。チャンネルの操作を行うとブロックします。そのため、もしも'ch'の値を受け取るコードがなければ、次にチャンネルが操作可能になるまで送信操作は待たされることになります。
 
-The filter function has three arguments: an input channel, an output channel, and a prime number. It copies values from the input to the output, discarding anything divisible by the prime. The unary communications operator <- (receive) retrieves the next value on the channel.
+.. The filter function has three arguments: an input channel, an output channel, and a prime number. It copies values from the input to the output, discarding anything divisible by the prime. The unary communications operator <- (receive) retrieves the next value on the channel.
 
- 
-16    // Copy the values from channel 'in' to channel 'out',
-17    // removing those divisible by 'prime'.
-18    func filter(in, out chan int, prime int) {
-19        for {
-20            i := <-in;  // Receive value of new variable 'i' from 'in'.
-21            if i % prime != 0 {
-22                out <- i  // Send 'i' to channel 'out'.
-23            }
-24        }
-25    }
-The generator and filters execute concurrently. Go has its own model of process/threads/light-weight processes/coroutines, so to avoid notational confusion we call concurrently executing computations in Go goroutines. To start a goroutine, invoke the function, prefixing the call with the keyword go; this starts the function running in parallel with the current computation but in the same address space:
+Filter関数は3つの引数を持っています。入力のチャンネルと、出力のチャンネル、および素数になります。この関数は入力のチャンネルの値を受け取って、値のコピーを出力のチャンネルに送信しますが、渡された素数で割ることが可能な値が来た場合は途中で破棄します。単項の通信演算子の ``<-`` を使って、入力のチャンネルの次の値を受信します。
 
-    go sum(hugeArray); // calculate sum in the background
-If you want to know when the calculation is done, pass a channel on which it can report back:
+.. code-block:: cpp
+
+  16    // 'in'チャンネルから値をコピーして、'out'チャンネルに送信します
+  17    // 'prime'で割ることが可能な数は削除します
+  18    func filter(in, out chan int, prime int) {
+  19        for {
+  20            i := <-in;  // 'in'から値を受信して、'i'に格納
+  21            if i % prime != 0 {
+  22                out <- i  // 'i'を'out'チャンネルに送信
+  23            }
+  24        }
+  25    }
+
+.. 16    // Copy the values from channel 'in' to channel 'out',
+   17    // removing those divisible by 'prime'.
+   20            i := <-in;  // Receive value of new variable 'i' from 'in'.
+   22                out <- i  // Send 'i' to channel 'out'.
+
+.. The generator and filters execute concurrently. Go has its own model of process/threads/light-weight processes/coroutines, so to avoid notational confusion we call concurrently executing computations in Go goroutines. To start a goroutine, invoke the function, prefixing the call with the keyword go; this starts the function running in parallel with the current computation but in the same address space:
+
+ジェネレータとフィルターはそれぞれ並列に実行されます。Goはプロセス/スレッド/軽量プロセス/コルーチンにあたる固有の機能を持っています。表記上の混乱を避けるために、Goではこのような並列計算実行をGoroutineと呼んでいます。関数を呼び出してgoroutineを開始するためには、 ``go`` というキーワードを前につけて呼びます。こうすると、同じアドレス空間で並列に関数を実行することができます。
+
+.. code-block:: cpp
+
+    go sum(hugeArray); // バックグラウンドで合計を計算します
+
+..  go sum(hugeArray); // calculate sum in the background
+
+.. If you want to know when the calculation is done, pass a channel on which it can report back:
+
+もしも計算が完了したのを知りたければ、チャンネルを渡して結果を返してもらうようにします:
+
+.. code-block:: cpp
 
     ch := make(chan int);
     go sum(hugeArray, ch);
-    // ... do something else for a while
+    // ... しばらくの間別のことをします
+    result := <-ch;  // 並列で計算している関数の終了を待って、結果を受け取ります
+
+..  // ... do something else for a while
     result := <-ch;  // wait for, and retrieve, result
-Back to our prime sieve. Here's how the sieve pipeline is stitched together:
 
+.. Back to our prime sieve. Here's how the sieve pipeline is stitched together:
+
+それでは、サンプルの、素数のふるいの例に戻ります。ここでは、ふるいのパイプラインをつなぎ合わせています:
+
+.. code-block:: cpp
+
+  28    func main() {
+  29        ch := make(chan int);  // 新しいチャンネルを作成します
+  30        go generate(ch);  // goroutineとしてgenerate()を実行します
+  31        for {
+  32            prime := <-ch;
+  33            fmt.Println(prime);
+  34            ch1 := make(chan int);
+  35            go filter(ch, ch1, prime);
+  36            ch = ch1
+  37        }
+  38    }
+
+.. 29        ch := make(chan int);  // Create a new channel.
+   30        go generate(ch);  // Start generate() as a goroutine.
+
+.. Line 29 creates the initial channel to pass to generate, which it then starts up. As each prime pops out of the channel, a new filter is added to the pipeline and its output becomes the new value of ch.
+
+29行目ではチャンネルを初期化してgenerate()関数に渡しています。generate()はチャンネルに値を入れ始めます。それぞれの素数はチャンネルから出力されます。出力されると、新しいフィルタがパイプラインに追加され、そのフィルタの出力チャンネルが、新しい'ch'の値になります。
+
+.. The sieve program can be tweaked to use a pattern common in this style of programming. Here is a variant version of generate, from progs/sieve1.go:
+
+ふるいのプログラムを変更して、このスタイルのプログラムの一般的なパターンを使用してみます。以下のプログラムはgenerate()関数の別バージョンです。これは :file:`progs/sieve1.go` に格納されています:
+
+.. code-block:: cpp
  
-28    func main() {
-29        ch := make(chan int);  // Create a new channel.
-30        go generate(ch);  // Start generate() as a goroutine.
-31        for {
-32            prime := <-ch;
-33            fmt.Println(prime);
-34            ch1 := make(chan int);
-35            go filter(ch, ch1, prime);
-36            ch = ch1
-37        }
-38    }
-Line 29 creates the initial channel to pass to generate, which it then starts up. As each prime pops out of the channel, a new filter is added to the pipeline and its output becomes the new value of ch.
+  10    func generate() chan int {
+  11        ch := make(chan int);
+  12        go func(){
+  13            for i := 2; ; i++ {
+  14                ch <- i
+  15            }
+  16        }();
+  17        return ch;
+  18    }
 
-The sieve program can be tweaked to use a pattern common in this style of programming. Here is a variant version of generate, from progs/sieve1.go:
+.. This version does all the setup internally. It creates the output channel, launches a goroutine running a function literal, and returns the channel to the caller. It is a factory for concurrent execution, starting the goroutine and returning its connection.
 
+このバージョンはすべてのセットアップを内部で行っています。内部で出力チャンネルを作成し、関数リテラルをgoroutineとして実行しています。最後に、呼び出し元に、内部で作成したチャンネルを返しています。これは並列実行のためのファクトリ関数になっていて、goroutineを実行してコネクションを返すようになっています。
+
+.. The function literal notation (lines 12-16) allows us to construct an anonymous function and invoke it on the spot. Notice that the local variable ch is available to the function literal and lives on even after generate returns.
+
+関数のリテラル表記(12行目-16行目)を使うと、無名関数を作ることができて、その場で実行することができます。ローカル変数の ``ch`` は関数リテラルの中でも使用することができ、generate()関数から抜けた後も使用することができます。
+
+.. The same change can be made to filter:
+
+同じ変更をfilter()関数にも適用します:
+
+.. code-block:: cpp
  
-10    func generate() chan int {
-11        ch := make(chan int);
-12        go func(){
-13            for i := 2; ; i++ {
-14                ch <- i
-15            }
-16        }();
-17        return ch;
-18    }
-This version does all the setup internally. It creates the output channel, launches a goroutine running a function literal, and returns the channel to the caller. It is a factory for concurrent execution, starting the goroutine and returning its connection.
+  21    func filter(in chan int, prime int) chan int {
+  22        out := make(chan int);
+  23        go func() {
+  24            for {
+  25                if i := <-in; i % prime != 0 {
+  26                    out <- i
+  27                }
+  28            }
+  29        }();
+  30        return out;
+  31    }
 
-The function literal notation (lines 12-16) allows us to construct an anonymous function and invoke it on the spot. Notice that the local variable ch is available to the function literal and lives on even after generate returns.
+.. The sieve function's main loop becomes simpler and clearer as a result, and while we're at it let's turn it into a factory too:
 
-The same change can be made to filter:
-
+sieve(ふるい)関数のメインループは、呼ばれる側の関数をファクトリに変更したために、こちらもシンプルでクリーンになりました:
  
-21    func filter(in chan int, prime int) chan int {
-22        out := make(chan int);
-23        go func() {
-24            for {
-25                if i := <-in; i % prime != 0 {
-26                    out <- i
-27                }
-28            }
-29        }();
-30        return out;
-31    }
-The sieve function's main loop becomes simpler and clearer as a result, and while we're at it let's turn it into a factory too:
+.. code-block:: cpp
 
- 
-33    func sieve() chan int {
-34        out := make(chan int);
-35        go func() {
-36            ch := generate();
-37            for {
-38                prime := <-ch;
-39                out <- prime;
-40                ch = filter(ch, prime);
-41            }
-42        }();
-43        return out;
-44    }
-Now main's interface to the prime sieve is a channel of primes:
+   33    func sieve() chan int {
+   34        out := make(chan int);
+   35        go func() {
+   36            ch := generate();
+   37            for {
+   38                prime := <-ch;
+   39                out <- prime;
+   40                ch = filter(ch, prime);
+   41            }
+   42        }();
+   43        return out;
+   44    }
 
- 
-46    func main() {
-47        primes := sieve();
-48        for {
-49            fmt.Println(<-primes);
-50        }
-51    }
+.. Now main's interface to the prime sieve is a channel of primes:
+
+素数のふるいを行うmainのインタフェースは、primesチャンネルになりました:
+
+.. code-block:: cpp 
+
+   46    func main() {
+   47        primes := sieve();
+   48        for {
+   49            fmt.Println(<-primes);
+   50        }
+   51    }
+
 Multiplexing[Top]
 With channels, it's possible to serve multiple independent client goroutines without writing an explicit multiplexer. The trick is to send the server a channel in the message, which it will then use to reply to the original sender. A realistic client-server program is a lot of code, so here is a very simple substitute to illustrate the idea. It starts by defining a request type, which embeds a channel that will be used for the reply.
 
