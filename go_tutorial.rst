@@ -451,7 +451,7 @@ I/O Package
 
    12    type File struct {
 .. 13        fd      int;    // file descriptor number
-   13        fd      int;    // ファイルディスクリプタ番号
+   13        fd      int;    // ファイル記述子番号
 .. 14        name    string; // file name at Open time
    14        name    string; // ファイルを開く時の名前
    15    }
@@ -466,32 +466,39 @@ I/O Package
 
 .. Next is a type definition: the type keyword introduces a type declaration, in this case a data structure called File. To make things a little more interesting, our File includes the name of the file that the file descriptor refers to.
 
-次は、型の定義です。\ ``File``\ というデータ構造を定義している様に、\ ``type``\ キーワードは型の宣言をする時に使用します。
+次は、型の定義です。\ ``File``\ というデータ構造を定義している様に、\ ``type``\ キーワードは型の宣言をする時に使用します。これの興味深い点は、この\ ``File``\ 型はファイル記述子が示すファイルの名前を含んでいるという点です。
 
 Because File starts with a capital letter, the type is available outside the package, that is, by users of the package. In Go the rule about visibility of information is simple: if a name (of a top-level type, function, method, constant or variable, or of a structure field or method) is capitalized, users of the package may see it. Otherwise, the name and hence the thing being named is visible only inside the package in which it is declared. This is more than a convention; the rule is enforced by the compiler. In Go, the term for publicly visible names is ''exported''.
+
+\ ``File``\ 型は、大文字から始まるため、型はパッケージの外部、つまり、パッケージを使用する側から見る事が出来ます。Go言語の情報可視性に関するルールは簡単です。もし(トップレベルの型、関数、メソッド、定数、変数、もしくは構造体のフィールド、メソッドの)名前が大文字で書かれている場合、パッケージを使用する側から見る事が出来ます。
 
 In the case of File, all its fields are lower case and so invisible to users, but we will soon give it some exported, upper-case methods.
 
 First, though, here is a factory to create a File:
 
- 
-17    func newFile(fd int, name string) *File {
-18        if fd < 0 {
-19            return nil
-20        }
-21        return &File{fd, name}
-22    }
+.. code-block::
+
+   17    func newFile(fd int, name string) *File {
+   18        if fd < 0 {
+   19            return nil
+   20        }
+   21        return &File{fd, name}
+   22    }
+
 This returns a pointer to a new File structure with the file descriptor and name filled in. This code uses Go's notion of a ''composite literal'', analogous to the ones used to build maps and arrays, to construct a new heap-allocated object. We could write
 
-    n := new(File);
-    n.fd = fd;
-    n.name = name;
-    return n
+.. code-block::
+
+      n := new(File);
+      n.fd = fd;
+      n.name = name;
+      return n
+
+
 but for simple structures like File it's easier to return the address of a nonce composite literal, as is done here on line 21.
 
 We can use the factory to construct some familiar, exported variables of type *File:
 
- 
 24    var (
 25        Stdin  = newFile(0, "/dev/stdin");
 26        Stdout = newFile(1, "/dev/stdout");
