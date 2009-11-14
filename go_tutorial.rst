@@ -38,22 +38,34 @@ The comment convention is the same as in C++::
 
 Later we'll have much more to say about printing.
 
-Compiling
-=========
+.. Compiling
+   =========
 
-Go is a compiled language. At the moment there are two compilers. Gccgo is a Go compiler that uses the GCC back end. There is also a suite of compilers with different (and odd) names for each architecture: 6g for the 64-bit x86, 8g for the 32-bit x86, and more. These compilers run significantly faster but generate less efficient code than gccgo. At the time of writing (late 2009), they also have a more robust run-time system although gccgo is catching up.
+コンパイル
+========
 
-Here's how to compile and run our program. With 6g, say:
+.. Go is a compiled language. At the moment there are two compilers. Gccgo is a Go compiler that uses the GCC back end. There is also a suite of compilers with different (and odd) names for each architecture: 6g for the 64-bit x86, 8g for the 32-bit x86, and more. These compilers run significantly faster but generate less efficient code than gccgo. At the time of writing (late 2009), they also have a more robust run-time system although gccgo is catching up.
+
+Goはコンパイル型言語です。現状のところコンパイラが2つあります。GccgoはGCCバックエンドを利用するコンパイラです。またアーキテクチャーごとに異なる(そしておかしな)名前のコンパイラーが一式あります。64-bit x86用の6g、32-bit x86用の8などです。これらはとても高速ですが、gccgoより非効率なコードを生成します。執筆時点(2009後半)では、gccgoも追い上げていますが、より堅牢なランタイムシステムを持ちます。
+
+.. Here's how to compile and run our program. With 6g, say:
+
+プログラムをコンパイルして走らせる方法を紹介します。6gだと
 
 .. code-block:: bash
 
-    $ 6g helloworld.go  # compile; object goes into helloworld.6
-    $ 6l helloworld.6   # link; output goes into 6.out
+    $ 6g helloworld.go  # コンパイル; オブジェクトはhelloworld.6となる
+    $ 6l helloworld.6   # リンク; 出力は6.outとなる
     $ 6.out
     Hello, world; or Καλημ?ρα κ?σμε; or こんにちは 世界
     $
 
-With gccgo it looks a little more traditional:
+..  $ 6g helloworld.go  # compile; object goes into helloworld.6
+    $ 6l helloworld.6   # link; output goes into 6.out
+
+.. With gccgo it looks a little more traditional:
+
+gccgoだともう少し従来のやりかたに似ています。
 
 .. code-block:: bash
 
