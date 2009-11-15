@@ -246,7 +246,7 @@ mainメソッドの戻り値が無い場合は、 niladicメソッドとなり�
 
 .. The os package contains other essentials for getting started; for instance, os.Args is a slice used by the flag package to access the command-line arguments.
 
-flagsパッケージはプログラムを開始するための基礎部分を含んでいます。 例えば、flags.Argsは、コマンドライン引数へアクセスするためのものです。
+osパッケージはプログラムを開始するための基礎部分を含んでいます。 例えば、os.Argsは、コマンドライン引数へアクセスするために、flagパッケージを使っています。
 
 ..
    An Interlude about Types
