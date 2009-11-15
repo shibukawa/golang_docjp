@@ -11,9 +11,6 @@
 .. toctree::
    :hidden:
    
-   go_tutorial
-   effective_go
-   
    command_documentation
    package_documentation
 
@@ -34,6 +31,21 @@ Effective Go
    
    effective_go
 
+FAQ
+---
+
+.. toctree::
+   :maxdepth: 2
+
+   faq
+
+言語設計のFAQ
+-------------
+
+.. toctree::
+   :maxdepth: 2
+
+   language_design_faq
 
 Programming
 ---------------
