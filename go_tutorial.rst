@@ -160,17 +160,18 @@ echoサンプルのソースコードを見てみましょう。プログラム�
 
 
 .. This program imports the "os" package to access its Stdout variable, of type `*os.File.`  The import statement is actually a declaration:  in its general form, as used in our ``hello world'' program, it names the identifier (fmt) that will be used to access members of the package imported from the file ("fmt"), found in the current directory or in a standard location. 
-.. In this program, though, we've dropped the explicit name from the imports; 
-.. by default, packages are imported using the name defined by the imported package, 
-.. which by convention is of course the file name itself. 
+.. In this program, though, we've dropped the explicit name from the imports;  by default, packages are imported using the name defined by the imported package, which by convention is of course the file name itself. 
 .. Our ``hello world'' program could have said just import "fmt".
 
 このプログラムは、Stdout変数にアクセスするために、"os"をインポートしています。, of type `*os.File.` "import"句は、パッケージを利用する場合に明示的に宣言します。 
 "hello,world"のサンプルでは、見つけられたファイル("fmt")からインポートされたパッケージのメンバーにアクセスするための識別子を(fmt)と命名しています。インポート対象は、カレントディレクトリか、標準の位置にある必要があります。
-もっとも、このプログラムでは、インポート時に明白な名前を落としました。
+もっとも、今回のサンプルでは、インポート時に明白な名前を落としました。
 識別子を指定しない場合は、ファイル名を利用してインポートします。
+"hello, world"のサンプルでは、明示して、"fmt"パッケージをインポートしています。
 
 .. You can specify your own import names if you want but it's only necessary if you need to resolve a naming conflict.
+
+必要であれば、パッケージ名の競合を解決するために名前を指定することができます。
 
 .. Given os.Stdout we can use its WriteString method to print the string.
 
@@ -178,9 +179,15 @@ os.Stdout の WriteString メソッドを利用することで、文字列を出
 
 .. Having imported the flag package, line 12 creates a global variable to hold the value of echo's -n flag. The variable omitNewline has type *bool, pointer to bool.
 
+12行目では、flagパッケージをインポートし、"-n"が実行時に与えられたかを保持するグローバル変数を作成しています。 　omitNewline変数は、*bool型で、boolへのポインタです。
+
 .. In main.main, we parse the arguments (line 20) and then create a local string variable we will use to build the output.
 
+mainメソッドの中では、20行目に実行時引数を分析して、次に、出力用のローカル変数を作成します。
+
 .. The declaration statement has the form::
+
+変数の宣言は以下のようになります。
 
 .. code-block:: cpp
 
@@ -188,7 +195,11 @@ os.Stdout の WriteString メソッドを利用することで、文字列を出
 
 .. This is the var keyword, followed by the name of the variable, followed by its type, followed by an equals sign and an initial value for the variable.
 
+var キーワードに続き、変数名、変数の型、=に続き初期化する値を記述します。
+
 .. Go tries to be terse, and this declaration could be shortened. Since the string constant is of type string, we don't have to tell the compiler that. We could write::
+
+Go は簡潔になろうとしています、変数の宣言ではそれができました。string型は、文字列定数なので、コンパイラに通知する必要がありません。次のように記述することもできます。
 
 .. code-block:: cpp
 
@@ -196,7 +207,7 @@ os.Stdout の WriteString メソッドを利用することで、文字列を出
 
 .. or we could go even shorter and write the idiom::
 
-変数は以下のように、短く記述することもできます。
+変数は以下のように、もっと短く記述することもできます。
 
 .. code-block:: cpp
 
@@ -204,17 +215,30 @@ os.Stdout の WriteString メソッドを利用することで、文字列を出
 
 .. The := operator is used a lot in Go to represent an initializing declaration. There's one in the for clause on the next line::
 
+:=オペレータは、初期化時にGoで大いに使用されます。 次の行の節でも1つでてきます。
+
 .. code-block:: cpp
 
    22        for i := 0; i < flag.NArg(); i++ {
 
 .. The flag package has parsed the arguments and left the non-flag arguments in a list that can be iterated over in the obvious way.
 
+flagパッケージは、実行時引数を解析し、オプション引数以外をわかりやすく繰り返し取得できるリストにしてくれます。
+
 .. The Go for statement differs from that of C in a number of ways. First, it's the only looping construct; there is no while or do. Second, there are no parentheses on the clause, but the braces on the body are mandatory. The same applies to the if and switch statements. Later examples will show some other ways for can be written.
+
+Go の for文の書式は、Cのものと多く異なっています。 最初に、ループ構造です。 while文、do文がありません。
+次に、節を示す括弧がありません。"()"、しかし 中括弧"{}"によるブレスが必要です。
+これらは、if文、switch文にも当てはまります。 後述する例で示します。
 
 .. The body of the loop builds up the string s by appending (using +=) the flags and separating spaces. After the loop, if the -n flag is not set, the program appends a newline. Finally, it writes the result.
 
+プログラム中では、出力用変数 s に対して、スペースを区切り文字として追加しています。 このとき (+=)を使っています。
+ループが完了後に、コマンドライン引数で、"-n"が指定されていなければ、改行を追加しています。最後に、結果を標準出力に出力しています。
+
 .. Notice that main.main is a niladic function with no return type. It's defined that way. Falling off the end of main.main means ''success''; if you want to signal an erroneous return, call::
+
+mainメソッドの戻り値が無い場合は、 niladicメソッドとなります。 戻り値がなくとも、その様に定義されます。 mainメソッドが終了すれば、"success"を意味します。 もし、エラー終了としたい場合は、以下の式を呼び出してください。
 
 .. code-block:: cpp
 
@@ -222,6 +246,7 @@ os.Stdout の WriteString メソッドを利用することで、文字列を出
 
 .. The os package contains other essentials for getting started; for instance, os.Args is a slice used by the flag package to access the command-line arguments.
 
+flagsパッケージはプログラムを開始するための基礎部分を含んでいます。 例えば、flags.Argsは、コマンドライン引数へアクセスするためのものです。
 
 ..
    An Interlude about Types
