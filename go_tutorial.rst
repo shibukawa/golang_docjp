@@ -688,54 +688,60 @@ Finally we can run the program:
     hello, world
     can't open file; err=No such file or directory
     %
-Rotting cats[Top]
-Building on the file package, here's a simple version of the Unix utility cat(1), progs/cat.go:
 
- 
-05    package main
+.. Rotting cats[Top]
 
-07    import (
-08        "./file";
-09        "flag";
-10        "fmt";
-11        "os";
-12    )
+Rotting cats
+=================
 
+.. Building on the file package, here's a simple version of the Unix utility cat(1), progs/cat.go:
 
-14    func cat(f *file.File) {
-15        const NBUF = 512;
-16        var buf [NBUF]byte;
-17        for {
-18            switch nr, er := f.Read(&buf); true {
-19            case nr < 0:
-20                fmt.Fprintf(os.Stderr, "cat: error reading from %s: %s\n", f.String(), er.String());
-21                os.Exit(1);
-22            case nr == 0:  // EOF
-23                return;
-24            case nr > 0:
-25                if nw, ew := file.Stdout.Write(buf[0:nr]); nw != nr {
-26                    fmt.Fprintf(os.Stderr, "cat: error writing from %s: %s\n", f.String(), ew.String());
-27                }
-28            }
-29        }
-30    }
+fileパッケージで作成した簡易版のUnixコマンドのcat(1)が :file:`progs/cat.go` になります。
 
-
-32    func main() {
-33        flag.Parse();   // Scans the arg list and sets up flags
-34        if flag.NArg() == 0 {
-35            cat(file.Stdin);
-36        }
-37        for i := 0; i < flag.NArg(); i++ {
-38            f, err := file.Open(flag.Arg(i), 0, 0);
-39            if f == nil {
-40                fmt.Fprintf(os.Stderr, "cat: can't open %s: error %s\n", flag.Arg(i), err);
-41                os.Exit(1);
-42            }
-43            cat(f);
-44            f.Close();
-45        }
-46    }
+.. code-block:: cpp
+   
+   05    package main
+   
+   07    import (
+   08        "./file";
+   09        "flag";
+   10        "fmt";
+   11        "os";
+   12    )
+   
+   14    func cat(f *file.File) {
+   15        const NBUF = 512;
+   16        var buf [NBUF]byte;
+   17        for {
+   18            switch nr, er := f.Read(&buf); true {
+   19            case nr < 0:
+   20                fmt.Fprintf(os.Stderr, "cat: error reading from %s: %s\n", f.String(), er.String());
+   21                os.Exit(1);
+   22            case nr == 0:  // EOF
+   23                return;
+   24            case nr > 0:
+   25                if nw, ew := file.Stdout.Write(buf[0:nr]); nw != nr {
+   26                    fmt.Fprintf(os.Stderr, "cat: error writing from %s: %s\n", f.String(), ew.String());
+   27                }
+   28            }
+   29        }
+   30    }
+   
+   32    func main() {
+   33        flag.Parse();   // 引数のリストを読み取り、フラグをセットする
+   34        if flag.NArg() == 0 {
+   35            cat(file.Stdin);
+   36        }
+   37        for i := 0; i < flag.NArg(); i++ {
+   38            f, err := file.Open(flag.Arg(i), 0, 0);
+   39            if f == nil {
+   40                fmt.Fprintf(os.Stderr, "cat: can't open %s: error %s\n", flag.Arg(i), err);
+   41                os.Exit(1);
+   42            }
+   43            cat(f);
+   44            f.Close();
+   45        }
+   46    }
 
 By now this should be easy to follow, but the switch statement introduces some new features. Like a for loop, an if or switch can include an initialization statement. The switch on line 18 uses one to create variables nr and er to hold the return values from f.Read(). (The if on line 25 has the same idea.) The switch statement is general: it evaluates the cases from top to bottom looking for the first case that matches the value; the case expressions don't need to be constants or even integers, as long as they all have the same type.
 
