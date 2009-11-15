@@ -108,70 +108,104 @@ Goの設計では、珍しい解決策を取りました。ほとんどのフォ
 
    スペースが暗示しているとおりの順番になります。    
 
-Commentary
-==========
+.. Commentary
+   ==========
 
-Go provides C-style /* */ block comments and C++-style // line comments. Line comments are the norm; block comments appear mostly as package comments and are also useful to disable large swaths of code.
+コメント
+========
 
-The program?and web server?godoc processes Go source files to extract documentation about the contents of the package. Comments that appear before top-level declarations, with no intervening newlines, are extracted along with the declaration to serve as explanatory text for the item. The nature and style of these comments determines the quality of the documentation godoc produces.
+.. Go provides C-style /* */ block comments and C++-style // line comments. Line comments are the norm; block comments appear mostly as package comments and are also useful to disable large swaths of code.
 
-Every package should have a package comment, a block comment preceding the package clause. For multi-file packages, the package comment only needs to be present in one file, and any one will do. The package comment should introduce the package and provide information relevant to the package as a whole. It will appear first on the godoc page and should set up the detailed documentation that follows::
+GoはCスタイルの /\* \*/ ブロックコメントとC++スタイルの // 行コメントを提供します。行コメントは一般的に使用されるもので、ブロックコメントは大抵はパッケージのコメントでよく使われ、大部分のコードを一気に無効にする際にも便利です。
 
-  /*
-      The regexp package implements a simple library for
-      regular expressions.
+.. The program—and web server—godoc processes Go source files to extract documentation about the contents of the package. Comments that appear before top-level declarations, with no intervening newlines, are extracted along with the declaration to serve as explanatory text for the item. The nature and style of these comments determines the quality of the documentation godoc produces. 
 
-      The syntax of the regular expressions accepted is:
+プログラム、そしてWebサーバーでもある\ :program:`godoc`\ はGoソースファイルを処理してパッケージ内コンテンツのドキュメントを抽出します。トップレベルの宣言前にあり改行が間に入らないコメントはその宣言とともに抽出され、その項目の説明文となります。これらのコメントの特性とスタイルが\ :program:`godoc`\ が生成するドキュメントの質を決定します。
 
-      regexp:
-          concatenation { '|' concatenation }
-      concatenation:
-          { closure }
-      closure:
-          term [ '*' | '+' | '?' ]
-      term:
-          '^'
-          '$'
-          '.'
-          character
-          '[' [ '^' ] character-ranges ']'
-          '(' regexp ')'
-  */
-  package regexp
+.. Every package should have a package comment, a block comment preceding the package clause. For multi-file packages, the package comment only needs to be present in one file, and any one will do. The package comment should introduce the package and provide information relevant to the package as a whole. It will appear first on the godoc page and should set up the detailed documentation that follows.
 
-If the package is simple, the package comment can be brief::
+各パッケージはパッケージ節に先行するブロックコメントであるパッケージコメントを持つべきです。パッケージが複数のファイルにわたる場合はそのうち1つのファイルにしか必要ありません。パッケージコメントはそのパッケージの紹介と関連情報をまとめて提供するものであるべきです。これは\ :program:`godoc`\ ページの始めに表示されるので、それに続く詳細なドキュメントのお膳立てすべきです。
 
-  // The path package implements utility routines for
-  // manipulating slash-separated filename paths.
+.. 
 
-Comments do not need extra formatting such as banners of stars. The generated output may not even be presented in a fixed-width font, so don't depend on spacing for alignment?godoc, like gofmt, takes care of that. Finally, the comments are uninterpreted plain text, so HTML and other annotations such as _this_ will reproduce verbatim and should not be used.
 
-Inside a package, any comment immediately preceding a top-level declaration serves as a doc comment for that declaration. Every exported (capitalized) name in a program should have a doc comment.
+.. code-block:: cpp
 
-Doc comments work best as complete English sentences, which allow a wide variety of automated presentations. The first sentence should be a one-sentence summary that starts with the name being declared::
+   /*
+   	The regexp package implements a simple library for
+   	regular expressions.
 
-  // Compile parses a regular expression and returns, if successful, a Regexp
-  // object that can be used to match against text.
-  func Compile(str string) (regexp *Regexp, error os.Error) {
+   	The syntax of the regular expressions accepted is:
 
-Go's declaration syntax allows grouping of declarations. A single doc comment can introduce a group of related constants or variables. Since the whole declaration is presented, such a comment can often be perfunctory::
+   	regexp:
+   		concatenation { '|' concatenation }
+   	concatenation:
+   		{ closure }
+   	closure:
+   		term [ '*' | '+' | '?' ]
+   	term:
+   		'^'
+   		'$'
+   		'.'
+   		character
+   		'[' [ '^' ] character-ranges ']'
+   		'(' regexp ')'
+   */
+   package regexp
 
-  // Error codes returned by failures to parse an expression.
-  var (
-      ErrInternal      = os.NewError("internal error");
-      ErrUnmatchedLpar = os.NewError("unmatched '('");
-      ErrUnmatchedRpar = os.NewError("unmatched ')'");
-      ...
-  )
+.. If the package is simple, the package comment can be brief. 
 
-Even for private names, grouping can also indicate relationships between items, such as the fact that a set of variables is protected by a mutex::
+パッケージがシンプルなものであれば、パッケージコメントはシンプルなもので良いでしょう。
 
-  var (
-      countLock    sync.Mutex;
-      inputCount    uint32;
-      outputCount    uint32;
-      errorCount    uint32;
-  )
+.. code-block:: cpp
+
+   // The path package implements utility routines for
+   // manipulating slash-separated filename paths.
+
+.. Comments do not need extra formatting such as banners of stars. The generated output may not even be presented in a fixed-width font, so don't depend on spacing for alignment—godoc, like gofmt, takes care of that. Finally, the comments are uninterpreted plain text, so HTML and other annotations such as _this_ will reproduce verbatim and should not be used.
+
+コメントはアスタリスクのバナーのような余分なフォーマッティングをする必要はありません。生成される出力は等幅フォントで表示されないかもしれませんので、位置合わせのためのスペーシングに依存することがないようにします。\ :program:`godoc`\ は\ :program:`gofmt`\ のようにこの問題の面倒をみてくれます。最後に、コメントはインタープリタに処理されないプレインテキストなので、HTMLや_このような_註釈は文字どおりに表示されるので使用してはいけません。
+
+.. Inside a package, any comment immediately preceding a top-level declaration serves as a doc comment for that declaration. Every exported (capitalized) name in a program should have a doc comment.
+
+パッケージ内でトップレベルの宣言の直前にあるものはその宣言のDocコメントとなります。エクスポートされた(大文字で始まる)名前はdocコメントを持つべきです。
+
+.. Doc comments work best as complete English sentences, which allow a wide variety of automated presentations. The first sentence should be a one-sentence summary that starts with the name being declared.
+
+Docコメントは完全な英文で書くのが最も効果的です。これにより広範囲にわたる自動プレゼンテーションが可能となります。始めの文はこれから宣言される名前から始まる1行の要約であるべきです。
+
+.. code-block:: cpp
+
+   // Compile parses a regular expression and returns, if successful, a Regexp
+   // object that can be used to match against text.
+   func Compile(str string) (regexp *Regexp, error os.Error) {
+
+.. Go's declaration syntax allows grouping of declarations. A single doc comment can introduce a group of related constants or variables. Since the whole declaration is presented, such a comment can often be perfunctory.
+
+Goの宣言構文は宣言のグループ化が可能です。1つのDocコメントはある定数や変数のグループに対し使用することが出来ます。すべての宣言が提示されるので、そのようなコメントは形式的なものとなります。
+
+.. code-block:: cpp
+
+   // Error codes returned by failures to parse an expression.
+   var (
+       ErrInternal      = os.NewError("internal error");
+       ErrUnmatchedLpar = os.NewError("unmatched '('");
+       ErrUnmatchedRpar = os.NewError("unmatched ')'");
+       ...
+   )
+
+.. Even for private names, grouping can also indicate relationships between items, such as the fact that a set of variables is protected by a mutex.
+
+プライベートな名前に対してもグルーピングをしてそれらの関係、たとえばある変数群がmutexでで保護されているなどを示すことが可能です。
+
+.. code-block:: cpp
+
+   var (
+       countLock    sync.Mutex;
+       inputCount    uint32;
+       outputCount    uint32;
+       errorCount    uint32;
+   )
 
 Names
 =====
