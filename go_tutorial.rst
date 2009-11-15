@@ -264,14 +264,14 @@ osパッケージはプログラムを開始するための基礎部分を含ん
    the same type. There is also a ``byte`` synonym for ``uint8``, which is the
    element type for strings.
 
-Go には多くの ``int`` や ``float`` のような型がありますが、これらの値の
-サイズは実行するマシンで ''適切'' なサイズになります。このため、サイズが
-明示的な型として ``int8``, ``float64`` などの型や、負数のない整数型といった
-``uint``, ``uint32`` なども定義されています。
-型名が異なる型は、明確に別の型としてあつかわれるので、 ``int`` と ``int32``
-はどちらもサイズが32ビットですが、異なる型となります。
-他に、 ``uint8`` の別名である ``byte`` という型があり、これは文字列の要素
-のための型です。
+Go には多くの :ctype:`int` や :ctype:`float` のような型がありますが、
+これらの値のサイズは実行するマシンで ''適切'' なサイズになります。このため、
+サイズが明示的な型として :ctype:`int8`, :ctype:`float64` などの型や、
+負数のない整数型といった :ctype:`uint`, :ctype:`uint32` なども定義されています。
+型名が異なる型は、明確に別の型としてあつかわれるので、 :ctype:`int` と
+:ctype:`int32` はどちらもサイズが32ビットですが、異なる型となります。
+他に、 :ctype:`uint8` の別名である :ctype:`byte` という型があり、
+これは文字列の要素のための型です。
 
 ..
    Speaking of ``string``, that's a built-in type as well. Strings are
@@ -280,11 +280,13 @@ Go には多くの ``int`` や ``float`` のような型がありますが、こ
    can change a string *variable* simply by reassigning it. This snippet from
    ``strings.go`` is legal code::
  
-``string`` 型という組み込み型もあります。文字列は *変更不可能な値* で、
-単なる ``byte`` 型の配列ではありません。一度、文字列型の値を作ると、
+:ctype:`string` 型という組み込み型もあります。文字列は *変更不可能な値* で、
+単なる :ctype:`byte` 型の配列ではありません。一度、文字列型の値を作ると、
 この値を変更する事は出来ず、文字列を変更は出来ますが実質的には、別の
 文字列型の値が割り当てられることになります。以下は ``strings.go`` の
-ソースコードの一部です::
+ソースコードの一部です。
+
+.. code-block:: cpp
 
   11        s := "hello";
   12        if s[1] != 'e' { os.Exit(1) }
@@ -296,8 +298,10 @@ Go には多くの ``int`` や ``float`` のような型がありますが、こ
    However the following statements are illegal because they would modify a
    ``string`` value::
 
-ところで、以下は不正なコード例です。これは ``string`` の値を書き換えようと
-しているからです::
+ところで、以下は不正なコード例です。これは :ctype:`string` の値を書き換えようと
+しているからです。
+
+.. code-block:: cpp
 
     s[0] = 'x';
     (*p)[1] = 'y';
@@ -306,8 +310,8 @@ Go には多くの ``int`` や ``float`` のような型がありますが、こ
    In C++ terms, Go strings are a bit like ``const strings``, while pointers to
    strings are analogous to ``const string`` references.
 
-C++ の言い方で言えば、 Go の文字列は ``const strings`` と言えます。また、
-これを参照するポインタも同じように ``const strings`` への参照と言えます。
+C++ の言い方で言えば、 Go の文字列は :ctype:`const strings` と言えます。また、
+これを参照するポインタも同じように :ctype:`const strings` への参照と言えます。
 
 ..
    Yes, there are pointers. However, Go simplifies their use a little; read on.
@@ -318,7 +322,9 @@ C++ の言い方で言えば、 Go の文字列は ``const strings`` と言え�
 ..
    Arrays are declared like this::
 
-配列は以下のように宣言されます::
+配列は以下のように宣言されます。
+
+.. code-block:: cpp
 
     var arrayOfInt [10]int;
 
@@ -329,13 +335,13 @@ C++ の言い方で言えば、 Go の文字列は ``const strings`` と言え�
    pointers to arrays.
 
 配列は文字列のような、値の集まりですが、これらは変更可能です。 ``arrayOfInt``
-と C との違いは、 ``int`` へのポインタとして使う事が出来るところです。
+と C との違いは、 :ctype:`int` へのポインタとして使う事が出来るところです。
 Go では、配列は値の集まりで、配列へのポインタとして使えるという意味になります。
 
 ..
    The size of the array is part of its type; however, one can declare a slice variable, to which one can assign a pointer to any array with the same element type or -- much more commonly -- a slice expression of the form `a[low : high]`, representing the subarray indexed by `low` through `high-1`. Slices look a lot like arrays but have no explicit size (`[]` vs. `[10]`) and they reference a segment of an underlying, often anonymous, regular array. Multiple slices can share data if they represent pieces of the same array; multiple arrays can never share data.
 
-この配列のサイズは型の一部なので、変数のスライスを宣言したり、 to which one can assign a pointer to any array with the same element type -- もっと一般的な利用例として -- スライスは `a[low : high]` と言う風に表現し、これによって元の配列の `low` から `high-1` の要素を持つ部分配列となります。スライスはほとんど配列のように見えますが、明確なサイズ情報を持たず (`[]` vs. `[10]`) 、they reference a segment of an underlying, often anonymous, regular array. 複数のスライスは、元の配列が同じものであればデータを共有することができますが、異なる複数の配列がデータを共有することは決してありません。
+この配列のサイズは型の一部なので、変数のスライスを宣言したり、 to which one can assign a pointer to any array with the same element type -- もっと一般的な利用例として -- スライスは ``a[low : high]`` と言う風に表現し、これによって元の配列の ``low`` から ``high-1`` の要素を持つ部分配列となります。スライスはほとんど配列のように見えますが、明確なサイズ情報を持たず (``[]`` vs. ``[10]``) 、they reference a segment of an underlying, often anonymous, regular array. 複数のスライスは、元の配列が同じものであればデータを共有することができますが、異なる複数の配列がデータを共有することは決してありません。
 
 ..
    Slices are much more common in Go programs than regular arrays; they're more flexible, have reference semantics, and are efficient. What they lack is the precise control of storage layout of a regular array; if you want to have a hundred elements of an array stored within your structure, you should use a regular array.
@@ -359,7 +365,9 @@ Go では、配列は値の集まりで、配列へのポインタとして使�
     14        return s
     15    }
 
-スライスの使い方として以下のように関数を書けます(sum.goより)::
+スライスの使い方として以下のように関数を書けます(sum.goより)。
+
+.. code-block:: cpp
  
   09    func sum(a []int) int {   // intを返す
   10        s := 0;
@@ -375,30 +383,38 @@ Go では、配列は値の集まりで、配列へのポインタとして使�
 ..
    19        s := sum(&[3]int{1,2,3});  // a slice of the array is passed to sum
 
-そして呼び出し側は以下のようになります::
+そして呼び出し側は以下のようになります。
  
+.. code-block:: cpp
+
    19        s := sum(&[3]int{1,2,3});  // 配列のスライスをsumに渡す
 
 ..
    Note how the return type (int) is defined for sum() by stating it after the parameter list. The expression [3]int{1,2,3}?a type followed by a brace-bounded expression?is a constructor for a value, in this case an array of 3 ints. Putting an & in front gives us the address of a unique instance of the value. We pass the pointer to sum() by (implicitly) promoting it to a slice.
 
-``sum()`` の返値の型 (``int``) がパラメータリストの後ろに定義されていることに注意してください。 ``[3]int{1,2,3}`` という表現 -- 型の後ろにブレースに囲まれた表現がある -- は値のコンストラクタで、この例では3つの ``int`` 値を持つ配列を作っています。 ``&`` を前に置くことで、値のインスタンスの唯一のアドレスを取得することが出来ます。 ``sum()`` 関数にポインタを渡すことで (暗黙的に) 配列をスライスに変形させています。
+``sum()`` の返値の型 (:ctype:`int`) がパラメータリストの後ろに定義されていることに注意してください。 ``[3]int{1,2,3}`` という表現 -- 型の後ろにブレースに囲まれた表現がある -- は値のコンストラクタで、この例では3つの :ctype:`int` 値を持つ配列を作っています。 ``&`` を前に置くことで、値のインスタンスの唯一のアドレスを取得することが出来ます。 ``sum()`` 関数にポインタを渡すことで (暗黙的に) 配列をスライスに変形させています。
 
 .. If you are creating a regular array but want the compiler to count the elements for you, use ... as the array size::
 
-もし正規の配列を作るときにコンパイラに要素の数を数えさせるようにするには、 ... を配列のサイズとして使います::
+もし正規の配列を作るときにコンパイラに要素の数を数えさせるようにするには、 ... を配列のサイズとして使います。
+
+.. code-block:: cpp
 
     s := sum(&[...]int{1,2,3});
 
 .. In practice, though, unless you're meticulous about storage layout within a data structure, a slice itself?using empty brackets and no &?is all you need::
 
-慣習として、もし記憶域でのデータ構成を気にしないのであれば、スライスをそのまま -- 空のブラケットに ``&`` 無しで -- 渡せば良いことになります::
+慣習として、もし記憶域でのデータ構成を気にしないのであれば、スライスをそのまま -- 空のブラケットに ``&`` 無しで -- 渡せば良いことになります。
+
+.. code-block:: cpp
 
     s := sum([]int{1,2,3});
 
 .. There are also maps, which you can initialize like this::
 
-マップを使う場合は、以下のように初期化出来ます::
+マップを使う場合は、以下のように初期化出来ます。
+
+.. code-block:: cpp
 
     m := map[string]int{"one":1 , "two":2}
 
@@ -412,7 +428,7 @@ An Interlude about Allocation
 =============================
 .. Most types in Go are values. If you have an int or a struct or an array, assignment copies the contents of the object. To allocate a new variable, use new(), which returns a pointer to the allocated storage.
 
-Goでは、ほとんどの型は値です。 ``int`` や ``struct`` や ``array`` は代入時にオブジェクトの内容をコピーします。新しい変数を割り当てるためには ``new()`` を使います。 ``new()`` は割り当てた記憶域へのポインタを返します。
+Goでは、ほとんどの型は値です。 :ctype:`int` や :ctype:`struct` や :ctype:`array` は代入時にオブジェクトの内容をコピーします。新しい変数を割り当てるためには ``new()`` を使います。 ``new()`` は割り当てた記憶域へのポインタを返します。
 
 .. code-block:: cpp
 
@@ -466,7 +482,7 @@ Goでは多くの整数型サイズの変数がありますが、整数型定数
 その代わり、単精度変数に割り当てようとして桁溢れした場合には
 整数型定数は多精度変数として評価されます。
 
-.. code-block:: python
+.. code-block:: cpp
 
     const hardEight = (1 << 100) >> 97  // これは正しい
 
@@ -474,7 +490,9 @@ Goでは多くの整数型サイズの変数がありますが、整数型定数
   There are nuances that deserve redirection to the legalese of the language specification
   but here are some illustrative examples:
 
-言語仕様には変換に関する記述がありますが、ここではいくつか実例を示します::
+言語仕様には変換に関する記述がありますが、ここではいくつか実例を示します。
+
+.. code-block:: cpp
 
     var a uint64 = 0  // uint64型 値0の変数
     a := uint64(0)    // "conversion"に相当する使い方です
@@ -531,11 +549,11 @@ I/O Package
 
 .. The first few lines declare the name of the package?file?and then import two packages. The os package hides the differences between various operating systems to give a consistent view of files and so on; here we're going to use its error handling utilities and reproduce the rudiments of its file I/O.
 
-最初の数行でパッケージ名-ファイル名を宣言してから、2つのパッケージをインポートしています。\ ``os`` \パッケージは様々なオペレーティングシステム間の違いを吸収して、ファイルなどを一貫して利用できる様にします。ここで、エラー制御ユーティリティを使用し、ファイルI/Oの基本を再生します。
+最初の数行でパッケージ名-ファイル名を宣言してから、2つのパッケージをインポートしています。\ :mod:`os`\ パッケージは様々なオペレーティングシステム間の違いを吸収して、ファイルなどを一貫して利用できる様にします。ここで、エラー制御ユーティリティを使用し、ファイルI/Oの基本を再生します。
 
 .. The other item is the low-level, external syscall package, which provides a primitive interface to the underlying operating system's calls.
 
-もう一方のパッケージは、基本的なオペレーティングシステムの呼び出しに原始的なインターフェイスを提供する、低レベルな外部\ ``syscall``\ パッケージです。
+もう一方のパッケージは、基本的なオペレーティングシステムの呼び出しに原始的なインターフェイスを提供する、低レベルな外部\ :mod:`syscall`\ パッケージです。
 
 .. Next is a type definition: the type keyword introduces a type declaration, in this case a data structure called File. To make things a little more interesting, our File includes the name of the file that the file descriptor refers to.
 
@@ -822,7 +840,7 @@ Every type implements the empty interface, which makes it useful for things like
 
 例として、progs/sort.goから取ってきた簡単なソートアルゴリズムを見てみましょう。
 
-.. code-block:: guess
+.. code-block:: cpp
 
    13    func Sort(data Interface) {
    14        for i := 1; i < data.Len(); i++ {
@@ -837,7 +855,7 @@ Every type implements the empty interface, which makes it useful for things like
 
 このコードは3つのメソッドを必要とします。これをソートのインターフェースにラップしてみましょう。
 
-.. code-block:: guess  
+.. code-block:: cpp  
 
     07    type Interface interface {
     08        Len() int;
@@ -849,7 +867,7 @@ Every type implements the empty interface, which makes it useful for things like
 
 Len, Less, Swapを実装したものであれば、どんな型でもSortを適用することが可能です。ソートパッケージは整数、文字列などの配列をソートするために必要となるメソッドを含んでいます。次に整数の配列をソートするコードを見てみましょう。
 
-.. code-block:: guess
+.. code-block:: cpp
 
    33    type IntArray []int
    
@@ -865,7 +883,7 @@ Len, Less, Swapを実装したものであれば、どんな型でもSortを適�
 
 progs/sortmain.gから、ここまでのコードをテストするルーチンを見てみます。
 
-.. code-block:: guess
+.. code-block:: cpp
 
    12    func ints() {
    13        data := []int{74, 59, 238, -784, 9845, 959, 905, 0, 0, 42, 7586, -5467984, 7586};
@@ -880,7 +898,7 @@ progs/sortmain.gから、ここまでのコードをテストするルーチン�
 
 ある型をソートするためにしなければいけないことは次のように3つのメソッドを定義するだけです。
 
-.. code-block:: guess
+.. code-block:: cpp
 
    30    type day struct {
    31        num        int;
@@ -919,12 +937,12 @@ PrintfやFprintfなどが含まれるパッケージfmtについて簡単な使�
 
 具体的には例えば 、Cでは各フォーマットがそれに対応する引数の型と完全に一致している必要があります。多くの場合Goはもっと簡単です。例えば%lludを指定する代わりに、%dとするだけでよいのです。Printfは整数型のサイズも符号の有無も知っており、あなたの代わりに常に正しい結果を導き出してくれるのです。スニペット:
 
- .. code-block:: cpp
+.. code-block:: cpp
 
    10        var u64 uint64 = 1<<64-1;
    11        fmt.Printf("%d %d\n", u64, int64(u64));
 
-これは以下のように出力されます。
+これは以下のように出力されます::
 
  18446744073709551615 -1
 
@@ -932,7 +950,7 @@ PrintfやFprintfなどが含まれるパッケージfmtについて簡単な使�
 
 それでも面倒なら、%vを使えばどのような値でも（配列や構造体でも）、分かりやすく適切なかたちで出力されます。
 
- .. code-block:: cpp
+.. code-block:: cpp
 
    14        type T struct { a int; b string };
    15        t := T{77, "Sunset Strip"};
@@ -941,7 +959,7 @@ PrintfやFprintfなどが含まれるパッケージfmtについて簡単な使�
 
 .. is
 
-これは以下のように出力されます。
+これは以下のように出力されます::
 
   18446744073709551615 {77 Sunset Strip} [1 2 3 4]
 
@@ -975,6 +993,8 @@ Printfの代わりにPrintやPrintlnを使えば、フォーマットは必要�
 .. Since *testType has a String() method, the default formatter for that type will use it and produce the output
 
 ``*testType`` はString()メソッドを持っているので、その型のデフォルトフォーマッタはこのメソッドを使って出力を行うことになります。
+
+.. code-block:: cpp
 
    77 Sunset Strip
 
@@ -1228,7 +1248,7 @@ sieve(ふるい)関数のメインループは、呼ばれる側の関数をフ�
 .. FIXME:
 channelを使うことによって複数の独立したgoroutineをmultiplexerを書くことなく処理することが出来ます。channelをメッセージに含めてサーバーに送信し、それを使って送信元に返事をします。現実的なクライアントサーバープログラムはコード量が多いので、ここでは簡略化したものを使って説明を行います。これはリクエスト型の定義から始まり、その中には返事するために使用するchannelが組込まれています。
 
-.. code-block:: guess
+.. code-block:: cpp
 
     09    type request struct {
     10        a, b    int;
@@ -1239,7 +1259,7 @@ channelを使うことによって複数の独立したgoroutineをmultiplexer�
 
 サーバーは簡単なもので、整数のバイナリ操作を行います。ここで処理をしてリクエストに返事を返すコードを見ていきます。
 
-.. code-block:: guess 
+.. code-block:: cpp 
 
     14    type binOp func(a, b int) int
     
@@ -1256,7 +1276,7 @@ channelを使うことによって複数の独立したgoroutineをmultiplexer�
 
 サーバールーチンは延々とループし続け、リクエストを受けとり、処理をブロックさせないようにgoroutineを開始して実際の処理をさせます。
 
-.. code-block:: guess
+.. code-block:: cpp
 
     21    func server(op binOp, service chan *request) {
     22        for {
@@ -1269,7 +1289,7 @@ channelを使うことによって複数の独立したgoroutineをmultiplexer�
 
 サーバーを見慣れた方法で組み立てます。サーバーを開始してそれに接続したchannelを返します。
 
-.. code-block:: guess
+.. code-block:: cpp
 
     28    func startServer(op binOp) chan *request {
     29        req := make(chan *request);
@@ -1281,7 +1301,7 @@ channelを使うことによって複数の独立したgoroutineをmultiplexer�
 
 次に簡単なテストです。これはサーバーをオペレーターを付加して開始し、Nリクエストを返事を待たずに送信します。すべてのリクエストの送信が終わった時点で結果のチェックを行います。
 
-.. code-block:: guess
+.. code-block:: cpp
 
     34    func main() {
     35        adder := startServer(func(a, b int) int { return a + b });
@@ -1306,7 +1326,7 @@ channelを使うことによって複数の独立したgoroutineをmultiplexer�
 
 このプログラムの厄介なところはサーバーがきれいにシャットダウンされないことです。mainが返る時にいくつかのgoroutineが通信中のままブロックされて残ってしまいます。これを解決するためにquit channelをサーバーに渡します。
 
-.. code-block:: guess
+.. code-block:: cpp
 
     32    func startServer(op binOp) (service chan *request, quit chan bool) {
     33        service = make(chan *request);
@@ -1319,7 +1339,7 @@ channelを使うことによって複数の独立したgoroutineをmultiplexer�
 
 quit channelをサーバー関数に渡し、サーバーはそれを次のようにして使います。
 
-.. code-block:: guess
+.. code-block:: cpp
 
     21    func server(op binOp, service chan *request, quit chan bool) {
     22        for {
@@ -1341,13 +1361,13 @@ quit channelをサーバー関数に渡し、サーバーはそれを次のよ�
 .. FIXME
 あとはmainの終わりにあるquit channelをstrobeするだけです。
 
-.. code-block:: guess
+.. code-block:: cpp
 
     40        adder, quit := startServer(func(a, b int) int { return a + b });
 
 ...
 
-.. code-block:: guess
+.. code-block:: cpp
 
     55        quit <- true;
 
