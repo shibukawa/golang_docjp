@@ -239,16 +239,27 @@ MixedCaps
 
 Finally, the convention in Go is to use MixedCaps or mixedCaps rather than underscores to write multiword names.
 
-Semicolons
-==========
+.. Semicolons
+   ==========
 
-Go needs fewer semicolons between statements than do other C variants. Semicolons are never required at the top level. And they are separators, not terminators, so they can be left off the last element of a statement or declaration list, a convenience for one-line funcs and the like::
+セミコロン
+----------
+
+.. Go needs fewer semicolons between statements than do other C variants. Semicolons are never required at the top level. And they are separators, not terminators, so they can be left off the last element of a statement or declaration list, a convenience for one-line funcs and the like::
+
+Goは他のCの異型のように多くのセミコロンを必要としません。セミコロンはトップレベルでは使う必要はありません。また終端記号ではなく分離記号なので、文や宣言のリストの最後では省くことが可能で、一行の関数などでの使用に便利です。
+
+.. code-block:: cpp
 
   func CopyInBackground(dst, src chan Item) {
       go func() { for { dst <- <-src } }()
   }
 
-In fact, semicolons can be omitted at the end of any "StatementList" in the grammar, which includes things like cases in switch statements::
+.. In fact, semicolons can be omitted at the end of any "StatementList" in the grammar, which includes things like cases in switch statements::
+
+事実、セミコロンは文法上のいかなる"文のリスト"でも省略することが可能です。これはswitch文でのcaseを含みます。
+
+.. code-block:: cpp
 
   switch {
   case a < b:
@@ -259,7 +270,11 @@ In fact, semicolons can be omitted at the end of any "StatementList" in the gram
       return 1
   }
 
-The grammar accepts an empty statement after any statement list, which means a terminal semicolon is always OK. As a result, it's fine to put semicolons everywhere you'd put them in a C program?they would be fine after those return statements, for instance?but they can often be omitted. By convention, they're always left off top-level declarations (for instance, they don't appear after the closing brace of struct declarations, or of funcs for that matter) and often left off one-liners. But within functions, place them as you see fit.
+
+.. The grammar accepts an empty statement after any statement list, which means a terminal semicolon is always OK. As a result, it's fine to put semicolons everywhere you'd put them in a C program?they would be fine after those return statements, for instance?but they can often be omitted. By convention, they're always left off top-level declarations (for instance, they don't appear after the closing brace of struct declarations, or of funcs for that matter) and often left off one-liners. But within functions, place them as you see fit.
+
+文法上、すべての文のリストのあとに空文を許されているので、終端にセミコロンを使ってもかまいません。結果としてCでセミコロンを使う場所で使っても問題ありませんし、たとえばこれらのreturnの後に置いてもかまいませんが、通常は省略されます。慣習上、セミコロンはトップレベルの宣言では省略されます(たとえばstructやfuncの宣言の閉じ括弧にセミコロンは使われません)し、ワンライナーでもそうですが、関数の中では適切だと思うところで使ってください。
+
 
 Control structures
 ==================
