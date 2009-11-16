@@ -753,78 +753,85 @@ Now let's make a variant of cat that optionally does rot13 on its input. It's ea
 
 The cat() subroutine uses only two methods of f: Read() and String(), so let's start by defining an interface that has exactly those two methods. Here is code from progs/cat_rot13.go:
 
+.. code-block:: cpp
  
-26    type reader interface {
-27        Read(b []byte) (ret int, err os.Error);
-28        String() string;
-29    }
+   26    type reader interface {
+   27        Read(b []byte) (ret int, err os.Error);
+   28        String() string;
+   29    }
+
 Any type that has the two methods of reader?regardless of whatever other methods the type may also have?is said to implement the interface. Since file.File implements these methods, it implements the reader interface. We could tweak the cat subroutine to accept a reader instead of a *file.File and it would work just fine, but let's embellish a little first by writing a second type that implements reader, one that wraps an existing reader and does rot13 on the data. To do this, we just define the type and implement the methods and with no other bookkeeping, we have a second implementation of the reader interface.
 
+.. code-block:: cpp
  
-31    type rotate13 struct {
-32        source    reader;
-33    }
+   31    type rotate13 struct {
+   32        source    reader;
+   33    }
 
-35    func newRotate13(source reader) *rotate13 {
-36        return &rotate13{source}
-37    }
+   35    func newRotate13(source reader) *rotate13 {
+   36        return &rotate13{source}
+   37    }
 
-
-39    func (r13 *rotate13) Read(b []byte) (ret int, err os.Error) {
-40        r, e := r13.source.Read(b);
-41        for i := 0; i < r; i++ {
-42            b[i] = rot13(b[i])
-43        }
-44        return r, e
-45    }
-
-
-47    func (r13 *rotate13) String() string {
-48        return r13.source.String()
-49    }
-50    // end of rotate13 implementation
+   39    func (r13 *rotate13) Read(b []byte) (ret int, err os.Error) {
+   40        r, e := r13.source.Read(b);
+   41        for i := 0; i < r; i++ {
+   42            b[i] = rot13(b[i])
+   43        }
+   44        return r, e
+   45    }
+   
+   47    func (r13 *rotate13) String() string {
+   48        return r13.source.String()
+   49    }
+   50    // end of rotate13 implementation
 
 (The rot13 function called on line 42 is trivial and not worth reproducing here.)
 
 To use the new feature, we define a flag:
 
+.. code-block:: cpp
  
-14    var rot13Flag = flag.Bool("rot13", false, "rot13 the input")
+   14    var rot13Flag = flag.Bool("rot13", false, "rot13 the input")
+
 and use it from within a mostly unchanged cat() function:
 
+.. code-block:: cpp
  
-52    func cat(r reader) {
-53        const NBUF = 512;
-54        var buf [NBUF]byte;
-
-56        if *rot13Flag {
-57            r = newRotate13(r)
-58        }
-59        for {
-60            switch nr, er := r.Read(&buf); {
-61            case nr < 0:
-62                fmt.Fprintf(os.Stderr, "cat: error reading from %s: %s\n", r.String(), er.String());
-63                os.Exit(1);
-64            case nr == 0:  // EOF
-65                return;
-66            case nr > 0:
-67                nw, ew := file.Stdout.Write(buf[0:nr]);
-68                if nw != nr {
-69                    fmt.Fprintf(os.Stderr, "cat: error writing from %s: %s\n", r.String(), ew.String());
-70                }
-71            }
-72        }
-73    }
+   52    func cat(r reader) {
+   53        const NBUF = 512;
+   54        var buf [NBUF]byte;
+   
+   56        if *rot13Flag {
+   57            r = newRotate13(r)
+   58        }
+   59        for {
+   60            switch nr, er := r.Read(&buf); {
+   61            case nr < 0:
+   62                fmt.Fprintf(os.Stderr, "cat: error reading from %s: %s\n", r.String(), er.String());
+   63                os.Exit(1);
+   64            case nr == 0:  // EOF
+   65                return;
+   66            case nr > 0:
+   67                nw, ew := file.Stdout.Write(buf[0:nr]);
+   68                if nw != nr {
+   69                    fmt.Fprintf(os.Stderr, "cat: error writing from %s: %s\n", r.String(), ew.String());
+   70                }
+   71            }
+   72        }
+   73    }
 
 (We could also do the wrapping in main and leave cat() mostly alone, except for changing the type of the argument; consider that an exercise.) Lines 56 through 58 set it all up: If the rot13 flag is true, wrap the reader we received into a rotate13 and proceed. Note that the interface variables are values, not pointers: the argument is of type reader, not *reader, even though under the covers it holds a pointer to a struct.
 
 Here it is in action:
 
-    % echo abcdefghijklmnopqrstuvwxyz | ./cat
-    abcdefghijklmnopqrstuvwxyz
-    % echo abcdefghijklmnopqrstuvwxyz | ./cat --rot13
-    nopqrstuvwxyzabcdefghijklm
-    %
+.. code-block:: bash
+
+   % echo abcdefghijklmnopqrstuvwxyz | ./cat
+   abcdefghijklmnopqrstuvwxyz
+   % echo abcdefghijklmnopqrstuvwxyz | ./cat --rot13
+   nopqrstuvwxyzabcdefghijklm
+   %
+
 Fans of dependency injection may take cheer from how easily interfaces allow us to substitute the implementation of a file descriptor.
 
 Interfaces are a distinctive feature of Go. An interface is implemented by a type if the type implements all the methods declared in the interface. This means that a type may implement an arbitrary number of different interfaces. There is no type hierarchy; things can be much more ad hoc, as we saw with rot13. The type file.File implements reader; it could also implement a writer, or any other interface built from its methods that fits the current situation. Consider the empty interface
