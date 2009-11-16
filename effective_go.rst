@@ -276,48 +276,72 @@ Goは他のCの異型のように多くのセミコロンを必要としませ�
 文法上、すべての文のリストのあとに空文を許されているので、終端にセミコロンを使ってもかまいません。結果としてCでセミコロンを使う場所で使っても問題ありませんし、たとえばこれらのreturnの後に置いてもかまいませんが、通常は省略されます。慣習上、セミコロンはトップレベルの宣言では省略されます(たとえばstructやfuncの宣言の閉じ括弧にセミコロンは使われません)し、ワンライナーでもそうですが、関数の中では適切だと思うところで使ってください。
 
 
-Control structures
-==================
+.. Control structures
+   ==================
 
-The control structures of Go are related to those of C but different in important ways. There is no do or while loop, only a slightly generalized for; switch is more flexible; if and switch accept an optional initialization statement like that of for; and there are new control structures including a type switch and a multiway communications multiplexer, select. The syntax is also slightly different: parentheses are not required and the bodies must always be brace-delimited.
+制御構造
+========
+
+.. The control structures of Go are related to those of C but different in important ways. There is no do or while loop, only a slightly generalized for; switch is more flexible; if and switch accept an optional initialization statement like that of for; and there are new control structures including a type switch and a multiway communications multiplexer, select. The syntax is also slightly different: parentheses are not required and the bodies must always be brace-delimited.
+
+Goの制御構造はCのものと関係がありますが、重要な点で異なります。doやwhileループがなく、少々一般化されたforだけがあり、switchはより柔軟で、ifやswitchではforのように任意の初期化文を使え、そしてtype switchやmultiway communications multiplexerやselectなどの新規の制御構造があります。文法も少し異なります。括弧が必須ではなく、本文は必ず中括弧で囲まれていなければなりません。
 
 If
 --
 
-In Go a simple if looks like this::
+.. In Go a simple if looks like this::
+
+Goでは単純なifは次のようなものです。
+
+.. code-block:: cpp
 
   if x > 0 {
       return y
   }
 
-Mandatory braces encourage writing simple if statements on multiple lines. It's good style to do so anyway, especially when the body contains a control statement such as a return or break.
+.. Mandatory braces encourage writing simple if statements on multiple lines. It's good style to do so anyway, especially when the body contains a control statement such as a return or break.
 
-Since if and switch accept an initialization statement, it's common to see one used to set up a local variable::
+中括弧を強制することにより単純なif文を複数行にわたって書くよう促します。これは良いスタイルですが、本体にreturnやbreakなどの制御文が含まれる場合は特にそうです。
 
-  if err := file.Chmod(0664); err != nil {
-      log.Stderr(err);
-      return err;
-  }
+.. Since if and switch accept an initialization statement, it's common to see one used to set up a local variable::
 
-In the Go libraries, you'll find that when an if statement doesn't flow into the next statement?that is, the body ends in break, continue, goto, or return?the unnecessary else is omitted::
+ifやswitchは初期化文を使えるので、ローカル変数をセットアップする際によく使われます。
 
-  f, err := os.Open(name, os.O_RDONLY, 0);
-  if err != nil {
-      return err;
-  }
-  codeUsing(f);
+.. code-block:: cpp
 
-This is a example of a common situation where code must analyze a sequence of error possibilities. The code reads well if the successful flow of control runs down the page, eliminating error cases as they arise. Since error cases tend to end in return statements, the resulting code needs no else statements::
+   if err := file.Chmod(0664); err != nil {
+       log.Stderr(err);
+       return err;
+   }
 
-  f, err := os.Open(name, os.O_RDONLY, 0);
-  if err != nil {
-      return err;
-  }
-  d, err := f.Stat();
-  if err != nil {
-      return err;
-  }
-  codeUsing(f, d);
+.. In the Go libraries, you'll find that when an if statement doesn't flow into the next statement—that is, the body ends in break, continue, goto, or return—the unnecessary else is omitted. 
+
+Goのライブラリでは、if文で次の文に処理が進まない時、つまり本体がbreakやcontinue、goto、returnなどで終わる時、不要であるelseは省略されます。
+
+.. code-block:: cpp
+
+   f, err := os.Open(name, os.O_RDONLY, 0);
+   if err != nil {
+       return err;
+   }
+   codeUsing(f);
+
+.. This is a example of a common situation where code must analyze a sequence of error possibilities. The code reads well if the successful flow of control runs down the page, eliminating error cases as they arise. Since error cases tend to end in return statements, the resulting code needs no else statements::
+
+これはエラーの可能性を解析するしなければならないコードでよく見られる例です。コードは正常フローはページを流れていくもので、エラーケースは発生のたびに除去されるという場合に読みやすくなります。エラーケースは通常return文で終わるので、結果としてelse文は不要となります。
+
+.. code-block:: cpp
+
+   f, err := os.Open(name, os.O_RDONLY, 0);
+   if err != nil {
+       return err;
+   }
+   d, err := f.Stat();
+   if err != nil {
+       return err;
+   }
+   codeUsing(f, d);
+
 
 For
 ---
