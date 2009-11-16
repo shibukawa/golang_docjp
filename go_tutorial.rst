@@ -789,7 +789,9 @@ Any type that has the two methods of reader?regardless of whatever other methods
 
 (The rot13 function called on line 42 is trivial and not worth reproducing here.)
 
-To use the new feature, we define a flag:
+.. To use the new feature, we define a flag:
+
+新しい機能を使用するために、フラグを定義します。
 
 .. code-block:: cpp
  
@@ -824,7 +826,9 @@ and use it from within a mostly unchanged cat() function:
 
 (We could also do the wrapping in main and leave cat() mostly alone, except for changing the type of the argument; consider that an exercise.) Lines 56 through 58 set it all up: If the rot13 flag is true, wrap the reader we received into a rotate13 and proceed. Note that the interface variables are values, not pointers: the argument is of type reader, not *reader, even though under the covers it holds a pointer to a struct.
 
-Here it is in action:
+.. Here it is in action:
+
+それでは動作させてみます。
 
 .. code-block:: bash
 
