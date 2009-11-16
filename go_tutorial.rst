@@ -751,10 +751,12 @@ Line 25 calls Write() by slicing the incoming buffer, which is itself a slice. S
 
 Now let's make a variant of cat that optionally does rot13 on its input. It's easy to do by just processing the bytes, but instead we will exploit Go's notion of an interface.
 
-The cat() subroutine uses only two methods of f: Read() and String(), so let's start by defining an interface that has exactly those two methods. Here is code from progs/cat_rot13.go:
+.. The cat() subroutine uses only two methods of f: Read() and String(), so let's start by defining an interface that has exactly those two methods. Here is code from progs/cat_rot13.go:
+
+cat()サブルーチンはfのRead()とString()という2つのメソッドのみしか使用しません。そこで、これら２つのメソッドを持つインタフェースを定義することから始めてみましょう。これは :file:`progs/cat_rot13.go` のコードです。
 
 .. code-block:: cpp
- 
+
    26    type reader interface {
    27        Read(b []byte) (ret int, err os.Error);
    28        String() string;
@@ -767,11 +769,11 @@ Any type that has the two methods of reader?regardless of whatever other methods
    31    type rotate13 struct {
    32        source    reader;
    33    }
-
+   
    35    func newRotate13(source reader) *rotate13 {
    36        return &rotate13{source}
    37    }
-
+   
    39    func (r13 *rotate13) Read(b []byte) (ret int, err os.Error) {
    40        r, e := r13.source.Read(b);
    41        for i := 0; i < r; i++ {
