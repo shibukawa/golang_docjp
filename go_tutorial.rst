@@ -745,6 +745,8 @@ fileパッケージで作成した簡易版のUnixコマンドのcat(1)が :file
 
 By now this should be easy to follow, but the switch statement introduces some new features. Like a for loop, an if or switch can include an initialization statement. The switch on line 18 uses one to create variables nr and er to hold the return values from f.Read(). (The if on line 25 has the same idea.) The switch statement is general: it evaluates the cases from top to bottom looking for the first case that matches the value; the case expressions don't need to be constants or even integers, as long as they all have the same type.
 
+ここまでは簡単なはずでしたが、switch文のいくつかの新機能を提供します。forループのようにifやswitchは初期化を行います。18行目のswitch文はf.Read()からの戻り値を保持する変数nrとerを作ります。（25行目のifも同じ意図です）switch文は一般的で、値に合致する最初のケースを探しながら上から下にケースを評価します。ケース式は同じ型を持っている限り、定数や整数でなくてもよいのです。
+
 Since the switch value is just true, we could leave it off?as is also the situation in a for statement, a missing value means true. In fact, such a switch is a form of if-else chain. While we're here, it should be mentioned that in switch statements each case has an implicit break.
 
 Line 25 calls Write() by slicing the incoming buffer, which is itself a slice. Slices provide the standard Go way to handle I/O buffers.
@@ -842,8 +844,12 @@ Fans of dependency injection may take cheer from how easily interfaces allow us 
 
 Interfaces are a distinctive feature of Go. An interface is implemented by a type if the type implements all the methods declared in the interface. This means that a type may implement an arbitrary number of different interfaces. There is no type hierarchy; things can be much more ad hoc, as we saw with rot13. The type file.File implements reader; it could also implement a writer, or any other interface built from its methods that fits the current situation. Consider the empty interface
 
-    type Empty interface {}
-Every type implements the empty interface, which makes it useful for things like containers.
+.. code-block:: cpp
+   type Empty interface {}
+
+.. Every type implements the empty interface, which makes it useful for things like containers.
+
+すべての型がコンテナのように役に立つ空のインタフェースを実装します。
 
 .. Sorting
    =======
