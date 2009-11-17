@@ -95,7 +95,7 @@ http://bitbucket.org/shibu/golang-docjp/
 * Yoji TAKEUCHI / ytakeuch
 * Takayuki Shimizukawa / shimizukawa
 * Daigo Shitara / sdaigo
-* murapong
+* MURAKAMI Masahiro / murapong
 
 ライセンス
 ----------
