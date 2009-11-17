@@ -426,7 +426,11 @@ GoのforはCのものと似ていますが同じではありません。それ�
 Switch
 ------
 
-Go's switch is more general than C's. The expressions need not be constants or even integers, the cases are evaluated top to bottom until a match is found, and if the switch has no expression it switches on true. It's therefore possible?and idiomatic?to write an if-else-if-else chain as a switch::
+.. Go's switch is more general than C's. The expressions need not be constants or even integers, the cases are evaluated top to bottom until a match is found, and if the switch has no expression it switches on true. It's therefore possible—and idiomatic—to write an if-else-if-else chain as a switch.
+
+GoのswitchはCのものより雑多なものです。式は定数である必要はありませんし、整数ですらなくてもかまいません。caseは一致が見つかるまで上から順に評価されます。もしswitchが式を持っていなければ、真となるcaseに切り替えられます。よってswitchをif-else-if-elseのチェインをswitchで書くことが出来ますし、慣習的なものでもあります。
+
+.. code-block:: cpp
 
   func unhex(c byte) byte {
       switch {
@@ -440,7 +444,11 @@ Go's switch is more general than C's. The expressions need not be constants or e
       return 0
   }
 
-There is no automatic fall through, but cases can be presented in comma-separated lists::
+.. There is no automatic fall through, but cases can be presented in comma-separated lists::
+
+自動的にフォールスルーは発生しませんが、caseをカンマ区切りのリストで表現することが出来ます。
+
+.. code-block:: cpp
 
   func shouldEscape(c byte) bool {
       switch c {
@@ -450,11 +458,14 @@ There is no automatic fall through, but cases can be presented in comma-separate
       return false
   }
 
-Here's a comparison routine for byte arrays that uses two switch statements::
+.. Here's a comparison routine for byte arrays that uses two switch statements::
 
-  // Compare returns an integer comparing the two byte arrays
-  // lexicographically.
-  // The result will be 0 if a == b, -1 if a < b, and +1 if a > b
+次に2つのswitch文を使ったバイト列の比較関数をお見せします。
+
+.. code-block:: cpp
+
+  // Compareは2つのバイト列を辞書順で比較した結果を整数として返します。
+  // a == bの場合は0、a < bの場合は-1、a > bの場合は+1を返します。
   func Compare(a, b []byte) int {
       for i := 0; i < len(a) && i < len(b); i++ {
           switch {
@@ -473,7 +484,15 @@ Here's a comparison routine for byte arrays that uses two switch statements::
       return 0
   }
 
-A switch can also be used to discover the dynamic type of an interface variable. Such a type switch uses the syntax of a type assertion with the keyword type inside the parentheses. If the switch declares a variable in the expression, the variable will have the corresponding type in each clause::
+.. // Compare returns an integer comparing the two byte arrays
+.. // lexicographically.
+.. // The result will be 0 if a == b, -1 if a < b, and +1 if a > b
+
+.. A switch can also be used to discover the dynamic type of an interface variable. Such a type switch uses the syntax of a type assertion with the keyword type inside the parentheses. If the switch declares a variable in the expression, the variable will have the corresponding type in each clause::
+
+switchはインタフェース変数の動的な型を調べる時にも使われます。こういったtype switchはtypeキーワードを使った型アサーションを括弧の中で使用します。switchが変数を式の中で宣言するとその変数はその節で対応する型として扱われます。
+
+.. code-block:: cpp
 
   switch t := interfaceValue.(type) {
   default:
