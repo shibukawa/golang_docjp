@@ -346,47 +346,79 @@ Goのライブラリでは、if文で次の文に処理が進まない時、つ�
 For
 ---
 
-The Go for loop is similar to?but not the same as?C's. It unifies for and while and there is no do-while. There are three forms, only one of which has semicolons::
+.. The Go for loop is similar to—but not the same as—C's. It unifies for and while and there is no do-while. There are three forms, only one of which has semicolons.
 
-  // Like a C for
-  for init; condition; post { }
+GoのforはCのものと似ていますが同じではありません。それはforとwhileを1つにしたものでdo-whileはありません。forは3つの形式があり、そのうち1つだけがセミコロンを使います。
+
+.. code-block:: cpp
+
+   // Cのforのようなもの
+   for init; condition; post { }
   
-  // Like a C while
-  for condition { }
+   // Cのwhileのようなもの
+   for condition { }
 
-  // Like a C for(;;)
-  for { }
+   // Cのfor(;;)のようなもの
+   for { }
 
-Short declarations make it easy to declare the index variable right in the loop::
+.. // Like a C for
+.. // Like a C while
+.. // Like a C for(;;)
 
-  sum := 0;
-  for i := 0; i < 10; i++ {
-      sum += i
-  }
+.. Short declarations make it easy to declare the index variable right in the loop::
 
-If you're looping over an array, slice, string, or map, or reading from a channel, a range clause can manage the loop for you::
+宣言が短いのでインデックス変数をループの中で簡単に宣言出来ます。
 
-  var m map[string]int;
-  sum := 0;
-  for _, value := range m {  // key is unused
-      sum += value
-  }
+.. code-block:: cpp
 
-For strings, the range does more work for you, breaking out individual Unicode characters by parsing the UTF-8 (erroneous encodings consume one byte and produce the replacement rune U+FFFD). The loop::
+   sum := 0;
+   for i := 0; i < 10; i++ {
+       sum += i
+   }
 
-  for pos, char := range "日本語" {
-      fmt.Printf("character %c starts at byte position %d\n", char, pos)
-  }
+.. If you're looping over an array, slice, string, or map, or reading from a channel, a range clause can manage the loop for you.
 
-prints::
+配列、スライス、マップなどをループする時やチャンネルから読み込む時にはrange節を使ってループをうまく使うことが出来ます。
+
+.. code-block:: cpp
+
+   var m map[string]int;
+   sum := 0;
+   for _, value := range m {  // キーは未使用
+       sum += value
+   }
+
+..  // key is unused
+
+.. For strings, the range does more work for you, breaking out individual Unicode characters by parsing the UTF-8 (erroneous encodings consume one byte and produce the replacement rune U+FFFD). The loop
+
+文字列に対してはrangeはなお便利です。ユニコード文字列をUTF-8に分けて分割してくれます。(間違ったエンコーディングは1バイトを使って代わりにU+FFFDを出力します)
+
+
+.. code-block:: cpp
+
+   for pos, char := range "日本語" {
+       fmt.Printf("character %c starts at byte position %d\n", char, pos)
+   }
+
+次を出力します。
+
+.. code-block:: cpp
 
   character 日 starts at byte position 0
   character 本 starts at byte position 3
   character 語 starts at byte position 6
 
-Finally, since Go has no comma operator and ++ and -- are statements not expressions, if you want to run multiple variables in a for you should use parallel assignment::
 
-  // Reverse a
+.. Finally, since Go has no comma operator and ++ and -- are statements not expressions, if you want to run multiple variables in a for you should use parallel assignment::
+
+最後に、Goはカンマ演算子を持たず、++や--は文であり式ではないため、複数の変数をfor内で使用したい場合は並列代入を使わなければなりません。
+
+..   // Reverse a
+
+.. code-block:: cpp
+
+  // aを逆転させる
   for i, j := 0, len(a)-1; i < j; i, j = i+1, j-1 {
       a[i], a[j] = a[j], a[i]
   }
