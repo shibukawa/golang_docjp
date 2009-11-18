@@ -591,67 +591,74 @@ but for simple structures like File it's easier to return the address of a nonce
 
 We can use the factory to construct some familiar, exported variables of type *File:
 
-24    var (
-25        Stdin  = newFile(0, "/dev/stdin");
-26        Stdout = newFile(1, "/dev/stdout");
-27        Stderr = newFile(2, "/dev/stderr");
-28    )
+.. code-block:: cpp
+
+   24    var (
+   25        Stdin  = newFile(0, "/dev/stdin");
+   26        Stdout = newFile(1, "/dev/stdout");
+   27        Stderr = newFile(2, "/dev/stderr");
+   28    )
+
 The newFile function was not exported because it's internal. The proper, exported factory to use is Open:
 
- 
-30    func Open(name string, mode int, perm int) (file *File, err os.Error) {
-31        r, e := syscall.Open(name, mode, perm);
-32        if e != 0 {
-33            err = os.Errno(e);
-34        }
-35        return newFile(r, name), err
-36    }
+.. code-block:: cpp 
+
+   30    func Open(name string, mode int, perm int) (file *File, err os.Error) {
+   31        r, e := syscall.Open(name, mode, perm);
+   32        if e != 0 {
+   33            err = os.Errno(e);
+   34        }
+   35        return newFile(r, name), err
+   36    }
+
 There are a number of new things in these few lines. First, Open returns multiple values, an File and an error (more about errors in a moment). We declare the multi-value return as a parenthesized list of declarations; syntactically they look just like a second parameter list. The function syscall.Open also has a multi-value return, which we can grab with the multi-variable declaration on line 31; it declares r and e to hold the two values, both of type int (although you'd have to look at the syscall package to see that). Finally, line 35 returns two values: a pointer to the new File and the error. If syscall.Open fails, the file descriptor r will be negative and NewFile will return nil.
 
 About those errors: The os library includes a general notion of an error. It's a good idea to use its facility in your own interfaces, as we do here, for consistent error handling throughout Go code. In Open we use a conversion to translate Unix's integer errno value into the integer type os.Errno, which implements os.Error.
 
 Now that we can build Files, we can write methods for them. To declare a method of a type, we define a function to have an explicit receiver of that type, placed in parentheses before the function name. Here are some methods for *File, each of which declares a receiver variable file.
 
+.. code-block:: cpp
  
-38    func (file *File) Close() os.Error {
-39        if file == nil {
-40            return os.EINVAL
-41        }
-42        e := syscall.Close(file.fd);
-43        file.fd = -1;  // so it can't be closed again
-44        if e != 0 {
-45            return os.Errno(e);
-46        }
-47        return nil
-48    }
-
-50    func (file *File) Read(b []byte) (ret int, err os.Error) {
-51        if file == nil {
-52            return -1, os.EINVAL
-53        }
-54        r, e := syscall.Read(file.fd, b);
-55        if e != 0 {
-56            err = os.Errno(e);
-57        }
-58        return int(r), err
-59    }
+   38    func (file *File) Close() os.Error {
+   39        if file == nil {
+   40            return os.EINVAL
+   41        }
+   42        e := syscall.Close(file.fd);
+   43        file.fd = -1;  // so it can't be closed again
+   44        if e != 0 {
+   45            return os.Errno(e);
+   46        }
+   47        return nil
+   48    }
 
 
-61    func (file *File) Write(b []byte) (ret int, err os.Error) {
-62        if file == nil {
-63            return -1, os.EINVAL
-64        }
-65        r, e := syscall.Write(file.fd, b);
-66        if e != 0 {
-67            err = os.Errno(e);
-68        }
-69        return int(r), err
-70    }
+   50    func (file *File) Read(b []byte) (ret int, err os.Error) {
+   51        if file == nil {
+   52            return -1, os.EINVAL
+   53        }
+   54        r, e := syscall.Read(file.fd, b);
+   55        if e != 0 {
+   56            err = os.Errno(e);
+   57        }
+   58        return int(r), err
+   59    }
 
 
-72    func (file *File) String() string {
-73        return file.name
-74    }
+   61    func (file *File) Write(b []byte) (ret int, err os.Error) {
+   62        if file == nil {
+   63            return -1, os.EINVAL
+   64        }
+   65        r, e := syscall.Write(file.fd, b);
+   66        if e != 0 {
+   67            err = os.Errno(e);
+   68        }
+   69        return int(r), err
+   70    }
+
+
+   72    func (file *File) String() string {
+   73        return file.name
+   74    }
 
 There is no implicit this and the receiver variable must be used to access members of the structure. Methods are not declared within the struct declaration itself. The struct declaration defines only data members. In fact, methods can be created for almost any type you name, such as an integer or array, not just for structs. We'll see an example with arrays later.
 
@@ -661,29 +668,33 @@ The methods use the public variable os.EINVAL to return the (os.Error version of
 
 We can now use our new package:
 
+.. code-block:: cpp
  
-05    package main
-
-07    import (
-08        "./file";
-09        "fmt";
-10        "os";
-11    )
+   05    package main
 
 
-13    func main() {
-14        hello := []byte{'h', 'e', 'l', 'l', 'o', ',', ' ', 'w', 'o', 'r', 'l', 'd', '\n'};
-15        file.Stdout.Write(hello);
-16        file, err := file.Open("/does/not/exist",  0,  0);
-17        if file == nil {
-18            fmt.Printf("can't open file; err=%s\n",  err.String());
-19            os.Exit(1);
-20        }
-21    }
+   07    import (
+   08        "./file";
+   09        "fmt";
+   10        "os";
+   11    )
+
+
+   13    func main() {
+   14        hello := []byte{'h', 'e', 'l', 'l', 'o', ',', ' ', 'w', 'o', 'r', 'l', 'd', '\n'};
+   15        file.Stdout.Write(hello);
+   16        file, err := file.Open("/does/not/exist",  0,  0);
+   17        if file == nil {
+   18            fmt.Printf("can't open file; err=%s\n",  err.String());
+   19            os.Exit(1);
+   20        }
+   21    }
 
 The ''./'' in the import of ''./file'' tells the compiler to use our own package rather than something from the directory of installed packages.
 
 Finally we can run the program:
+
+.. code-block:: sh
 
     % helloworld3
     hello, world
