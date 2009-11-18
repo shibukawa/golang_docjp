@@ -515,7 +515,7 @@ Multiple return values
 
 One of Go's unusual features is that functions and methods can return multiple values. This can be used to improve on a couple of clumsy idioms in C programs: in-band error returns (such as -1 for EOF) and modifying an argument.
 
-In C, a write error is signaled by a negative count with the error code secreted away in a volatile location. In Go, Write can return a count and an error: “Yes, you wrote some bytes but not all of them because you filled the device”. The signature of *File.Write in package os is::
+In C, a write error is signaled by a negative count with the error code secreted away in a volatile location. In Go, Write can return a count and an error: “Yes, you wrote some bytes but not all of them because you filled the device”. The signature of \*File.Write in package os is::
 
   func (file *File) Write(b []byte) (n int, err Error)
 
@@ -567,7 +567,7 @@ Data
 Allocation with new()
 ---------------------
 
-Go has two allocation primitives, new() and make(). They do different things and apply to different types, which can be confusing, but the rules are simple. Let's talk about new() first. It's a built-in function essentially the same as its namesakes in other languages: new(T) allocates zeroed storage for a new item of type T and returns its address, a value of type *T. In Go terminology, it returns a pointer to a newly allocated zero value of type T.
+Go has two allocation primitives, new() and make(). They do different things and apply to different types, which can be confusing, but the rules are simple. Let's talk about new() first. It's a built-in function essentially the same as its namesakes in other languages: new(T) allocates zeroed storage for a new item of type T and returns its address, a value of type \*T. In Go terminology, it returns a pointer to a newly allocated zero value of type T.
 
 Since the memory returned by new() is zeroed, it's helpful to arrange that the zeroed object can be used without further initialization. This means a user of the data structure can create one with new() and get right to work. For example, the documentation for bytes.Buffer states that "the zero value for Buffer is an empty buffer ready to use." Similarly, sync.Mutex does not have an explicit constructor or Init method. Instead, the zero value for a sync.Mutex is defined to be an unlocked mutex.
 
@@ -629,7 +629,7 @@ Composite literals can also be created for arrays, slices, and maps, with the fi
 Allocation with make()
 ----------------------
 
-Back to allocation. The built-in function make(T, args) serves a purpose different from new(T). It creates slices, maps, and channels only, and it returns an initialized (not zero) value of type T, not *T. The reason for the distinction is that these three types are, under the covers, references to data structures that must be initialized before use. A slice, for example, is a three-item descriptor containing a pointer to the data (inside an array), the length, and the capacity; until those items are initialized, the slice is nil. For slices, maps, and channels, make initializes the internal data structure and prepares the value for use. For instance::
+Back to allocation. The built-in function make(T, args) serves a purpose different from new(T). It creates slices, maps, and channels only, and it returns an initialized (not zero) value of type T, not \*T. The reason for the distinction is that these three types are, under the covers, references to data structures that must be initialized before use. A slice, for example, is a three-item descriptor containing a pointer to the data (inside an array), the length, and the capacity; until those items are initialized, the slice is nil. For slices, maps, and channels, make initializes the internal data structure and prepares the value for use. For instance::
 
   make([]int, 10, 100)
 
@@ -845,19 +845,44 @@ Within the function Printf, v is a variable that can be passed, for instance, to
 
 There's even more to printing than we've covered here. See the godoc documentation for package fmt for the details.
 
-Initialization
-==============
+.. Initialization
+   ==============
 
-Although it doesn't look superficially very different from initialization in C or C++, initialization in Go is more powerful. Complex structures can be built during initialization and the ordering issues between initialized objects in different packages are handled correctly.
+初期化
+======
 
-Constants
----------
+.. Although it doesn't look superficially very different from initialization in C or C++, initialization in Go is more powerful. Complex structures can be built during initialization and the ordering issues between initialized objects in different packages are handled correctly.
 
-Constants in Go are just that?constant. They are created at compile time, even when defined as locals in functions, and can only be numbers, strings or booleans. Because of the compile-time restriction, the expressions that define them must be constant expressions, evaluatable by the compiler. For instance, 1<<3 is a constant expression, while math.Sin(math.Pi/4) is not because the function call to math.Sin needs to happen at run time.
+Goの初期化は一見CやC++と大して変わらないように見えますが、より強力なものです。複雑な構造を初期化中に構築可能で、異なるパッケージ中のオブジェクト間の初期化順序も正しく処理します。
 
-In Go, enumerated constants are created using the iota enumerator. Since iota can be part of an expression and expressions can be implicitly repeated, it is easy to build intricate sets of values::
+.. Constants
+   ---------
+
+定数
+----
+
+.. Constants in Go are just that?constant. They are created at compile time, even when defined as locals in functions, and can only be numbers, strings or booleans. Because of the compile-time restriction, the expressions that define them must be constant expressions, evaluatable by the compiler. For instance, 1<<3 is a constant expression, while math.Sin(math.Pi/4) is not because the function call to math.Sin needs to happen at run time.
+
+Goの定数は文字通り定数です。定数は、たとえ関数でローカル定義されていてもコンパイル時に生成されます。また定数は、数値、文字列、論理値のいずれかでなくてはいけません。コンパイル時という制約から、それらを定義する式はコンパイラが評価できる定数式である必要があります。例えば、 1<<3 は定数式ですが、math.Sin(math.Pi/4)はmath.Sinへの関数呼び出しが実行時に発生する為、定数式ではありません。
+
+.. In Go, enumerated constants are created using the iota enumerator. Since iota can be part of an expression and expressions can be implicitly repeated, it is easy to build intricate sets of values::
+
+Goでは列挙定数はiota列挙子をつかって生成されます。iotaは式の一部にもでき、式は暗黙的に繰り返されるので、複雑な値の集合も簡単に生成できます:
+
+.. code-block:: cpp
 
   type ByteSize float64
+  const (
+      _ = iota;    // 空の識別子に割り当てて、最初の値（０）を無視する
+      KB ByteSize = 1<<(10*iota);
+      MB;
+      GB;
+      TB;
+      PB;
+      YB;
+  )
+
+.. type ByteSize float64
   const (
       _ = iota;    // ignore first value by assigning to blank identifier
       KB ByteSize = 1<<(10*iota);
@@ -868,7 +893,11 @@ In Go, enumerated constants are created using the iota enumerator. Since iota ca
       YB;
   )
 
-The ability to attach a method such as String to a type makes it possible for such values to format themselves automatically for printing, even as part of a general type::
+.. The ability to attach a method such as String to a type makes it possible for such values to format themselves automatically for printing, even as part of a general type::
+
+型にString()などのメソッドを関連づける事で、丁度普通の組み込み型のように自動的にフォーマット表示させる事が可能です:
+
+.. code-block:: cpp
 
   func (b ByteSize) String() string {
       switch {
@@ -888,12 +917,21 @@ The ability to attach a method such as String to a type makes it possible for su
       return fmt.Sprintf("%.2fB", b)
   }
 
-The expression YB prints as 1.00YB, while ByteSize(1e13) prints as 9.09TB,
+.. The expression YB prints as 1.00YB, while ByteSize(1e13) prints as 9.09TB,
 
-Variables
+式YBは1.00YBと表示され、ByteSize(1e13)は9.09TBと表示されます。
+
+.. Variables
+   ---------
+
+変数
 ---------
 
-Variables can be initialized just like constants but the initializer can be a general expression computed at run time::
+.. Variables can be initialized just like constants but the initializer can be a general expression computed at run time::
+
+変数は定数と同じように初期化することも可能ですが、初期化子に実行時に計算される普通の式が使えます:
+
+.. code-block:: cpp
 
   var (
       HOME = os.Getenv("HOME");
@@ -901,14 +939,37 @@ Variables can be initialized just like constants but the initializer can be a ge
       GOROOT = os.Getenv("GOROOT");
   )
 
-The init function
------------------
+.. The init function
+   -----------------
 
-Finally, each source file can define its own init() function to set up whatever state is required. The only restriction is that, although goroutines can be launched during initialization, they will not begin execution until it completes; initialization always runs as a single thread of execution. And finally means finally: init() is called after all the variable declarations in the package have evaluated their initializers, and those are evaluated only after all the imported packages have been initialized.
+init 関数
+---------
 
-Besides initializations that cannot be expressed as declarations, a common use of init() functions is to verify or repair correctness of the program state before real execution begins::
+.. Finally, each source file can define its own init() function to set up whatever state is required. The only restriction is that, although goroutines can be launched during initialization, they will not begin execution until it completes; initialization always runs as a single thread of execution. And finally means finally: init() is called after all the variable declarations in the package have evaluated their initializers, and those are evaluated only after all the imported packages have been initialized.
+
+最後に、各ソースファイルは必要なあらゆる状態を設定するために、独自のinit()関数を定義する事ができます。唯一の制約は、初期化中にgoroutineを起動する事はできますが、初期化が完了するまで実行されないという事です。つまり初期化は常にシングルスレッドとして実行されます。また「最後に」と言うのはまさしく「最後」で、init()が呼び出されるのはパッケージ中の全ての変数宣言が初期化子を評価し、全てのimportedパッケージが初期化された後です。
+
+.. Besides initializations that cannot be expressed as declarations, a common use of init() functions is to verify or repair correctness of the program state before real execution begins::
+
+宣言として表現できない初期化の他に、init()関数の良く使われる用法の一つとしては実際の実行が始まる前にプログラム状態の正当性を検証したり修正することがあります。:
+
+.. code-block:: cpp
 
   func init() {
+      if USER == "" {
+          log.Exit("$USER not set")
+      }
+      if HOME == "" {
+          HOME = "/usr/" + USER
+      }
+      if GOROOT == "" {
+          GOROOT = HOME + "/go"
+      }
+      // GOROOT はコマンドラインの--gorootフラグで上書き可能
+      flag.StringVar(&GOROOT, "goroot", GOROOT, "Go root directory")
+  }
+
+.. func init() {
       if USER == "" {
           log.Exit("$USER not set")
       }
@@ -955,12 +1016,12 @@ In fact, we can do even better. If we modify our function so it looks like a sta
       return len(data), nil)
   }
 
-then the type *ByteSlice satisfies the standard interface io.Writer, which is handy. For instance, we can print into one::
+then the type \*ByteSlice satisfies the standard interface io.Writer, which is handy. For instance, we can print into one::
 
     var b ByteSlice;
     fmt.Fprintf(&b, "This hour has %d days\n", 7);
 
-We pass the address of a ByteSlice because only *ByteSlice satisfies io.Writer. The rule about pointers vs. values for receivers is that value methods can be invoked on pointers and values, but pointer methods can only be invoked on pointers. This is because pointer methods can modify the receiver; invoking them on a copy of the value would cause those modifications to be discarded.
+We pass the address of a ByteSlice because only \*ByteSlice satisfies io.Writer. The rule about pointers vs. values for receivers is that value methods can be invoked on pointers and values, but pointer methods can only be invoked on pointers. This is because pointer methods can modify the receiver; invoking them on a copy of the value would cause those modifications to be discarded.
 
 By the way, the idea of using Write on a slice of bytes is implemented by bytes.Buffer.
 
@@ -1209,7 +1270,7 @@ The Logger is a regular field of the struct and we can initialize it in the usua
       return &Job{command, logger}
   }
 
-If we need to refer to an embedded field directly, the type name of the field, ignoring the package qualifier, serves as a field name. If we needed to access the *log.Logger of a Job variable job, we would write job.Logger. This would be useful if we wanted to refine the methods of Logger::
+If we need to refer to an embedded field directly, the type name of the field, ignoring the package qualifier, serves as a field name. If we needed to access the \*log.Logger of a Job variable job, we would write job.Logger. This would be useful if we wanted to refine the methods of Logger::
 
   func (job *Job) Logf(format string, args ...) {
       job.Logger.Logf("%q: %s", job.Command, fmt.Sprintf(format, args));
