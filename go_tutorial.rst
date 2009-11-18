@@ -531,7 +531,7 @@ I/O Package
 
 次に、ファイルのオープン、クローズ、読み込み、書き込みを行うインターフェイスを含んだシンプルなパッケージを見てみましょう。以下は\ ``file.go``\ の書き出しの部分です。
 
-.. code-block:
+.. code-block:: cpp
 
    05    package file
 
@@ -541,11 +541,12 @@ I/O Package
    10    )
 
    12    type File struct {
-.. 13        fd      int;    // file descriptor number
    13        fd      int;    // ファイル記述子番号
-.. 14        name    string; // file name at Open time
    14        name    string; // ファイルを開く時の名前
    15    }
+
+.. 13        fd      int;    // file descriptor number
+.. 14        name    string; // file name at Open time
 
 .. The first few lines declare the name of the package?file?and then import two packages. The os package hides the differences between various operating systems to give a consistent view of files and so on; here we're going to use its error handling utilities and reproduce the rudiments of its file I/O.
 
