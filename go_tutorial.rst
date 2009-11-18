@@ -845,6 +845,7 @@ Fans of dependency injection may take cheer from how easily interfaces allow us 
 Interfaces are a distinctive feature of Go. An interface is implemented by a type if the type implements all the methods declared in the interface. This means that a type may implement an arbitrary number of different interfaces. There is no type hierarchy; things can be much more ad hoc, as we saw with rot13. The type file.File implements reader; it could also implement a writer, or any other interface built from its methods that fits the current situation. Consider the empty interface
 
 .. code-block:: cpp
+
    type Empty interface {}
 
 .. Every type implements the empty interface, which makes it useful for things like containers.
