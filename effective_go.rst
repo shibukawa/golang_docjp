@@ -928,9 +928,11 @@ Methods
 Pointers vs. Values
 -------------------
 
-Methods can be defined for any named type that is not a pointer or an interface; the receiver does not have to be a struct.
+.. Methods can be defined for any named type that is not a pointer or an interface; the receiver does not have to be a struct.
 
-In the discussion of slices above, we wrote an Append function. We can define it as a method on slices instead. To do this, we first declare a named type to which we can bind the method, and then make the receiver for the method a value of that type::
+.. In the discussion of slices above, we wrote an Append function. We can define it as a method on slices instead. To do this, we first declare a named type to which we can bind the method, and then make the receiver for the method a value of that type::
+
+.. code-block:: cpp
 
   type ByteSlice []byte
   
@@ -938,7 +940,9 @@ In the discussion of slices above, we wrote an Append function. We can define it
       // Body exactly the same as above
   }
 
-This still requires the method to return the updated slice. We can eliminate that clumsiness by redefining the method to take a pointer to a ByteSlice as its receiver, so the method can overwrite the caller's slice::
+.. This still requires the method to return the updated slice. We can eliminate that clumsiness by redefining the method to take a pointer to a ByteSlice as its receiver, so the method can overwrite the caller's slice::
+
+.. code-block:: cpp
 
   func (p *ByteSlice) Append(data []byte) {
       slice := *p;
@@ -946,7 +950,9 @@ This still requires the method to return the updated slice. We can eliminate tha
       *p = slice;
   }
 
-In fact, we can do even better. If we modify our function so it looks like a standard Write method, like this::
+.. In fact, we can do even better. If we modify our function so it looks like a standard Write method, like this::
+
+.. code-block:: cpp
 
   func (p *ByteSlice) Write(data []byte) (n int, err os.Error) {
       slice := *p;
@@ -955,14 +961,16 @@ In fact, we can do even better. If we modify our function so it looks like a sta
       return len(data), nil)
   }
 
-then the type *ByteSlice satisfies the standard interface io.Writer, which is handy. For instance, we can print into one::
+.. then the type *ByteSlice satisfies the standard interface io.Writer, which is handy. For instance, we can print into one::
+
+.. code-block:: cpp
 
     var b ByteSlice;
     fmt.Fprintf(&b, "This hour has %d days\n", 7);
 
-We pass the address of a ByteSlice because only *ByteSlice satisfies io.Writer. The rule about pointers vs. values for receivers is that value methods can be invoked on pointers and values, but pointer methods can only be invoked on pointers. This is because pointer methods can modify the receiver; invoking them on a copy of the value would cause those modifications to be discarded.
+.. We pass the address of a ByteSlice because only *ByteSlice satisfies io.Writer. The rule about pointers vs. values for receivers is that value methods can be invoked on pointers and values, but pointer methods can only be invoked on pointers. This is because pointer methods can modify the receiver; invoking them on a copy of the value would cause those modifications to be discarded.
 
-By the way, the idea of using Write on a slice of bytes is implemented by bytes.Buffer.
+.. By the way, the idea of using Write on a slice of bytes is implemented by bytes.Buffer.
 
 Interfaces and other types
 ==========================
