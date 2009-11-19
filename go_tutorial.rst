@@ -757,20 +757,27 @@ fileパッケージで作成した簡易版のUnixコマンドのcat(1)が :file
 
 .. By now this should be easy to follow, but the switch statement introduces some new features. Like a for loop, an if or switch can include an initialization statement. The switch on line 18 uses one to create variables nr and er to hold the return values from f.Read(). (The if on line 25 has the same idea.) The switch statement is general: it evaluates the cases from top to bottom looking for the first case that matches the value; the case expressions don't need to be constants or even integers, as long as they all have the same type.
 
-ここまでは簡単なはずでした。しかし、switch文はいくつかの新しい機能を提供します。forループのようにifやswitchは初期化を行います。18行目のswitch文はf.Read()からの戻り値を保持する変数nrとerを作ります。（25行目のifも同じ意図です）switch文は一般的で、値に合致する最初のケースを探しながら上から下にケースを評価します。ケース式は同じ型を持っている限り、定数や整数でなくてもよいのです。
+ここまでは簡単なはずでした。しかし、switch文はいくつかの新しい機能を提供します。forループのようにifやswitchは初期化を行うことができます。18行目のswitch文はf.Read()からの戻り値を保持する変数nrとerを作るために初期化します。（25行目のifも同じ意図です）switch文は通常通り、値に合致する最初のケースを探しながら上から下にケースを評価します。ケース式は同じ型を持っている限り、定数や整数でなくてもよいのです。
 
-Since the switch value is just true, we could leave it off?as is also the situation in a for statement, a missing value means true. In fact, such a switch is a form of if-else chain. While we're here, it should be mentioned that in switch statements each case has an implicit break.
+.. Since the switch value is just true, we could leave it off?as is also the situation in a for statement, a missing value means true. In fact, such a switch is a form of if-else chain. While we're here, it should be mentioned that in switch statements each case has an implicit break.
 
-Line 25 calls Write() by slicing the incoming buffer, which is itself a slice. Slices provide the standard Go way to handle I/O buffers.
+.. FIXME
+switch値は単なるtrueなのですが、抜けられるのでしょうか。for文と同じように、値がない場合はtrueを意味します。実際、このようなswitch文はif-else形式です。この間、各ケースは暗黙のbreakを持っていると言えます。
 
-Now let's make a variant of cat that optionally does rot13 on its input. It's easy to do by just processing the bytes, but instead we will exploit Go's notion of an interface.
+.. Line 25 calls Write() by slicing the incoming buffer, which is itself a slice. Slices provide the standard Go way to handle I/O buffers.
+
+25行目で（それ自体がスライスなのですが）入力バッファをスライスしながらWrite()を呼びます。スライスはGoの標準的なI/Oバッファを扱う方法を提供します。
+
+.. Now let's make a variant of cat that optionally does rot13 on its input. It's easy to do by just processing the bytes, but instead we will exploit Go's notion of an interface.
+
+さて、入力値に対してROT13をオプションで行うcatの派生形を作成しましょう。バイトで処理するのは簡単ですが、代わりにGoのインタフェースの概念を利用します。
 
 .. The cat() subroutine uses only two methods of f: Read() and String(), so let's start by defining an interface that has exactly those two methods. Here is code from progs/cat_rot13.go:
 
 cat()サブルーチンはfのRead()とString()という2つのメソッドのみしか使用しません。そこで、これら２つのメソッドを持つインタフェースを定義することから始めてみましょう。これは :file:`progs/cat_rot13.go` のコードです。
 
 .. code-block:: cpp
-
+   
    26    type reader interface {
    27        Read(b []byte) (ret int, err os.Error);
    28        String() string;
@@ -779,7 +786,7 @@ cat()サブルーチンはfのRead()とString()という2つのメソッドの�
 Any type that has the two methods of reader?regardless of whatever other methods the type may also have?is said to implement the interface. Since file.File implements these methods, it implements the reader interface. We could tweak the cat subroutine to accept a reader instead of a \*file.File and it would work just fine, but let's embellish a little first by writing a second type that implements reader, one that wraps an existing reader and does rot13 on the data. To do this, we just define the type and implement the methods and with no other bookkeeping, we have a second implementation of the reader interface.
 
 .. code-block:: cpp
- 
+   
    31    type rotate13 struct {
    32        source    reader;
    33    }
