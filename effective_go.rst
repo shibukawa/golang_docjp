@@ -207,32 +207,59 @@ Goの宣言構文は宣言のグループ化が可能です。1つのDocコメ�
        errorCount    uint32;
    )
 
-Names
+.. Names
+.. =====
+
+名前
 =====
 
-Names are as important in Go as in any other language. In some cases they even have semantic effect: for instance, the visibility of a name outside a package is determined by whether its first character is upper case. It's therefore worth spending a little time talking about naming conventions in Go programs.
+.. Names are as important in Go as in any other language. In some cases they even have semantic effect: for instance, the visibility of a name outside a package is determined by whether its first character is upper case. It's therefore worth spending a little time talking about naming conventions in Go programs.
 
-Package names
+他の言語と同様に、Goにおいても名前は重要です。場合によって、名前は意味上の効果をもたらします。例えば、パッケージの外側にある名前の可視性は、名前の一文字目が大文字かどうかで決定されます。従って、命名規則にわずかばかりの時間を使うことは、Goにおいて価値のあることです。
+
+.. Package names
+.. -------------
+
+パッケージ名
 -------------
 
-When a package is imported, the package name becomes an accessor for the contents. After::
+.. When a package is imported, the package name becomes an accessor for the contents. After::
+
+..   import "bytes"
+
+.. the importing package can talk about bytes.Buffer. It's helpful if everyone using the package can use the same name to refer to its contents, which implies that the package name should be good: short, concise, evocative. By convention, packages are given lower case, single-word names; there should be no need for underscores or mixedCaps. Err on the side of brevity, since everyone using your package will be typing that name. And don't worry about collisions a priori. The package name is only the default name for imports; it need not be unique across all source code, and in the rare case of a collision the importing package can choose a different name to use locally. In any case, confusion is rare because the file name in the import determines just which package is being used.
+
+パッケージをインポートすると、パッケージ名はパッケージ内容へのアクセッサになります。次のように::
 
   import "bytes"
 
-the importing package can talk about bytes.Buffer. It's helpful if everyone using the package can use the same name to refer to its contents, which implies that the package name should be good: short, concise, evocative. By convention, packages are given lower case, single-word names; there should be no need for underscores or mixedCaps. Err on the side of brevity, since everyone using your package will be typing that name. And don't worry about collisions a priori. The package name is only the default name for imports; it need not be unique across all source code, and in the rare case of a collision the importing package can choose a different name to use locally. In any case, confusion is rare because the file name in the import determines just which package is being used.
+と書くと、インポートされるパッケージを通してbytes.Bufferを使用することができます。パッケージを使用する人々が、パッケージ内容を参照する際に同じ名前を使用することができれば、それは役に立ちます。このことは、パッケージ名が短く、簡潔で、意味明瞭なものほど良いことを意味します。規約により、パッケージには小文字の1単語である名前が与えられます。アンダースコアの使用や大文字小文字の混在は必要ありません。また、あなたのパッケージを使う人々が使う度にパッケージ名を打ち込むことを考えて、パッケージ名を簡潔過ぎるほど簡潔にしてしまう場合があります。その場合でも、名前の事前衝突を心配する必要はありません。なぜなら、パッケージ名はインポートするためのデフォルト名でしかないからです。すなわち、ソースコード全体でパッケージ名がユニークである必要はありません。万が一インポートされるパッケージ名が衝突する場合にも、局所的に異なるパッケージ名を選択することが可能です。どのような場合でも、インポート機能において、ファイル名がどのパッケージが使用されているかを決定するので、混乱することはまれです。
 
-Another convention is that the package name is the base name of its source directory; the package in src/pkg/container/vector is imported as "container/vector" but has name vector, not container_vector and not containerVector.
+.. Another convention is that the package name is the base name of its source directory; the package in src/pkg/container/vector is imported as "container/vector" but has name vector, not container_vector and not containerVector.
 
-The importer of a package will use the name to refer to its contents (the import . notation is intended mostly for tests and other unusual situations), so exported names in the package can use that fact to avoid stutter. For instance, the buffered reader type in the bufio package is called Reader, not BufReader, because users see it as bufio.Reader, which is a clear, concise name. Moreover, because imported entities are always addressed with their package name, bufio.Reader does not conflict with io.Reader. Similarly, the function to make new instances of vector.Vector?which is the definition of a constructor in Go?would normally be called NewVector, but since Vector is the only type exported by the package, and since the package is called vector, it's called just New. Clients of the package see that as vector.New. Use the package structure to help you choose good names.
+もう一つの規約は、パッケージ名はそのソースファイルのディレクトリの基本名であるということです。src/pkg/container/vectorパッケージは、"container/vector"としてインポートされます。パッケージ名はvectorであって、container_vectorでもcontainerVectorでもありません。
 
-Another short example is once.Do; once.Do(setup) reads well and would not be improved by writing once.DoOrWaitUntilDone(setup). Long names don't automatically make things more readable. If the name represents something intricate or subtle, it's usually better to write a helpful doc comment than to attempt to put all the information into the name.
+.. The importer of a package will use the name to refer to its contents (the import . notation is intended mostly for tests and other unusual situations), so exported names in the package can use that fact to avoid stutter. For instance, the buffered reader type in the bufio package is called Reader, not BufReader, because users see it as bufio.Reader, which is a clear, concise name. Moreover, because imported entities are always addressed with their package name, bufio.Reader does not conflict with io.Reader. Similarly, the function to make new instances of vector.Vector?which is the definition of a constructor in Go?would normally be called NewVector, but since Vector is the only type exported by the package, and since the package is called vector, it's called just New. Clients of the package see that as vector.New. Use the package structure to help you choose good names.
 
-Interface names
+パッケージインポータは、パッケージ内容を参照するためにパッケージ名を使用します（.（ドット）記法を使ったインポートは、テストや他のまれな場面で使用します）。
+
+.. Another short example is once.Do; once.Do(setup) reads well and would not be improved by writing once.DoOrWaitUntilDone(setup). Long names don't automatically make things more readable. If the name represents something intricate or subtle, it's usually better to write a helpful doc comment than to attempt to put all the information into the name.
+
+もう一つの短い例は、once.Doです。onche.Do(setup)は読みやすく、once.DoOrWaitUntileDone(setup)と書いてもより読みやすくなることはありません。より長い名前を使えば、より読みやすくなるということはありません。もし名前が難解であったり、捉えにくい場合、名前にすべての情報を詰め込もうとするより、役に立つDocコメントを記述するのがより良いのが普通です。
+
+.. Interface names
+.. ---------------
+
+インターフェース名
 ---------------
 
-By convention, one-method interfaces are named by the method name plus the -er suffix: Reader, Writer, Formatter etc.
+.. By convention, one-method interfaces are named by the method name plus the -er suffix: Reader, Writer, Formatter etc.
 
-There are a number of such names and it's productive to honor them and the function names they capture. Read, Write, Close, Flush, String and so on have canonical signatures and meanings. To avoid confusion, don't give your method one of those names unless it has the same signature and meaning. Conversely, if your type implements a method with the same meaning as a method on a well-known type, give it the same name and signature; call your string-converter method String not ToString.
+規約により、1メソッドのインターフェースは、メソッド名に-erサフィックスを加えた名前を持ちます。例えば、Reader, Writer, Formatter などです。
+
+.. There are a number of such names and it's productive to honor them and the function names they capture. Read, Write, Close, Flush, String and so on have canonical signatures and meanings. To avoid confusion, don't give your method one of those names unless it has the same signature and meaning. Conversely, if your type implements a method with the same meaning as a method on a well-known type, give it the same name and signature; call your string-converter method String not ToString.
+
+このような名前は多く存在します。そして、その名前と、それらが得る機能名は、敬意を表するほど生産的です。Read, Write, Close, Flush, String などの名前は、標準的な特徴と意味を備えています。混乱を避けるため、あなたのメソッドが同じ特徴と意味を備えていない限り、そのような名前をメソッド名としてはなりません。逆に言えば、もしあなたがよく知られた種類の、同じ意味を持つメソッドを実装したならば、同じ名前と特徴を与えるべきです。例えば独自の文字列変換メソッドを実装するなら、そのメソッド名はToStringではなく、Stringであるべきです。
 
 MixedCaps
 ---------
