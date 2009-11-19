@@ -589,7 +589,7 @@ This returns a pointer to a new File structure with the file descriptor and name
 
 but for simple structures like File it's easier to return the address of a nonce composite literal, as is done here on line 21.
 
-We can use the factory to construct some familiar, exported variables of type *File:
+We can use the factory to construct some familiar, exported variables of type \*File:
 
 .. code-block:: cpp
 
@@ -615,7 +615,7 @@ There are a number of new things in these few lines. First, Open returns multipl
 
 About those errors: The os library includes a general notion of an error. It's a good idea to use its facility in your own interfaces, as we do here, for consistent error handling throughout Go code. In Open we use a conversion to translate Unix's integer errno value into the integer type os.Errno, which implements os.Error.
 
-Now that we can build Files, we can write methods for them. To declare a method of a type, we define a function to have an explicit receiver of that type, placed in parentheses before the function name. Here are some methods for *File, each of which declares a receiver variable file.
+Now that we can build Files, we can write methods for them. To declare a method of a type, we define a function to have an explicit receiver of that type, placed in parentheses before the function name. Here are some methods for \*File, each of which declares a receiver variable file.
 
 .. code-block:: cpp
  
@@ -776,7 +776,7 @@ cat()サブルーチンはfのRead()とString()という2つのメソッドの�
    28        String() string;
    29    }
 
-Any type that has the two methods of reader?regardless of whatever other methods the type may also have?is said to implement the interface. Since file.File implements these methods, it implements the reader interface. We could tweak the cat subroutine to accept a reader instead of a *file.File and it would work just fine, but let's embellish a little first by writing a second type that implements reader, one that wraps an existing reader and does rot13 on the data. To do this, we just define the type and implement the methods and with no other bookkeeping, we have a second implementation of the reader interface.
+Any type that has the two methods of reader?regardless of whatever other methods the type may also have?is said to implement the interface. Since file.File implements these methods, it implements the reader interface. We could tweak the cat subroutine to accept a reader instead of a \*file.File and it would work just fine, but let's embellish a little first by writing a second type that implements reader, one that wraps an existing reader and does rot13 on the data. To do this, we just define the type and implement the methods and with no other bookkeeping, we have a second implementation of the reader interface.
 
 .. code-block:: cpp
  
@@ -838,7 +838,7 @@ and use it from within a mostly unchanged cat() function:
    72        }
    73    }
 
-(We could also do the wrapping in main and leave cat() mostly alone, except for changing the type of the argument; consider that an exercise.) Lines 56 through 58 set it all up: If the rot13 flag is true, wrap the reader we received into a rotate13 and proceed. Note that the interface variables are values, not pointers: the argument is of type reader, not *reader, even though under the covers it holds a pointer to a struct.
+(We could also do the wrapping in main and leave cat() mostly alone, except for changing the type of the argument; consider that an exercise.) Lines 56 through 58 set it all up: If the rot13 flag is true, wrap the reader we received into a rotate13 and proceed. Note that the interface variables are values, not pointers: the argument is of type reader, not \*reader, even though under the covers it holds a pointer to a struct.
 
 .. Here it is in action:
 

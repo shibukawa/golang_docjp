@@ -681,7 +681,7 @@ Slices wrap arrays to give a more general, powerful, and convenient interface to
 
 Slices are reference types, which means that if you assign one slice to another, both refer to the same underlying array. For instance, if a function takes a slice argument, changes it makes to the elements of the slice will be visible to the caller, analogous to passing a pointer to the underlying array. A Read function can therefore accept a slice argument rather than a pointer and a count; the length within the slice sets an upper limit of how much data to read. Here is the signature of the Read method of the File type in package os::
 
-func (file *File) Read(buf []byte) (n int, err os.Error)
+    func (file *File) Read(buf []byte) (n int, err os.Error)
 
 The method returns the number of bytes read and an error value, if any. To read into the first 32 bytes of a larger buffer b, slice (here used as a verb) the buffer::
 
