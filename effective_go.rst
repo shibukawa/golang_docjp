@@ -261,10 +261,15 @@ Goの宣言構文は宣言のグループ化が可能です。1つのDocコメ�
 
 このような名前は多く存在します。そして、その名前と、それらが得る機能名は、敬意を表するほど生産的です。Read, Write, Close, Flush, String などの名前は、標準的な特徴と意味を備えています。混乱を避けるため、あなたのメソッドが同じ特徴と意味を備えていない限り、そのような名前をメソッド名としてはなりません。逆に言えば、もしあなたがよく知られた種類の、同じ意味を持つメソッドを実装したならば、同じ名前と特徴を与えるべきです。例えば独自の文字列変換メソッドを実装するなら、そのメソッド名はToStringではなく、Stringであるべきです。
 
-MixedCaps
+.. MixedCaps
+.. ---------
+
+大文字小文字の混在
 ---------
 
-Finally, the convention in Go is to use MixedCaps or mixedCaps rather than underscores to write multiword names.
+.. Finally, the convention in Go is to use MixedCaps or mixedCaps rather than underscores to write multiword names.
+
+最後に、Goにおける規約では、複数単語の名前を記述する際、アンダースコアを使用するのではなく、MixedCapsまたはmixedCapsと記述するように決められています。
 
 .. Semicolons
    ==========
