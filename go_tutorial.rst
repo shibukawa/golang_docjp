@@ -762,6 +762,7 @@ fileパッケージで作成した簡易版のUnixコマンドのcat(1)が :file
 .. Since the switch value is just true, we could leave it off?as is also the situation in a for statement, a missing value means true. In fact, such a switch is a form of if-else chain. While we're here, it should be mentioned that in switch statements each case has an implicit break.
 
 .. FIXME
+
 switch値は単なるtrueなのですが、抜けられるのでしょうか。for文と同じように、値がない場合はtrueを意味します。実際、このようなswitch文はif-else形式です。この間、各ケースは暗黙のbreakを持っていると言えます。
 
 .. Line 25 calls Write() by slicing the incoming buffer, which is itself a slice. Slices provide the standard Go way to handle I/O buffers.
@@ -1290,7 +1291,8 @@ sieve(ふるい)関数のメインループは、呼ばれる側の関数をフ�
 
 .. With channels, it's possible to serve multiple independent client goroutines without writing an explicit multiplexer. The trick is to send the server a channel in the message, which it will then use to reply to the original sender. A realistic client-server program is a lot of code, so here is a very simple substitute to illustrate the idea. It starts by defining a request type, which embeds a channel that will be used for the reply.
 
-.. FIXME:
+.. FIXME
+
 channelを使うことによって複数の独立したgoroutineをmultiplexerを書くことなく処理することが出来ます。channelをメッセージに含めてサーバーに送信し、それを使って送信元に返事をします。現実的なクライアントサーバープログラムはコード量が多いので、ここでは簡略化したものを使って説明を行います。これはリクエスト型の定義から始まり、その中には返事するために使用するchannelが組込まれています。
 
 .. code-block:: cpp
@@ -1404,6 +1406,7 @@ quit channelをサーバー関数に渡し、サーバーはそれを次のよ�
 .. All that's left is to strobe the quit channel at the end of main:
 
 .. FIXME
+
 あとはmainの終わりにあるquit channelをstrobeするだけです。
 
 .. code-block:: cpp

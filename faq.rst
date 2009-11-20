@@ -106,9 +106,12 @@ Other than being split into multiple files, the package will compile and test ju
 How do I write a unit test?
 Create a new file ending in _test.go in the same directory as your package sources. Inside that file, import "testing" and write functions of the form
 
-func TestFoo(t *testing.T) {
-    ...
-}
+.. code-block:: cpp
+
+   func TestFoo(t *testing.T) {
+       ...
+   }
+
 Run gotest in that directory. That script finds the Test functions, builds a test binary, and runs it.
 
 Where is assert?
