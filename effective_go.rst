@@ -540,10 +540,12 @@ switchはインタフェース変数の動的な型を調べる時にも使わ�
   }
 
 .. Functions
+
 関数
 =========
 
 .. Multiple return values
+
 複数の戻り値
 ----------------------
 
@@ -597,6 +599,7 @@ osパッケージの*File.Writeオブジェクトのシグネチャは以下の�
   }
 
 .. You could use it to scan the numbers in an input array a like this::
+
 これは次のように、入力した配列から数値を探し出すのに使うことができます。
 
 .. code-block:: cpp
@@ -607,6 +610,7 @@ osパッケージの*File.Writeオブジェクトのシグネチャは以下の�
     }
 
 .. Named result parameters
+
 名前付けされた戻り値
 -----------------------
 
@@ -653,32 +657,57 @@ Goの関数の”戻り値”は、ちょうど入力値のように、名前を
       return;
   }
 
-Data
-====
+.. Data
+   ====
 
-Allocation with new()
----------------------
+データ
+======
 
-Go has two allocation primitives, new() and make(). They do different things and apply to different types, which can be confusing, but the rules are simple. Let's talk about new() first. It's a built-in function essentially the same as its namesakes in other languages: new(T) allocates zeroed storage for a new item of type T and returns its address, a value of type \*T. In Go terminology, it returns a pointer to a newly allocated zero value of type T.
+.. Allocation with new()
+   ---------------------
 
-Since the memory returned by new() is zeroed, it's helpful to arrange that the zeroed object can be used without further initialization. This means a user of the data structure can create one with new() and get right to work. For example, the documentation for bytes.Buffer states that "the zero value for Buffer is an empty buffer ready to use." Similarly, sync.Mutex does not have an explicit constructor or Init method. Instead, the zero value for a sync.Mutex is defined to be an unlocked mutex.
+new()によるメモリ割り当て
+-------------------------
 
-The zero-value-is-useful property works transitively. Consider this type declaration::
+.. Go has two allocation primitives, new() and make(). They do different things and apply to different types, which can be confusing, but the rules are simple. Let's talk about new() first. It's a built-in function essentially the same as its namesakes in other languages: new(T) allocates zeroed storage for a new item of type T and returns its address, a value of type \*T. In Go terminology, it returns a pointer to a newly allocated zero value of type T.
+
+Goはメモリ割り当てプリミティブとしてnew()とmake()の２つを持っています。これらは動作も適用される型も異なっている為、混乱を招くかもしれませんがルールは単純です。まずはnew()から始めましょう。new()は組み込み関数で、他の言語での同名のものと本質的に同じです。new(T)は、T型のゼロで初期化された新しい要素を割り当て、そのアドレスを*T型の値として返します。Goの用語では、new(T)は新しく確保されたT型のゼロ値へのポインタを返します。
+
+.. Since the memory returned by new() is zeroed, it's helpful to arrange that the zeroed object can be used without further initialization. This means a user of the data structure can create one with new() and get right to work. For example, the documentation for bytes.Buffer states that "the zero value for Buffer is an empty buffer ready to use." Similarly, sync.Mutex does not have an explicit constructor or Init method. Instead, the zero value for a sync.Mutex is defined to be an unlocked mutex.
+
+new()に返されたメモリはゼロクリアされているため、初期値がゼロで良いようなオブジェクトを使う場合には、特に初期化する事無く使う事ができて便利です。つまり、そのデータ構造は単にnew()するだけできちんと動作する、という事です。例えば、bytes.Bufferのドキュメントには、「ゼロの値をもつバッファは利用可能状態の空のバッファである」と定められています。同様にsync.Mutexも明示的なコンストラクタやInitメソッドを持ちません。代わりに、ゼロの値をもつsync.Mutexは非ロック状態のmutexであると定義されています。
+
+.. The zero-value-is-useful property works transitively. Consider this type declaration::
+
+「ゼロによる初期化は有用」という特徴は遷移的です。次の型宣言を考えてみましょう:
+
+.. code-block:: cpp
 
   type SyncedBuffer struct {
-      lock    sync.Mutex;
+      lock      sync.Mutex;
       buffer    bytes.Buffer;
   }
 
-Values of type SyncedBuffer are also ready to use immediately upon allocation or just declaration. In this snippet, both p and v will work correctly without further arrangement::
+.. Values of type SyncedBuffer are also ready to use immediately upon allocation or just declaration. In this snippet, both p and v will work correctly without further arrangement::
+
+SyncedBuffer型の値はnew()によるメモリ割り当てでも、単なる宣言であっても即使えるようになります。次のコード片では特に調整しなくてもp, v両方とも正しく動作します:
+
+.. code-block:: cpp
 
   p := new(SyncedBuffer);  // type *SyncedBuffer
   var v SyncedBuffer;      // type  SyncedBuffer
 
-Constructors and composite literals
------------------------------------
+.. Constructors and composite literals
+   -----------------------------------
 
-Sometimes the zero value isn't good enough and an initializing constructor is necessary, as in this example derived from package os::
+コンストラクタと複合リテラル
+----------------------------
+
+.. Sometimes the zero value isn't good enough and an initializing constructor is necessary, as in this example derived from package os::
+
+時としてゼロ値だけでは不十分で、初期化コンストラクタが必要となる場合もあります。以下の例はosパッケージから派生した物です:
+
+.. code-block:: cpp
 
   func NewFile(fd int, name string) *File {
       if fd < 0 {
@@ -692,7 +721,11 @@ Sometimes the zero value isn't good enough and an initializing constructor is ne
       return f;
   }
 
-There's a lot of boiler plate in there. We can simplify it using a composite literal, which is an expression that creates a new instance each time it is evaluated::
+.. There's a lot of boiler plate in there. We can simplify it using a composite literal, which is an expression that creates a new instance each time it is evaluated::
+
+上のコードはいささか冗長で、複合リテラルを使う事で簡単にできます。複合リテラルは評価されるたびに新しいインスタンスを生成する式です:
+
+.. code-block:: cpp
 
   func NewFile(fd int, name string) *File {
       if fd < 0 {
@@ -702,32 +735,59 @@ There's a lot of boiler plate in there. We can simplify it using a composite lit
       return &f;
   }
 
-Note that it's perfectly OK to return the address of a local variable; the storage associated with the variable survives after the function returns. In fact, taking the address of a composite literal allocates a fresh instance each time it is evaluated, so we can combine these last two lines::
+.. Note that it's perfectly OK to return the address of a local variable; the storage associated with the variable survives after the function returns. In fact, taking the address of a composite literal allocates a fresh instance each time it is evaluated, so we can combine these last two lines::
+
+ここで注意すべき点は、ローカル変数のアドレスを戻り値にするのは完全に合法であり、変数領域は関数が帰った後も保持される、ということです。実のところ、複合リテラルのアドレスを取得すると、その式が評価されるごとに新しいインスタンスが割り当てられので、最後の2行は1行にまとめる事ができます:
+
+.. code-block:: cpp
 
     return &File{fd, name, nil, 0};
 
-The fields of a composite literal are laid out in order and must all be present. However, by labeling the elements explicitly as field:value pairs, the initializers can appear in any order, with the missing ones left as their respective zero values. Thus we could say::
+.. The fields of a composite literal are laid out in order and must all be present. However, by labeling the elements explicitly as field:value pairs, the initializers can appear in any order, with the missing ones left as their respective zero values. Thus we could say::
+
+複合リテラルのフィールドは定義順通りで、かつ漏れなく指定する必要があります。しかしながら、要素を明示的に field:value ペアのように書く事で任意の順序で書く事ができます。また指定が無いフィールドはゼロに初期化されます。結局、以下のように書く事ができます:
+
+.. code-block:: cpp
 
     return &File{fd: fd, name: name}
 
-As a limiting case, if a composite literal contains no fields at all, it creates a zero value for the type. The expressions new(File) and &File{} are equivalent.
+.. As a limiting case, if a composite literal contains no fields at all, it creates a zero value for the type. The expressions new(File) and &File{} are equivalent.
 
-Composite literals can also be created for arrays, slices, and maps, with the field labels being indices or map keys as appropriate. In these examples, the initializations work regardless of the values of Enone, Eio, and Einval, as long as they are distinct::
+稀なケースとして、全くフィールドを含まない複合リテラルの場合、その型のゼロ値を生成します。new(File)と&File{}は等価です:
+
+.. Composite literals can also be created for arrays, slices, and maps, with the field labels being indices or map keys as appropriate. In these examples, the initializations work regardless of the values of Enone, Eio, and Einval, as long as they are distinct::
+
+複合リテラルは配列やスライス、マップの生成にも使えます。その場合フィールドにつけたラベルは、インデックスかマップのキーになります。以下の例では、Enone, Eio, Einvalは異なってさえいれば値に関わらず初期化は動作します:
+
+.. code-block:: cpp
 
   a := [...]string   {Enone: "no error", Eio: "Eio", Einval: "invalid argument"};
   s := []string      {Enone: "no error", Eio: "Eio", Einval: "invalid argument"};
   m := map[int]string{Enone: "no error", Eio: "Eio", Einval: "invalid argument"};
 
-Allocation with make()
-----------------------
+.. Allocation with make()
+   ----------------------
 
-Back to allocation. The built-in function make(T, args) serves a purpose different from new(T). It creates slices, maps, and channels only, and it returns an initialized (not zero) value of type T, not \*T. The reason for the distinction is that these three types are, under the covers, references to data structures that must be initialized before use. A slice, for example, is a three-item descriptor containing a pointer to the data (inside an array), the length, and the capacity; until those items are initialized, the slice is nil. For slices, maps, and channels, make initializes the internal data structure and prepares the value for use. For instance::
+make()によるメモリ割り当て
+--------------------------
+
+.. Back to allocation. The built-in function make(T, args) serves a purpose different from new(T). It creates slices, maps, and channels only, and it returns an initialized (not zero) value of type T, not \*T. The reason for the distinction is that these three types are, under the covers, references to data structures that must be initialized before use. A slice, for example, is a three-item descriptor containing a pointer to the data (inside an array), the length, and the capacity; until those items are initialized, the slice is nil. For slices, maps, and channels, make initializes the internal data structure and prepares the value for use. For instance::
+
+メモリ割り当てに戻りましょう。組み込み関数make(T, args)はnew(T)とは違った目的に使われます。make()はスライス、マップ、チャンネル専用で、初期化（ゼロではありません）したT型(\*T型ではありません）を返します。この区別をしている理由は、内部的にはこれら３つのタイプが、使用前に初期化が必要なデータ構造へのリファレンスとなっているためです。例えばスライスは３要素の記述子で（配列内の）データへのポインタ、長さ、容量を含んでいます。これらが初期化されるまで、スライスはnilです。スライス、マップ、チャンネルは make は内部構造を初期化し、使用する為の値を準備します。たとえば:
+
+.. code-block:: cpp
 
   make([]int, 10, 100)
 
-allocates an array of 100 ints and then creates a slice structure with length 10 and a capacity of 100 pointing at the first 10 elements of the array. (When making a slice, the capacity can be omitted; see the section on slices for more information.) In contrast, new([]int) returns a pointer to a newly allocated, zeroed slice structure, that is, a pointer to a nil slice value.
+.. allocates an array of 100 ints and then creates a slice structure with length 10 and a capacity of 100 pointing at the first 10 elements of the array. (When making a slice, the capacity can be omitted; see the section on slices for more information.) In contrast, new([]int) returns a pointer to a newly allocated, zeroed slice structure, that is, a pointer to a nil slice value.
 
-These examples illustrate the difference between new() and make()::
+上記コードは100個のint配列を割り当て、その後、スライスの構造を長さ10で容量100(スライスを作る際、容量は無視されることがあります。詳細はスライスの節を参照してください)。対照的に new([]int)は新規に割り当てたゼロ値のスライス構造へのポインタ、すなわちnilスライスへのポインタを返します。
+
+.. These examples illustrate the difference between new() and make()::
+
+次の例はnew(), make()の違いを示しています。
+
+.. code-block:: cpp
 
   var p *[]int = new([]int);       // allocates slice structure; *p == nil; rarely useful
   var v  []int = make([]int, 100); // v now refers to a new array of 100 ints
@@ -739,20 +799,35 @@ These examples illustrate the difference between new() and make()::
   // Idiomatic:
   v := make([]int, 100);
 
-Remember that make() applies only to maps, slices and channels and does not return a pointer. To obtain an explicit pointer allocate with new().
+.. Remember that make() applies only to maps, slices and channels and does not return a pointer. To obtain an explicit pointer allocate with new().
 
-Arrays
-------
+make()はマップ、スライス、チャネルのいずれかのみで、ポインタを返さないことを思い出してください。明示的にポインタを欲しいときはnew()で割り当てます。
+
+.. Arrays
+   ------
+
+配列
+----
 
 Arrays are useful when planning the detailed layout of memory and sometimes can help avoid allocation, but primarily they are a building block for slices, the subject of the next section. To lay the foundation for that topic, here are a few words about arrays.
 
-There are major differences between the ways arrays work in Go and C. In Go,
+.. There are major differences between the ways arrays work in Go and C. In Go,
 
-* Arrays are values. Assigning one array to another copies all the elements.
-* In particular, if you pass an array to a function, it will receive a copy of the array, not a pointer to it.
-* The size of an array is part of its type. The types [10]int and [20]int are distinct.
+配列の動作においてGoとCには大きな違いがある。
 
-The value property can be useful but also expensive; if you want C-like behavior and efficiency, you can pass a pointer to the array::
+.. * Arrays are values. Assigning one array to another copies all the elements.
+   * In particular, if you pass an array to a function, it will receive a copy of the array, not a pointer to it.
+   * The size of an array is part of its type. The types [10]int and [20]int are distinct.
+
+* 配列は値です。ある配列を別の配列に代入することは全要素のコピーになります。
+* 特に、配列を関数に渡す場合、ポインタではなく、ポインタではなく配列のコピーを受け取る事になります。
+* 配列のサイズは型の一部です。[10]int と [20]int は異なる型となります。
+
+.. The value property can be useful but also expensive; if you want C-like behavior and efficiency, you can pass a pointer to the array::
+
+配列が値である、という特性は便利ですが同時に効率が悪くなります。Cのような振る舞いと効率を求めるなら、配列のポインタを渡す事もできます。
+
+.. code-block:: cpp
 
   func Sum(a *[3]float) (sum float) {
       for _, v := range a {
@@ -764,22 +839,36 @@ The value property can be useful but also expensive; if you want C-like behavior
   array := [...]float{7.0, 8.5, 9.1};
   x := sum(&array);  // Note the explicit address-of operator
 
-But even this style isn't idiomatic Go. Slices are.
+.. But even this style isn't idiomatic Go. Slices are.
+
+しかし、この書き方もまたGoの慣用的なスタイルではありません。スライスがそれです。
 
 Slices
 ------
 
-Slices wrap arrays to give a more general, powerful, and convenient interface to sequences of data. Except for items with explicit dimension such as transformation matrices, most array programming in Go is done with slices rather than simple arrays.
+.. Slices wrap arrays to give a more general, powerful, and convenient interface to sequences of data. Except for items with explicit dimension such as transformation matrices, most array programming in Go is done with slices rather than simple arrays.
 
-Slices are reference types, which means that if you assign one slice to another, both refer to the same underlying array. For instance, if a function takes a slice argument, changes it makes to the elements of the slice will be visible to the caller, analogous to passing a pointer to the underlying array. A Read function can therefore accept a slice argument rather than a pointer and a count; the length within the slice sets an upper limit of how much data to read. Here is the signature of the Read method of the File type in package os::
+スライスは配列をラップし、連続データへの汎用的・強力かつ便利なインターフェイスを提供します。変換行列のような明示的な次元を持つものを除き、Goでは殆どの配列プログラミングで、単純な配列よりむしろスライスの方が使われます。
+
+.. Slices are reference types, which means that if you assign one slice to another, both refer to the same underlying array. For instance, if a function takes a slice argument, changes it makes to the elements of the slice will be visible to the caller, analogous to passing a pointer to the underlying array. A Read function can therefore accept a slice argument rather than a pointer and a count; the length within the slice sets an upper limit of how much data to read. Here is the signature of the Read method of the File type in package os::
+
+スライスは参照型、つまりスライスに別のスライスを代入した場合、双方のスライスは同じ配列を指している。例えば、スライスを引数にとる関数の場合、その関数がスライスの要素に行った変更は呼び出し元(caller)にも見えてしまう、という元の配列のポインタを渡すのと類似のことが起こる。Read関数は従ってポインタと数を渡すのではなく、スライスを受け付ける事ができる。スライスの長さパラメータはデータをどれだけ読むかの上限値になる。次の行はosパッケージ：File型のReadメソッドのシグネチャである。
+
+.. code-block:: cpp
 
     func (file *File) Read(buf []byte) (n int, err os.Error)
 
-The method returns the number of bytes read and an error value, if any. To read into the first 32 bytes of a larger buffer b, slice (here used as a verb) the buffer::
+.. The method returns the number of bytes read and an error value, if any. To read into the first 32 bytes of a larger buffer b, slice (here used as a verb) the buffer::
+
+このメソッドはリードしたバイト数および（もしあれば）エラー値を返します。大きなバッファbから最初の32バイトを読むには以下のようにバッファをスライスします。
 
     n, err := f.Read(buf[0:32]);
 
-Such slicing is common and efficient. In fact, leaving efficiency aside for the moment, this snippet would also read the first 32 bytes of the buffer::
+.. Such slicing is common and efficient. In fact, leaving efficiency aside for the moment, this snippet would also read the first 32 bytes of the buffer::
+
+このようなスライスは一般的で効率が良いです。実際、効率を無視すれば、次のようなコードでも同じ事が可能です。
+
+.. code-block:: cpp
 
     var n int;
     var err os.Error;
@@ -792,7 +881,11 @@ Such slicing is common and efficient. In fact, leaving efficiency aside for the 
         n += nbytes;
     }
 
-The length of a slice may be changed as long as it still fits within the limits of the underlying array; just assign it to a slice of itself. The capacity of a slice, accessible by the built-in function cap, reports the maximum length the slice may assume. Here is a function to append data to a slice. If the data exceeds the capacity, the slice is reallocated. The resulting slice is returned. The function uses the fact that len and cap are legal when applied to the nil slice, and return 0::
+.. The length of a slice may be changed as long as it still fits within the limits of the underlying array; just assign it to a slice of itself. The capacity of a slice, accessible by the built-in function cap, reports the maximum length the slice may assume. Here is a function to append data to a slice. If the data exceeds the capacity, the slice is reallocated. The resulting slice is returned. The function uses the fact that len and cap are legal when applied to the nil slice, and return 0::
+
+スライスの長さは元の配列の大きさに収まっている限り、単にスライスに代入するだけで自由に変更できます。スライスの容量は、組み込み関数capにてアクセスする事ができます。スライスが仮定している最大の長さをレポートします。スライスにデータを追加する関数です。容量を超えた場合、スライスは再割り当てされます。結果のスライスが戻ります。このかんすうはlen, capは nilスライスに適用した場合でも 0を返す、ということを利用しています。
+
+.. code-block:: cpp
 
   func Append(slice, data[]byte) []byte {
       l := len(slice);
@@ -812,14 +905,27 @@ The length of a slice may be changed as long as it still fits within the limits 
       return slice;
   }
 
-We must return the slice afterwards because, although Append can modify the elements of slice, the slice itself (the run-time data structure holding the pointer, length, and capacity) is passed by value.
+.. We must return the slice afterwards because, although Append can modify the elements of slice, the slice itself (the run-time data structure holding the pointer, length, and capacity) is passed by value.
 
-Maps
-----
+.. FIXME
 
-Maps are a convenient and powerful built-in data structure to associate values of different types. The key can be of any type for which the equality operator is defined, such as integers, floats, strings, pointers, and interfaces (as long as the dynamic type supports equality). Structs, arrays and slices cannot be used as map keys, because equality is not defined on those types. Like slices, maps are a reference type. If you pass a map to a function that changes the contents of the map, the changes will be visible in the caller.
+スライスをあとから戻すべきです。なぜなら、APpendはスライスの要素を変更するかもしれないが、スライス自身（ポインタ、長さ、容量を持った実行時データ構造）が値として渡されるからです。
 
-Maps can be constructed using the usual composite literal syntax with colon-separated key-value pairs, so it's easy to build them during initialization::
+.. Maps
+   ----
+
+マップ
+------
+
+.. Maps are a convenient and powerful built-in data structure to associate values of different types. The key can be of any type for which the equality operator is defined, such as integers, floats, strings, pointers, and interfaces (as long as the dynamic type supports equality). Structs, arrays and slices cannot be used as map keys, because equality is not defined on those types. Like slices, maps are a reference type. If you pass a map to a function that changes the contents of the map, the changes will be visible in the caller.
+
+マップは値を別の型に関連づける、便利で強力な組み込みデータ構造です。キーには整数や浮動小数点数、文字列、ポインタ、インターフェイス（動的型が同値をサポートする限り）のように同値演算子が定義されていればどんな型でも使えます。構造体、配列、またスライスは同値が定義されていないので、マップのキーとして使えません。スライスのようにマップは参照型です。そのマップ内部を変更する関数にマップを渡す場合、呼び出し側にも変更は見えます。
+
+.. Maps can be constructed using the usual composite literal syntax with colon-separated key-value pairs, so it's easy to build them during initialization::
+
+マップはコロンで分割したkey-valueペアをつかって普通の複合リテラル文法で構築する事ができます。初期化のときにつくるのも簡単。
+
+.. code-block:: cpp
 
   var timeZone = map[string] int {
       "UTC":  0*60*60,
@@ -829,13 +935,23 @@ Maps can be constructed using the usual composite literal syntax with colon-sepa
       "PST": -8*60*60,
   }
 
-Assigning and fetching map values looks syntactically just like doing the same for arrays except that the index doesn't need to be an integer. An attempt to fetch a map value with a key that is not present in the map will cause the program to crash, but there is a way to do so safely using a multiple assignment::
+.. Assigning and fetching map values looks syntactically just like doing the same for arrays except that the index doesn't need to be an integer. An attempt to fetch a map value with a key that is not present in the map will cause the program to crash, but there is a way to do so safely using a multiple assignment::
+
+マップの代入と読み出しはインデックスが整数でなくても良いという部分を除くとほぼ配列と同じです。存在しないキーを指定した場合、プログラムはクラッシュします。しかし、並列代入によってこれを安全に行う方法があります。
+
+.. code-block:: cpp
 
   var seconds int;
   var ok bool;
   seconds, ok = timeZone[tz]
 
-For obvious reasons this is called the “comma ok” idiom. In this example, if tz is present, seconds will be set appropriately and ok will be true; if not, seconds will be set to zero and ok will be false. Here's a function that puts it together::
+.. For obvious reasons this is called the “comma ok” idiom. In this example, if tz is present, seconds will be set appropriately and ok will be true; if not, seconds will be set to zero and ok will be false. Here's a function that puts it together::
+
+.. FIXME
+
+これは明確な理由で"comma ok"イディオムと呼ばれます。この例ではtzが存在していれば２つ目の右辺値にtrueが、でなければfalseが代入sレマス。以下は両者を出力する関数です:
+
+.. code-block:: cpp
 
   func offset(tz string) int {
       if seconds, ok := timeZone[tz]; ok {
@@ -924,7 +1040,13 @@ to print in the format::
 
   7/-2.35/"abc\tdef"
 
-Our String() method is able to call Sprintf because the print routines are fully reentrant and can be used recursively. We can even go one step further and pass a print routine's arguments directly to another such routine. The signature of Printf uses the ... type for its final argument to specify that an arbitrary number of parameters can appear after the format::
+.. Our String() method is able to call Sprintf because the print routines are fully reentrant and can be used recursively. We can even go one step further and pass a print routine's arguments directly to another such routine. The signature of Printf uses the ... type for its final argument to specify that an arbitrary number of parameters can appear after the format::
+
+.. FIXME
+
+printルーチンは完全に再入可能に書かれており、再帰的に利用する事ができ、この結果このString() メソッドはSprintfを呼び出す事ができます。
+
+.. code-block:: cpp
 
   func Printf(format string, v ...) (n int, errno os.Error) {
 
@@ -935,7 +1057,9 @@ Within the function Printf, v is a variable that can be passed, for instance, to
       stderr.Output(2, fmt.Sprintln(v));  // Output takes parameters (int, string)
   }
 
-There's even more to printing than we've covered here. See the godoc documentation for package fmt for the details.
+.. There's even more to printing than we've covered here. See the godoc documentation for package fmt for the details.
+
+表示についてここで全てを網羅することはできません。詳細についてはfmtパッケージのgodocドキュメントを参照してください。
 
 .. Initialization
    ==============
