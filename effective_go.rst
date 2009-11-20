@@ -251,7 +251,7 @@ Goの宣言構文は宣言のグループ化が可能です。1つのDocコメ�
 .. ---------------
 
 インターフェース名
----------------
+------------------
 
 .. By convention, one-method interfaces are named by the method name plus the -er suffix: Reader, Writer, Formatter etc.
 
@@ -265,7 +265,7 @@ Goの宣言構文は宣言のグループ化が可能です。1つのDocコメ�
 .. ---------
 
 大文字小文字の混在
----------
+------------------
 
 .. Finally, the convention in Go is to use MixedCaps or mixedCaps rather than underscores to write multiword names.
 
