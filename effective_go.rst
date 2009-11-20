@@ -626,7 +626,6 @@ Goの関数の”戻り値”は、ちょうど入力値のように、名前を
 ドキュメントでは、nextIntの戻り値に名前をつけ例が載っています。
 
 
-
 .. code-block:: cpp
   func nextInt(b []byte, pos int) (value, nextPos int) {
 
