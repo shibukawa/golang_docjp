@@ -1234,12 +1234,21 @@ When someone visits the page /args, the handler installed at that page has value
 
 In this section we have made an HTTP server from a struct, an integer, a channel, and a function, all because interfaces are just sets of methods, which can be defined for (almost) any type.
 
-Embedding
-=========
+.. Embedding
+   =========
 
-Go does not provide the typical, type-driven notion of subclassing, but it does have the ability to “borrow” pieces of an implementation by embedding types within a struct or interface.
+埋め込み
+========
 
-Interface embedding is very simple. We've mentioned the io.Reader and io.Writer interfaces before; here are their definitions::
+.. Go does not provide the typical, type-driven notion of subclassing, but it does have the ability to “borrow” pieces of an implementation by embedding types within a struct or interface.
+
+Goはよくみかける型駆動のサブクラス定義方法を提供しませんが、型をstructやinterfaceの中に埋め込むことによって実装の一部を"借りる"機能を持っています。
+
+.. Interface embedding is very simple. We've mentioned the io.Reader and io.Writer interfaces before; here are their definitions:
+
+インターフェースの埋め込みは非常にシンプルです。io.Readerとio.Writerインターフェースについては前にふれました。これらの定義は次のとおりです。
+
+.. code-block:: cpp
 
   type Reader interface {
       Read(p []byte) (n int, err os.Error);
@@ -1249,68 +1258,115 @@ Interface embedding is very simple. We've mentioned the io.Reader and io.Writer 
       Write(p []byte) (n int, err os.Error);
   }
 
-The io package also exports several other interfaces that specify objects that can implement several such methods. For instance, there is io.ReadWriter, an interface containing both Read and Write. We could specify io.ReadWriter by listing the two methods explicitly, but it's easier and more evocative to embed the two interfaces to form the new one, like this::
+.. The io package also exports several other interfaces that specify objects that can implement several such methods. For instance, there is io.ReadWriter, an interface containing both Read and Write. We could specify io.ReadWriter by listing the two methods explicitly, but it's easier and more evocative to embed the two interfaces to form the new one, like this:
 
-  // ReadWrite is the interface that groups the basic Read and Write methods.
+ioパッケージはこのようなメソッドを実装したオブジェクトを定義するインターフェースを他にもいくつかエクスポートします。たとえば、ReadとWriteを含んだio.ReadWriterがあります。io.ReadWriterは明示的に2つのメソッドを並べることで実装することもできますが、次のように2つのインターフェースを埋め込んで新しいものを作る方が簡単かつ刺激的です。
+
+.. code-block:: cpp
+
+  // ReadWriteは基本的なReadとWriteメソッドをグループ化したインターフェース。
   type ReadWriter interface {
       Reader;
       Writer;
   }
 
-This says just what it looks like: A ReadWriter can do what a Reader does and what a Writer does; it is a union of the embedded interfaces (which must be disjoint sets of methods). Only interfaces can be embedded within interfaces.
+..   // ReadWrite is the interface that groups the basic Read and Write methods.
 
-The same basic idea applies to structs, but with more far-reaching implications. The bufio package has two struct types, bufio.Reader and bufio.Writer, each of which of course implements the analogous interfaces from package io. And bufio also implements a buffered reader/writer, which it does by combining a reader and a writer into one struct using embedding: it lists the types within the struct but does not give them field names::
+.. This says just what it looks like: A ReadWriter can do what a Reader does and what a Writer does; it is a union of the embedded interfaces (which must be disjoint sets of methods). Only interfaces can be embedded within interfaces.
 
-  // ReadWriter stores pointers to a Reader and a Writer.
-  // It implements io.ReadWriter.
+これは見たとおりのことを行ないます。ReadWriterはReaderとWriterが提供するものを行なうことが可能です。つまり埋め込まれたインターフェースの和集合(これは互いに素な集合でなければなりません)です。インターフェースの中にはインターフェース以外のものは埋め込めません。
+
+.. The same basic idea applies to structs, but with more far-reaching implications. The bufio package has two struct types, bufio.Reader and bufio.Writer, each of which of course implements the analogous interfaces from package io. And bufio also implements a buffered reader/writer, which it does by combining a reader and a writer into one struct using embedding: it lists the types within the struct but does not give them field names:
+
+基本的な考え方はstructにもあてはまりますが、こちらはより広範囲に影響を及ぼします。bufioパッケージはbufio.Reader、bufio.Writerというふたつのstruct型を持ち、それらはもちろんioパッケージのものと類似したインターフェースの実装です。bufioはバッファリングされたreader/writerも実装しますが、これはreaderとwriterを1つのstructに埋め込むことによって行なわれます。型はstruct内に並べられますが、名前は与えられません。
+
+.. code-block:: cpp
+
+  // ReadWriterはReaderとWriterへのポインタを保持します。
+  // それがio.ReadWriterの実装となります。
   type ReadWriter struct {
       *Reader;
       *Writer;
   }
 
-This struct could be written as::
+..  // ReadWriter stores pointers to a Reader and a Writer.
+    // It implements io.ReadWriter.
+
+.. This struct could be written as:
+
+これは次のようにも書くことも可能です。
+
+.. code-block:: cpp
 
   type ReadWriter struct {
       reader *Reader;
       writer *Writer;
   }
 
-but then to promote the methods of the fields and to satisfy the io interfaces, we would also need to provide forwarding methods, like this::
+.. but then to promote the methods of the fields and to satisfy the io interfaces, we would also need to provide forwarding methods, like this::
+
+しかし、こうしてしまうとフィールドのメソッドを使うため、そしてioインターフェースを満たすためには次のような転送メソッドを提供する必要があるでしょう。
+
+.. code-block:: cpp
 
   func (rw *ReadWriter) Read(p []byte) (n int, err os.Error) {
       return rw.reader.Read(p)
   }
 
-By embedding the structs directly, we avoid this bookkeeping. The methods of embedded types come along for free, which means that bufio.ReadWriter not only has the methods of bufio.Reader and bufio.Writer, it also satisfies all three interfaces: io.Reader, io.Writer, and io.ReadWriter.
+.. By embedding the structs directly, we avoid this bookkeeping. The methods of embedded types come along for free, which means that bufio.ReadWriter not only has the methods of bufio.Reader and bufio.Writer, it also satisfies all three interfaces: io.Reader, io.Writer, and io.ReadWriter.
 
-There's an important way in which embedding differs from subclassing. When we embed a type, the methods of that type become methods of the outer type, but when they are invoked the receiver of the method is the inner type, not the outer one. In our example, when the Read method of a bufio.ReadWriter is invoked, it has exactly the same effect as the forwarding method written out above; the receiver is the reader field of the ReadWriter, not the ReadWriter itself.
+structを直接埋め込むことにより、このbookkeepingを避けられます。埋め込まれた型のメソッドはただで手に入ります。つまりbufio.ReadWriterはbufio.Readerとbufio.Writerのメソッドを持つだけではなく、io.Reader、io.Writer、io.ReadWriterのインターフェースを満たします。
 
-Embedding can also be a simple convenience. This example shows an embedded field alongside a regular, named field::
+.. There's an important way in which embedding differs from subclassing. When we embed a type, the methods of that type become methods of the outer type, but when they are invoked the receiver of the method is the inner type, not the outer one. In our example, when the Read method of a bufio.ReadWriter is invoked, it has exactly the same effect as the forwarding method written out above; the receiver is the reader field of the ReadWriter, not the ReadWriter itself.
+
+埋め込みとサブクラスは重要な点で異なります。型が埋め込まれる時、その型のメソッドは外側の型のメソッドとなります。しかしそれらが呼び出される時、メソッドの受け取り側は内側の型であり、外側のものではありません。例では、bufio.ReadWriterのReadメソッドが呼び出される時、ちょうど前に書いた転送メソッドと同様の動作をします。つまり、受け側はReadWriterのreaderフィールドでありReadWriter自体ではありません。
+
+.. Embedding can also be a simple convenience. This example shows an embedded field alongside a regular, named field:
+
+埋め込みは簡単で便利なものです。次の例では埋め込みフィールドと通常の名前つきフィールドとが一緒になったものです。
+
+.. code-block: cpp
 
   type Job struct {
       Command    string;
       *log.Logger;
   }
 
-The Job type now has the Log, Logf and other methods of log.Logger. We could have given the Logger a field name, of course, but it's not necessary to do so. And now we can log to a Job::
+.. The Job type now has the Log, Logf and other methods of log.Logger. We could have given the Logger a field name, of course, but it's not necessary to do so. And now we can log to a Job:
+
+Job型はLogとLogf、そしてlog.Loggerのメソッドを持ちます。もちろんLoggerにフィールド名をつけることも出来ますが、なくてもかまいません。これで次のようにログを書き出せます。
+
+.. code-block:: cpp
 
   job.Log("starting now...");
 
-The Logger is a regular field of the struct and we can initialize it in the usual way::
+.. The Logger is a regular field of the struct and we can initialize it in the usual way:
+
+Loggerはstruct内の普通のフィールドであり、いつもの方法で初期化できます。
+
+.. code-block: cpp
 
   func NewJob(command string, logger *log.Logger) *Job {
       return &Job{command, logger}
   }
 
-If we need to refer to an embedded field directly, the type name of the field, ignoring the package qualifier, serves as a field name. If we needed to access the \*log.Logger of a Job variable job, we would write job.Logger. This would be useful if we wanted to refine the methods of Logger::
+.. If we need to refer to an embedded field directly, the type name of the field, ignoring the package qualifier, serves as a field name. If we needed to access the \*log.Logger of a Job variable job, we would write job.Logger. This would be useful if we wanted to refine the methods of Logger::
+
+埋め込まれたフィールドを直接参照する必要がある場合、そのフィールドの型名のパッケージ修飾を省いた形がフィールド名となります。Job変数、jobの\*log.Loggerにアクセスする場合job.Loggerとなるでしょう。これはLoggerのメソッドを改良する際に便利です。
+
+.. code-block:: cpp
 
   func (job *Job) Logf(format string, args ...) {
       job.Logger.Logf("%q: %s", job.Command, fmt.Sprintf(format, args));
   }
 
-Embedding types introduces the problem of name conflicts but the rules to resolve them are simple. First, a field or method X hides any other item X in a more deeply nested part of the type. If log.Logger contained a field or method called Command, the Command field of Job would dominate it.
+.. Embedding types introduces the problem of name conflicts but the rules to resolve them are simple. First, a field or method X hides any other item X in a more deeply nested part of the type. If log.Logger contained a field or method called Command, the Command field of Job would dominate it.
 
-Second, if the same name appears at the same nesting level, it is usually an error; it would be erroneous to embed log.Logger if Job struct contained another field or method called Logger. However, if the duplicate name is never mentioned in the program outside the type definition, it is OK. This qualification provides some protection against changes made to types embedded from outside; there is no problem if a field is added that conflicts with another field in another subtype if neither field is ever used.
+埋め込み型名前の衝突問題を発生させますが、それらを解決するルールは簡単なものです。まず、フィールドまたはメソッドXは奥深くにネストされた型のXを隠してしまいます。もしlog.LoggerがCommandというフィールドやメソッドを含んでいたら、JobのCommandフィールドが優先されます。
+
+.. Second, if the same name appears at the same nesting level, it is usually an error; it would be erroneous to embed log.Logger if Job struct contained another field or method called Logger. However, if the duplicate name is never mentioned in the program outside the type definition, it is OK. This qualification provides some protection against changes made to types embedded from outside; there is no problem if a field is added that conflicts with another field in another subtype if neither field is ever used.
+
+次に、同じ階層に同じ名前が現われる場合は通常エラーとなります。Job structがLoggerというフィールドやメソッドを持つ時にlog.Loggerを埋め込むのは間違いでしょう。しかしその重複した名前が型定義の外で振れられない場合は問題とはなりません。これは外側で埋め込まれる型からの保護を提供します。そのフィールドが使用されない限りは名前が他の下位の型と衝突するものであっても問題はありません。
 
 Concurrency
 ===========
