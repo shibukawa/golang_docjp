@@ -567,6 +567,7 @@ G言語では、Writeオブジェクトは、数値と ”デバイスが一杯�
 osパッケージの*File.Writeオブジェクトのシグネチャは以下のようになります。
 
 .. code-block:: cpp
+
   func (file *File) Write(b []byte) (n int, err Error)
 
 .. and as the documentation says, it returns the number of bytes written and a non-nil Error when n != len(b).
@@ -584,6 +585,7 @@ osパッケージの*File.Writeオブジェクトのシグネチャは以下の�
 以下は、バイト配列の中から、指定した添え字の数値とその次の添え字を取り出す簡単な関数です。
 
 .. code-block:: cpp
+
   func nextInt(b []byte, i int) (int, int) {
       for ; i < len(b) && !isDigit(b[i]); i++ {
       }
@@ -598,6 +600,7 @@ osパッケージの*File.Writeオブジェクトのシグネチャは以下の�
 これは次のように、入力した配列から数値を探し出すのに使うことができます。
 
 .. code-block:: cpp
+
     for i := 0; i < len(a); {
         x, i = nextInt(a, i);
         fmt.Println(x);
@@ -627,6 +630,7 @@ Goの関数の”戻り値”は、ちょうど入力値のように、名前を
 
 
 .. code-block:: cpp
+
   func nextInt(b []byte, pos int) (value, nextPos int) {
 
 .. Because named results are initialized and tied to an unadorned return, they can simplify as well as clarify.
@@ -638,6 +642,7 @@ Goの関数の”戻り値”は、ちょうど入力値のように、名前を
 
 
 .. code-block:: cpp
+
   func ReadFull(r Reader, buf []byte) (n int, err os.Error) {
       for len(buf) > 0 && err == nil {
           var nr int;
