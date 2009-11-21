@@ -1552,20 +1552,37 @@ Loggerはstruct内の普通のフィールドであり、いつもの方法で�
 
 次に、同じ階層に同じ名前が現われる場合は通常エラーとなります。Job structがLoggerというフィールドやメソッドを持つ時にlog.Loggerを埋め込むのは間違いでしょう。しかしその重複した名前が型定義の外で振れられない場合は問題とはなりません。これは外側で埋め込まれる型からの保護を提供します。そのフィールドが使用されない限りは名前が他の下位の型と衝突するものであっても問題はありません。
 
-Concurrency
-===========
+.. Concurrency
+   ===========
 
-Share by communicating
-----------------------
+並列処理
+========
 
-Concurrent programming is a large topic and there is space only for some Go-specific highlights here.
+.. Share by communicating
+   ----------------------
 
-Concurrent programming in many environments is made difficult by the subtleties required to implement correct access to shared variables. Go encourages a different approach in which shared values are passed around on channels and, in fact, never actively shared by separate threads of execution. Only one goroutine has access to the value at any given time. Data races cannot occur, by design. To encourage this way of thinking we have reduced it to a slogan:
+通信による共有
+--------------
 
-Do not communicate by sharing memory; instead, share memory by communicating.
-This approach can be taken too far. Reference counts may be best done by putting a mutex around an integer variable, for instance. But as a high-level approach, using channels to control access makes it easier to write clear, correct programs.
+.. Concurrent programming is a large topic and there is space only for some Go-specific highlights here.
 
-One way to think about this model is to consider a typical single-threaded program running on one CPU. It has no need for synchronization primitives. Now run another such instance; it too needs no synchronization. Now let those two communicate; if the communication is the synchronizer, there's still no need for other synchronization. Unix pipelines, for example, fit this model perfectly. Although Go's approach to concurrency originates in Hoare's Communicating Sequential Processes (CSP), it can also be seen as a type-safe generalization of Unix pipes.
+並列プログラミングは大きなテーマなので、ここではGoに特化したハイライトだけを紹介します。
+
+.. Concurrent programming in many environments is made difficult by the subtleties required to implement correct access to shared variables. Go encourages a different approach in which shared values are passed around on channels and, in fact, never actively shared by separate threads of execution. Only one goroutine has access to the value at any given time. Data races cannot occur, by design. To encourage this way of thinking we have reduced it to a slogan:
+
+共有する変数に正しくアクセスする手段を提供するのに必要となる繊細さにより、多くの環境で並列プログラミングは難しいものとなっています。Goは異なるアプローチをとり、共有する値はチャンネル上でやりとりされ、実際スレッド間で活発に共有されることはありません。ある値へのアクセスはどんなときでもひとつのGoroutineしか持たず、設計上競合状態になることはありえません。このような考え方を奨励するため、次のスローガンにまとめました。\ ::
+
+   共有メモリを使って通信せず、通信によってメモリを共有せよ。
+
+.. Do not communicate by sharing memory; instead, share memory by communicating.
+
+.. This approach can be taken too far. Reference counts may be best done by putting a mutex around an integer variable, for instance. But as a high-level approach, using channels to control access makes it easier to write clear, correct programs.
+
+このアプローチは過剰だととることもできます。たとえばリファレンスカウントは整数の変数にmutexを使うことで最もうまく行なえるかもしれません。しかし、高レベルなアプローチではチャンネルを使ってアクセスを制御する方が明解で正しいプログラムをより簡単に書くことができます。
+
+.. One way to think about this model is to consider a typical single-threaded program running on one CPU. It has no need for synchronization primitives. Now run another such instance; it too needs no synchronization. Now let those two communicate; if the communication is the synchronizer, there's still no need for other synchronization. Unix pipelines, for example, fit this model perfectly. Although Go's approach to concurrency originates in Hoare's Communicating Sequential Processes (CSP), it can also be seen as a type-safe generalization of Unix pipes.
+
+このモデルについて考えてみるため、1つのCPU上で走る典型的なシングルスレッドのプログラムについて考察してみましょう。これに同期プリミティブは必要ありません。もうひとつそのようなプログラムを走らせてみましょう。これもまた同期は不要です。ではこれらを互いに通信させてみましょう。その通信がsynchronizerであれば、まだ同期は不要です。たとえばUnixのパイプラインがこのモデルに完全にあてはまります。Goの並列処理のアプローチはHoareのCommunicating Sequential Processes (CSP)に由来するものですが、Unixパイプのtype-safe generalizationとしてみることもできるでしょう。
 
 Goroutines
 ----------
