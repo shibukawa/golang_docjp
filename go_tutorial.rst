@@ -811,7 +811,9 @@ cat()サブルーチンはfのRead()とString()という2つのメソッドの�
    49    }
    50    // rotate13の実装はここまで
 
-(The rot13 function called on line 42 is trivial and not worth reproducing here.)
+.. (The rot13 function called on line 42 is trivial and not worth reproducing here.)
+
+（42行目で呼ばれているrot13関数にはあまり意味がなく、ここで再作成する必要ありません。）
 
 .. To use the new feature, we define a flag:
 
