@@ -251,7 +251,7 @@ Goの宣言構文は宣言のグループ化が可能です。1つのDocコメ�
 .. ---------------
 
 インターフェース名
----------------
+------------------
 
 .. By convention, one-method interfaces are named by the method name plus the -er suffix: Reader, Writer, Formatter etc.
 
@@ -265,7 +265,7 @@ Goの宣言構文は宣言のグループ化が可能です。1つのDocコメ�
 .. ---------
 
 大文字小文字の混在
----------
+------------------
 
 .. Finally, the convention in Go is to use MixedCaps or mixedCaps rather than underscores to write multiword names.
 
@@ -539,21 +539,54 @@ switchはインタフェース変数の動的な型を調べる時にも使わ�
       fmt.Printf("pointer to integer %d\n", *t);
   }
 
-Functions
+.. Functions
+
+関数
 =========
 
-Multiple return values
+.. Multiple return values
+
+複数の戻り値
 ----------------------
 
-One of Go's unusual features is that functions and methods can return multiple values. This can be used to improve on a couple of clumsy idioms in C programs: in-band error returns (such as -1 for EOF) and modifying an argument.
+.. One of Go's unusual features is that functions and methods can return multiple values. 
+.. This can be used to improve on a couple of clumsy idioms in C programs: in-band error returns (such as -1 for EOF) and modifying an argument.
 
-In C, a write error is signaled by a negative count with the error code secreted away in a volatile location. In Go, Write can return a count and an error: “Yes, you wrote some bytes but not all of them because you filled the device”. The signature of \*File.Write in package os is::
+Goでは、関数やメソッドは複数の値を返すことが出来ます。これは珍しい特徴ですが、C言語の(EOFをあらわす-1のような)in-bandエラーの戻り値や,
+引数の変更といったような醜い構文を改善することが出来ます。
+clumsy idioms=不器用な熟語
+argument=引数
+
+
+.. In C, a write error is signaled by a negative count with the error code secreted away in a volatile location.
+.. In Go, Write can return a count and an error: “Yes, you wrote some bytes but not all of them because you filled the device”. 
+.. The signature of *File.Write in package os is::
+
+C言語では、書き込みエラーは、負の数値と非永続領域に隠蔽されたエラーコードによって通知されます。
+C言語では、書き込みエラーは負の数値で通知され、エラーコードはどこかに隠されてしまいます。
+
+G言語では、Writeオブジェクトは、数値と ”デバイスが一杯になったので、データの一部は書き込まれませんでした”というエラーを返します。
+osパッケージの*File.Writeオブジェクトのシグネチャは以下のようになります。
+
+.. code-block:: cpp
 
   func (file *File) Write(b []byte) (n int, err Error)
 
-and as the documentation says, it returns the number of bytes written and a non-nil Error when n != len(b). This is a common style; see the section on error handling for more examples.
+.. and as the documentation says, it returns the number of bytes written and a non-nil Error when n != len(b).
+.. This is a common style; see the section on error handling for more examples.
 
-A similar approach obviates the need to pass a pointer to a return value to simulate a reference parameter. Here's a simple-minded function to grab a number from a position in a byte array, returning the number and the next position::
+ドキュメントよるとWriteは戻り値として、書き込まれたデータのバイト数と、
+もし全てが書き込まれなかった場合(n != len(b)のとき)にはnilでないエラーを返すと書かれています。
+これは共通のスタイルです。もしもっとたくさんの例を見たければ、エラーのセクションを参照してください。
+
+
+.. A similar approach obviates the need to pass a pointer to a return value to simulate a reference parameter.
+.. Here's a simple-minded function to grab a number from a position in a byte array, returning the number and the next position::
+
+似たようなアプローチをとることで、参照変数をシミュレートするために戻り値にポインタを渡す必要がなくなります。
+以下は、バイト配列の中から、指定した添え字の数値とその次の添え字を取り出す簡単な関数です。
+
+.. code-block:: cpp
 
   func nextInt(b []byte, i int) (int, int) {
       for ; i < len(b) && !isDigit(b[i]); i++ {
@@ -565,23 +598,54 @@ A similar approach obviates the need to pass a pointer to a return value to simu
       return x, i;
   }
 
-You could use it to scan the numbers in an input array a like this::
+.. You could use it to scan the numbers in an input array a like this::
+
+これは次のように、入力した配列から数値を探し出すのに使うことができます。
+
+.. code-block:: cpp
 
     for i := 0; i < len(a); {
         x, i = nextInt(a, i);
         fmt.Println(x);
     }
 
-Named result parameters
+.. Named result parameters
+
+名前付けされた戻り値
 -----------------------
 
-The return or result "parameters" of a Go function can be given names and used as regular variables, just like the incoming parameters. When named, they are initialized to the zero values for their types when the function begins; if the function executes a return statement with no arguments, the current values of the result parameters are used as the returned values.
+.. The return or result "parameters" of a Go function can be given names and used as regular variables, 
+.. just like the incoming parameters. When named, they are
 
-The names are not mandatory but they can make code shorter and clearer: they're documentation. If we name the results of nextInt it becomes obvious which returned int is which::
+Goの関数の”戻り値”は、ちょうど入力値のように、名前をつけ普通の変数として扱うことが出来ます。
+
+.. initialized to the zero values for their types when the function begins; 
+.. if the function executes a return statement with no arguments, the current values of the 
+.. result parameters are used as the returned values.
+
+名前がつけられると、関数が始まるときにそれらの変数は、型に合った初期値で初期化されます。
+もし、関数が実行された結果値を返さなかったら、その時点での変数の値が戻り値として返されます。
+
+.. The names are not mandatory but they can make code shorter and clearer: they're documentation. 
+.. If we name the results of nextInt it becomes obvious which returned int is which::
+
+名前は必須ではありませんが、記述することで、コードを短く、読みやすく出来ます。
+ドキュメントでは、nextIntの戻り値に名前をつけ例が載っています。
+
+
+.. code-block:: cpp
 
   func nextInt(b []byte, pos int) (value, nextPos int) {
 
-Because named results are initialized and tied to an unadorned return, they can simplify as well as clarify. Here's a version of io.ReadFull that uses them well::
+.. Because named results are initialized and tied to an unadorned return, they can simplify as well as clarify.
+.. Here's a version of io.ReadFull that uses them well::
+
+名前付けされた戻り値は初期化され、名前付けされていない変数と結び付けられます。
+これらはとてもシンプルに記述できるだけでなく、分かりやすくすることができます。
+以下は、io.ReadFullをこれらを上手く用いて、書き直したものです。
+
+
+.. code-block:: cpp
 
   func ReadFull(r Reader, buf []byte) (n int, err os.Error) {
       for len(buf) > 0 && err == nil {
@@ -593,32 +657,57 @@ Because named results are initialized and tied to an unadorned return, they can 
       return;
   }
 
-Data
-====
+.. Data
+   ====
 
-Allocation with new()
----------------------
+データ
+======
 
-Go has two allocation primitives, new() and make(). They do different things and apply to different types, which can be confusing, but the rules are simple. Let's talk about new() first. It's a built-in function essentially the same as its namesakes in other languages: new(T) allocates zeroed storage for a new item of type T and returns its address, a value of type \*T. In Go terminology, it returns a pointer to a newly allocated zero value of type T.
+.. Allocation with new()
+   ---------------------
 
-Since the memory returned by new() is zeroed, it's helpful to arrange that the zeroed object can be used without further initialization. This means a user of the data structure can create one with new() and get right to work. For example, the documentation for bytes.Buffer states that "the zero value for Buffer is an empty buffer ready to use." Similarly, sync.Mutex does not have an explicit constructor or Init method. Instead, the zero value for a sync.Mutex is defined to be an unlocked mutex.
+new()によるメモリ割り当て
+-------------------------
 
-The zero-value-is-useful property works transitively. Consider this type declaration::
+.. Go has two allocation primitives, new() and make(). They do different things and apply to different types, which can be confusing, but the rules are simple. Let's talk about new() first. It's a built-in function essentially the same as its namesakes in other languages: new(T) allocates zeroed storage for a new item of type T and returns its address, a value of type \*T. In Go terminology, it returns a pointer to a newly allocated zero value of type T.
+
+Goはメモリ割り当てプリミティブとしてnew()とmake()の２つを持っています。これらは動作も適用される型も異なっている為、混乱を招くかもしれませんがルールは単純です。まずはnew()から始めましょう。new()は組み込み関数で、他の言語での同名のものと本質的に同じです。new(T)は、T型のゼロで初期化された新しい要素を割り当て、そのアドレスを*T型の値として返します。Goの用語では、new(T)は新しく確保されたT型のゼロ値へのポインタを返します。
+
+.. Since the memory returned by new() is zeroed, it's helpful to arrange that the zeroed object can be used without further initialization. This means a user of the data structure can create one with new() and get right to work. For example, the documentation for bytes.Buffer states that "the zero value for Buffer is an empty buffer ready to use." Similarly, sync.Mutex does not have an explicit constructor or Init method. Instead, the zero value for a sync.Mutex is defined to be an unlocked mutex.
+
+new()に返されたメモリはゼロクリアされているため、初期値がゼロで良いようなオブジェクトを使う場合には、特に初期化する事無く使う事ができて便利です。つまり、そのデータ構造は単にnew()するだけできちんと動作する、という事です。例えば、bytes.Bufferのドキュメントには、「ゼロの値をもつバッファは利用可能状態の空のバッファである」と定められています。同様にsync.Mutexも明示的なコンストラクタやInitメソッドを持ちません。代わりに、ゼロの値をもつsync.Mutexは非ロック状態のmutexであると定義されています。
+
+.. The zero-value-is-useful property works transitively. Consider this type declaration::
+
+「ゼロによる初期化は有用」という特徴は遷移的です。次の型宣言を考えてみましょう:
+
+.. code-block:: cpp
 
   type SyncedBuffer struct {
-      lock    sync.Mutex;
+      lock      sync.Mutex;
       buffer    bytes.Buffer;
   }
 
-Values of type SyncedBuffer are also ready to use immediately upon allocation or just declaration. In this snippet, both p and v will work correctly without further arrangement::
+.. Values of type SyncedBuffer are also ready to use immediately upon allocation or just declaration. In this snippet, both p and v will work correctly without further arrangement::
+
+SyncedBuffer型の値はnew()によるメモリ割り当てでも、単なる宣言であっても即使えるようになります。次のコード片では特に調整しなくてもp, v両方とも正しく動作します:
+
+.. code-block:: cpp
 
   p := new(SyncedBuffer);  // type *SyncedBuffer
   var v SyncedBuffer;      // type  SyncedBuffer
 
-Constructors and composite literals
------------------------------------
+.. Constructors and composite literals
+   -----------------------------------
 
-Sometimes the zero value isn't good enough and an initializing constructor is necessary, as in this example derived from package os::
+コンストラクタと複合リテラル
+----------------------------
+
+.. Sometimes the zero value isn't good enough and an initializing constructor is necessary, as in this example derived from package os::
+
+時としてゼロ値だけでは不十分で、初期化コンストラクタが必要となる場合もあります。以下の例はosパッケージから派生した物です:
+
+.. code-block:: cpp
 
   func NewFile(fd int, name string) *File {
       if fd < 0 {
@@ -632,7 +721,11 @@ Sometimes the zero value isn't good enough and an initializing constructor is ne
       return f;
   }
 
-There's a lot of boiler plate in there. We can simplify it using a composite literal, which is an expression that creates a new instance each time it is evaluated::
+.. There's a lot of boiler plate in there. We can simplify it using a composite literal, which is an expression that creates a new instance each time it is evaluated::
+
+上のコードはいささか冗長で、複合リテラルを使う事で簡単にできます。複合リテラルは評価されるたびに新しいインスタンスを生成する式です:
+
+.. code-block:: cpp
 
   func NewFile(fd int, name string) *File {
       if fd < 0 {
@@ -642,32 +735,59 @@ There's a lot of boiler plate in there. We can simplify it using a composite lit
       return &f;
   }
 
-Note that it's perfectly OK to return the address of a local variable; the storage associated with the variable survives after the function returns. In fact, taking the address of a composite literal allocates a fresh instance each time it is evaluated, so we can combine these last two lines::
+.. Note that it's perfectly OK to return the address of a local variable; the storage associated with the variable survives after the function returns. In fact, taking the address of a composite literal allocates a fresh instance each time it is evaluated, so we can combine these last two lines::
+
+ここで注意すべき点は、ローカル変数のアドレスを戻り値にするのは完全に合法であり、変数領域は関数が帰った後も保持される、ということです。実のところ、複合リテラルのアドレスを取得すると、その式が評価されるごとに新しいインスタンスが割り当てられので、最後の2行は1行にまとめる事ができます:
+
+.. code-block:: cpp
 
     return &File{fd, name, nil, 0};
 
-The fields of a composite literal are laid out in order and must all be present. However, by labeling the elements explicitly as field:value pairs, the initializers can appear in any order, with the missing ones left as their respective zero values. Thus we could say::
+.. The fields of a composite literal are laid out in order and must all be present. However, by labeling the elements explicitly as field:value pairs, the initializers can appear in any order, with the missing ones left as their respective zero values. Thus we could say::
+
+複合リテラルのフィールドは定義順通りで、かつ漏れなく指定する必要があります。しかしながら、要素を明示的に field:value ペアのように書く事で任意の順序で書く事ができます。また指定が無いフィールドはゼロに初期化されます。結局、以下のように書く事ができます:
+
+.. code-block:: cpp
 
     return &File{fd: fd, name: name}
 
-As a limiting case, if a composite literal contains no fields at all, it creates a zero value for the type. The expressions new(File) and &File{} are equivalent.
+.. As a limiting case, if a composite literal contains no fields at all, it creates a zero value for the type. The expressions new(File) and &File{} are equivalent.
 
-Composite literals can also be created for arrays, slices, and maps, with the field labels being indices or map keys as appropriate. In these examples, the initializations work regardless of the values of Enone, Eio, and Einval, as long as they are distinct::
+稀なケースとして、全くフィールドを含まない複合リテラルの場合、その型のゼロ値を生成します。new(File)と&File{}は等価です:
+
+.. Composite literals can also be created for arrays, slices, and maps, with the field labels being indices or map keys as appropriate. In these examples, the initializations work regardless of the values of Enone, Eio, and Einval, as long as they are distinct::
+
+複合リテラルは配列やスライス、マップの生成にも使えます。その場合フィールドにつけたラベルは、インデックスかマップのキーになります。以下の例では、Enone, Eio, Einvalは異なってさえいれば値に関わらず初期化は動作します:
+
+.. code-block:: cpp
 
   a := [...]string   {Enone: "no error", Eio: "Eio", Einval: "invalid argument"};
   s := []string      {Enone: "no error", Eio: "Eio", Einval: "invalid argument"};
   m := map[int]string{Enone: "no error", Eio: "Eio", Einval: "invalid argument"};
 
-Allocation with make()
-----------------------
+.. Allocation with make()
+   ----------------------
 
-Back to allocation. The built-in function make(T, args) serves a purpose different from new(T). It creates slices, maps, and channels only, and it returns an initialized (not zero) value of type T, not \*T. The reason for the distinction is that these three types are, under the covers, references to data structures that must be initialized before use. A slice, for example, is a three-item descriptor containing a pointer to the data (inside an array), the length, and the capacity; until those items are initialized, the slice is nil. For slices, maps, and channels, make initializes the internal data structure and prepares the value for use. For instance::
+make()によるメモリ割り当て
+--------------------------
+
+.. Back to allocation. The built-in function make(T, args) serves a purpose different from new(T). It creates slices, maps, and channels only, and it returns an initialized (not zero) value of type T, not \*T. The reason for the distinction is that these three types are, under the covers, references to data structures that must be initialized before use. A slice, for example, is a three-item descriptor containing a pointer to the data (inside an array), the length, and the capacity; until those items are initialized, the slice is nil. For slices, maps, and channels, make initializes the internal data structure and prepares the value for use. For instance::
+
+メモリ割り当てに戻りましょう。組み込み関数make(T, args)はnew(T)とは違った目的に使われます。make()はスライス、マップ、チャンネル専用で、初期化（ゼロではありません）したT型(\*T型ではありません）を返します。この区別をしている理由は、内部的にはこれら３つのタイプが、使用前に初期化が必要なデータ構造へのリファレンスとなっているためです。例えばスライスは３要素の記述子で（配列内の）データへのポインタ、長さ、容量を含んでいます。これらが初期化されるまで、スライスはnilです。スライス、マップ、チャンネルは make は内部構造を初期化し、使用する為の値を準備します。たとえば:
+
+.. code-block:: cpp
 
   make([]int, 10, 100)
 
-allocates an array of 100 ints and then creates a slice structure with length 10 and a capacity of 100 pointing at the first 10 elements of the array. (When making a slice, the capacity can be omitted; see the section on slices for more information.) In contrast, new([]int) returns a pointer to a newly allocated, zeroed slice structure, that is, a pointer to a nil slice value.
+.. allocates an array of 100 ints and then creates a slice structure with length 10 and a capacity of 100 pointing at the first 10 elements of the array. (When making a slice, the capacity can be omitted; see the section on slices for more information.) In contrast, new([]int) returns a pointer to a newly allocated, zeroed slice structure, that is, a pointer to a nil slice value.
 
-These examples illustrate the difference between new() and make()::
+上記コードは100個のint配列を割り当て、その後、スライスの構造を長さ10で容量100(スライスを作る際、容量は無視されることがあります。詳細はスライスの節を参照してください)。対照的に new([]int)は新規に割り当てたゼロ値のスライス構造へのポインタ、すなわちnilスライスへのポインタを返します。
+
+.. These examples illustrate the difference between new() and make()::
+
+次の例はnew(), make()の違いを示しています。
+
+.. code-block:: cpp
 
   var p *[]int = new([]int);       // allocates slice structure; *p == nil; rarely useful
   var v  []int = make([]int, 100); // v now refers to a new array of 100 ints
@@ -679,20 +799,35 @@ These examples illustrate the difference between new() and make()::
   // Idiomatic:
   v := make([]int, 100);
 
-Remember that make() applies only to maps, slices and channels and does not return a pointer. To obtain an explicit pointer allocate with new().
+.. Remember that make() applies only to maps, slices and channels and does not return a pointer. To obtain an explicit pointer allocate with new().
 
-Arrays
-------
+make()はマップ、スライス、チャネルのいずれかのみで、ポインタを返さないことを思い出してください。明示的にポインタを欲しいときはnew()で割り当てます。
+
+.. Arrays
+   ------
+
+配列
+----
 
 Arrays are useful when planning the detailed layout of memory and sometimes can help avoid allocation, but primarily they are a building block for slices, the subject of the next section. To lay the foundation for that topic, here are a few words about arrays.
 
-There are major differences between the ways arrays work in Go and C. In Go,
+.. There are major differences between the ways arrays work in Go and C. In Go,
 
-* Arrays are values. Assigning one array to another copies all the elements.
-* In particular, if you pass an array to a function, it will receive a copy of the array, not a pointer to it.
-* The size of an array is part of its type. The types [10]int and [20]int are distinct.
+配列の動作においてGoとCには大きな違いがある。
 
-The value property can be useful but also expensive; if you want C-like behavior and efficiency, you can pass a pointer to the array::
+.. * Arrays are values. Assigning one array to another copies all the elements.
+   * In particular, if you pass an array to a function, it will receive a copy of the array, not a pointer to it.
+   * The size of an array is part of its type. The types [10]int and [20]int are distinct.
+
+* 配列は値です。ある配列を別の配列に代入することは全要素のコピーになります。
+* 特に、配列を関数に渡す場合、ポインタではなく、ポインタではなく配列のコピーを受け取る事になります。
+* 配列のサイズは型の一部です。[10]int と [20]int は異なる型となります。
+
+.. The value property can be useful but also expensive; if you want C-like behavior and efficiency, you can pass a pointer to the array::
+
+配列が値である、という特性は便利ですが同時に効率が悪くなります。Cのような振る舞いと効率を求めるなら、配列のポインタを渡す事もできます。
+
+.. code-block:: cpp
 
   func Sum(a *[3]float) (sum float) {
       for _, v := range a {
@@ -704,22 +839,36 @@ The value property can be useful but also expensive; if you want C-like behavior
   array := [...]float{7.0, 8.5, 9.1};
   x := sum(&array);  // Note the explicit address-of operator
 
-But even this style isn't idiomatic Go. Slices are.
+.. But even this style isn't idiomatic Go. Slices are.
+
+しかし、この書き方もまたGoの慣用的なスタイルではありません。スライスがそれです。
 
 Slices
 ------
 
-Slices wrap arrays to give a more general, powerful, and convenient interface to sequences of data. Except for items with explicit dimension such as transformation matrices, most array programming in Go is done with slices rather than simple arrays.
+.. Slices wrap arrays to give a more general, powerful, and convenient interface to sequences of data. Except for items with explicit dimension such as transformation matrices, most array programming in Go is done with slices rather than simple arrays.
 
-Slices are reference types, which means that if you assign one slice to another, both refer to the same underlying array. For instance, if a function takes a slice argument, changes it makes to the elements of the slice will be visible to the caller, analogous to passing a pointer to the underlying array. A Read function can therefore accept a slice argument rather than a pointer and a count; the length within the slice sets an upper limit of how much data to read. Here is the signature of the Read method of the File type in package os::
+スライスは配列をラップし、連続データへの汎用的・強力かつ便利なインターフェイスを提供します。変換行列のような明示的な次元を持つものを除き、Goでは殆どの配列プログラミングで、単純な配列よりむしろスライスの方が使われます。
+
+.. Slices are reference types, which means that if you assign one slice to another, both refer to the same underlying array. For instance, if a function takes a slice argument, changes it makes to the elements of the slice will be visible to the caller, analogous to passing a pointer to the underlying array. A Read function can therefore accept a slice argument rather than a pointer and a count; the length within the slice sets an upper limit of how much data to read. Here is the signature of the Read method of the File type in package os::
+
+スライスは参照型、つまりスライスに別のスライスを代入した場合、双方のスライスは同じ配列を指している。例えば、スライスを引数にとる関数の場合、その関数がスライスの要素に行った変更は呼び出し元(caller)にも見えてしまう、という元の配列のポインタを渡すのと類似のことが起こる。Read関数は従ってポインタと数を渡すのではなく、スライスを受け付ける事ができる。スライスの長さパラメータはデータをどれだけ読むかの上限値になる。次の行はosパッケージ：File型のReadメソッドのシグネチャである。
+
+.. code-block:: cpp
 
     func (file *File) Read(buf []byte) (n int, err os.Error)
 
-The method returns the number of bytes read and an error value, if any. To read into the first 32 bytes of a larger buffer b, slice (here used as a verb) the buffer::
+.. The method returns the number of bytes read and an error value, if any. To read into the first 32 bytes of a larger buffer b, slice (here used as a verb) the buffer::
+
+このメソッドはリードしたバイト数および（もしあれば）エラー値を返します。大きなバッファbから最初の32バイトを読むには以下のようにバッファをスライスします。
 
     n, err := f.Read(buf[0:32]);
 
-Such slicing is common and efficient. In fact, leaving efficiency aside for the moment, this snippet would also read the first 32 bytes of the buffer::
+.. Such slicing is common and efficient. In fact, leaving efficiency aside for the moment, this snippet would also read the first 32 bytes of the buffer::
+
+このようなスライスは一般的で効率が良いです。実際、効率を無視すれば、次のようなコードでも同じ事が可能です。
+
+.. code-block:: cpp
 
     var n int;
     var err os.Error;
@@ -732,7 +881,11 @@ Such slicing is common and efficient. In fact, leaving efficiency aside for the 
         n += nbytes;
     }
 
-The length of a slice may be changed as long as it still fits within the limits of the underlying array; just assign it to a slice of itself. The capacity of a slice, accessible by the built-in function cap, reports the maximum length the slice may assume. Here is a function to append data to a slice. If the data exceeds the capacity, the slice is reallocated. The resulting slice is returned. The function uses the fact that len and cap are legal when applied to the nil slice, and return 0::
+.. The length of a slice may be changed as long as it still fits within the limits of the underlying array; just assign it to a slice of itself. The capacity of a slice, accessible by the built-in function cap, reports the maximum length the slice may assume. Here is a function to append data to a slice. If the data exceeds the capacity, the slice is reallocated. The resulting slice is returned. The function uses the fact that len and cap are legal when applied to the nil slice, and return 0::
+
+スライスの長さは元の配列の大きさに収まっている限り、単にスライスに代入するだけで自由に変更できます。スライスの容量は、組み込み関数capにてアクセスする事ができます。スライスが仮定している最大の長さをレポートします。スライスにデータを追加する関数です。容量を超えた場合、スライスは再割り当てされます。結果のスライスが戻ります。このかんすうはlen, capは nilスライスに適用した場合でも 0を返す、ということを利用しています。
+
+.. code-block:: cpp
 
   func Append(slice, data[]byte) []byte {
       l := len(slice);
@@ -752,14 +905,27 @@ The length of a slice may be changed as long as it still fits within the limits 
       return slice;
   }
 
-We must return the slice afterwards because, although Append can modify the elements of slice, the slice itself (the run-time data structure holding the pointer, length, and capacity) is passed by value.
+.. We must return the slice afterwards because, although Append can modify the elements of slice, the slice itself (the run-time data structure holding the pointer, length, and capacity) is passed by value.
 
-Maps
-----
+.. FIXME
 
-Maps are a convenient and powerful built-in data structure to associate values of different types. The key can be of any type for which the equality operator is defined, such as integers, floats, strings, pointers, and interfaces (as long as the dynamic type supports equality). Structs, arrays and slices cannot be used as map keys, because equality is not defined on those types. Like slices, maps are a reference type. If you pass a map to a function that changes the contents of the map, the changes will be visible in the caller.
+スライスをあとから戻すべきです。なぜなら、APpendはスライスの要素を変更するかもしれないが、スライス自身（ポインタ、長さ、容量を持った実行時データ構造）が値として渡されるからです。
 
-Maps can be constructed using the usual composite literal syntax with colon-separated key-value pairs, so it's easy to build them during initialization::
+.. Maps
+   ----
+
+マップ
+------
+
+.. Maps are a convenient and powerful built-in data structure to associate values of different types. The key can be of any type for which the equality operator is defined, such as integers, floats, strings, pointers, and interfaces (as long as the dynamic type supports equality). Structs, arrays and slices cannot be used as map keys, because equality is not defined on those types. Like slices, maps are a reference type. If you pass a map to a function that changes the contents of the map, the changes will be visible in the caller.
+
+マップは値を別の型に関連づける、便利で強力な組み込みデータ構造です。キーには整数や浮動小数点数、文字列、ポインタ、インターフェイス（動的型が同値をサポートする限り）のように同値演算子が定義されていればどんな型でも使えます。構造体、配列、またスライスは同値が定義されていないので、マップのキーとして使えません。スライスのようにマップは参照型です。そのマップ内部を変更する関数にマップを渡す場合、呼び出し側にも変更は見えます。
+
+.. Maps can be constructed using the usual composite literal syntax with colon-separated key-value pairs, so it's easy to build them during initialization::
+
+マップはコロンで分割したkey-valueペアをつかって普通の複合リテラル文法で構築する事ができます。初期化のときにつくるのも簡単。
+
+.. code-block:: cpp
 
   var timeZone = map[string] int {
       "UTC":  0*60*60,
@@ -769,13 +935,23 @@ Maps can be constructed using the usual composite literal syntax with colon-sepa
       "PST": -8*60*60,
   }
 
-Assigning and fetching map values looks syntactically just like doing the same for arrays except that the index doesn't need to be an integer. An attempt to fetch a map value with a key that is not present in the map will cause the program to crash, but there is a way to do so safely using a multiple assignment::
+.. Assigning and fetching map values looks syntactically just like doing the same for arrays except that the index doesn't need to be an integer. An attempt to fetch a map value with a key that is not present in the map will cause the program to crash, but there is a way to do so safely using a multiple assignment::
+
+マップの代入と読み出しはインデックスが整数でなくても良いという部分を除くとほぼ配列と同じです。存在しないキーを指定した場合、プログラムはクラッシュします。しかし、並列代入によってこれを安全に行う方法があります。
+
+.. code-block:: cpp
 
   var seconds int;
   var ok bool;
   seconds, ok = timeZone[tz]
 
-For obvious reasons this is called the “comma ok” idiom. In this example, if tz is present, seconds will be set appropriately and ok will be true; if not, seconds will be set to zero and ok will be false. Here's a function that puts it together::
+.. For obvious reasons this is called the “comma ok” idiom. In this example, if tz is present, seconds will be set appropriately and ok will be true; if not, seconds will be set to zero and ok will be false. Here's a function that puts it together::
+
+.. FIXME
+
+これは明確な理由で"comma ok"イディオムと呼ばれます。この例ではtzが存在していれば２つ目の右辺値にtrueが、でなければfalseが代入sレマス。以下は両者を出力する関数です:
+
+.. code-block:: cpp
 
   func offset(tz string) int {
       if seconds, ok := timeZone[tz]; ok {
@@ -864,7 +1040,13 @@ to print in the format::
 
   7/-2.35/"abc\tdef"
 
-Our String() method is able to call Sprintf because the print routines are fully reentrant and can be used recursively. We can even go one step further and pass a print routine's arguments directly to another such routine. The signature of Printf uses the ... type for its final argument to specify that an arbitrary number of parameters can appear after the format::
+.. Our String() method is able to call Sprintf because the print routines are fully reentrant and can be used recursively. We can even go one step further and pass a print routine's arguments directly to another such routine. The signature of Printf uses the ... type for its final argument to specify that an arbitrary number of parameters can appear after the format::
+
+.. FIXME
+
+printルーチンは完全に再入可能に書かれており、再帰的に利用する事ができ、この結果このString() メソッドはSprintfを呼び出す事ができます。
+
+.. code-block:: cpp
 
   func Printf(format string, v ...) (n int, errno os.Error) {
 
@@ -875,7 +1057,9 @@ Within the function Printf, v is a variable that can be passed, for instance, to
       stderr.Output(2, fmt.Sprintln(v));  // Output takes parameters (int, string)
   }
 
-There's even more to printing than we've covered here. See the godoc documentation for package fmt for the details.
+.. There's even more to printing than we've covered here. See the godoc documentation for package fmt for the details.
+
+表示についてここで全てを網羅することはできません。詳細についてはfmtパッケージのgodocドキュメントを参照してください。
 
 .. Initialization
    ==============
@@ -1234,12 +1418,21 @@ When someone visits the page /args, the handler installed at that page has value
 
 In this section we have made an HTTP server from a struct, an integer, a channel, and a function, all because interfaces are just sets of methods, which can be defined for (almost) any type.
 
-Embedding
-=========
+.. Embedding
+   =========
 
-Go does not provide the typical, type-driven notion of subclassing, but it does have the ability to “borrow” pieces of an implementation by embedding types within a struct or interface.
+埋め込み
+========
 
-Interface embedding is very simple. We've mentioned the io.Reader and io.Writer interfaces before; here are their definitions::
+.. Go does not provide the typical, type-driven notion of subclassing, but it does have the ability to “borrow” pieces of an implementation by embedding types within a struct or interface.
+
+Goはよくみかける型駆動のサブクラス定義方法を提供しませんが、型をstructやinterfaceの中に埋め込むことによって実装の一部を"借りる"機能を持っています。
+
+.. Interface embedding is very simple. We've mentioned the io.Reader and io.Writer interfaces before; here are their definitions:
+
+インターフェースの埋め込みは非常にシンプルです。io.Readerとio.Writerインターフェースについては前にふれました。これらの定義は次のとおりです。
+
+.. code-block:: cpp
 
   type Reader interface {
       Read(p []byte) (n int, err os.Error);
@@ -1249,83 +1442,147 @@ Interface embedding is very simple. We've mentioned the io.Reader and io.Writer 
       Write(p []byte) (n int, err os.Error);
   }
 
-The io package also exports several other interfaces that specify objects that can implement several such methods. For instance, there is io.ReadWriter, an interface containing both Read and Write. We could specify io.ReadWriter by listing the two methods explicitly, but it's easier and more evocative to embed the two interfaces to form the new one, like this::
+.. The io package also exports several other interfaces that specify objects that can implement several such methods. For instance, there is io.ReadWriter, an interface containing both Read and Write. We could specify io.ReadWriter by listing the two methods explicitly, but it's easier and more evocative to embed the two interfaces to form the new one, like this:
 
-  // ReadWrite is the interface that groups the basic Read and Write methods.
+ioパッケージはこのようなメソッドを実装したオブジェクトを定義するインターフェースを他にもいくつかエクスポートします。たとえば、ReadとWriteを含んだio.ReadWriterがあります。io.ReadWriterは明示的に2つのメソッドを並べることで実装することもできますが、次のように2つのインターフェースを埋め込んで新しいものを作る方が簡単かつ刺激的です。
+
+.. code-block:: cpp
+
+  // ReadWriteは基本的なReadとWriteメソッドをグループ化したインターフェース。
   type ReadWriter interface {
       Reader;
       Writer;
   }
 
-This says just what it looks like: A ReadWriter can do what a Reader does and what a Writer does; it is a union of the embedded interfaces (which must be disjoint sets of methods). Only interfaces can be embedded within interfaces.
+..   // ReadWrite is the interface that groups the basic Read and Write methods.
 
-The same basic idea applies to structs, but with more far-reaching implications. The bufio package has two struct types, bufio.Reader and bufio.Writer, each of which of course implements the analogous interfaces from package io. And bufio also implements a buffered reader/writer, which it does by combining a reader and a writer into one struct using embedding: it lists the types within the struct but does not give them field names::
+.. This says just what it looks like: A ReadWriter can do what a Reader does and what a Writer does; it is a union of the embedded interfaces (which must be disjoint sets of methods). Only interfaces can be embedded within interfaces.
 
-  // ReadWriter stores pointers to a Reader and a Writer.
-  // It implements io.ReadWriter.
+これは見たとおりのことを行ないます。ReadWriterはReaderとWriterが提供するものを行なうことが可能です。つまり埋め込まれたインターフェースの和集合(これは互いに素な集合でなければなりません)です。インターフェースの中にはインターフェース以外のものは埋め込めません。
+
+.. The same basic idea applies to structs, but with more far-reaching implications. The bufio package has two struct types, bufio.Reader and bufio.Writer, each of which of course implements the analogous interfaces from package io. And bufio also implements a buffered reader/writer, which it does by combining a reader and a writer into one struct using embedding: it lists the types within the struct but does not give them field names:
+
+基本的な考え方はstructにもあてはまりますが、こちらはより広範囲に影響を及ぼします。bufioパッケージはbufio.Reader、bufio.Writerというふたつのstruct型を持ち、それらはもちろんioパッケージのものと類似したインターフェースの実装です。bufioはバッファリングされたreader/writerも実装しますが、これはreaderとwriterを1つのstructに埋め込むことによって行なわれます。型はstruct内に並べられますが、名前は与えられません。
+
+.. code-block:: cpp
+
+  // ReadWriterはReaderとWriterへのポインタを保持します。
+  // それがio.ReadWriterの実装となります。
   type ReadWriter struct {
       *Reader;
       *Writer;
   }
 
-This struct could be written as::
+..  // ReadWriter stores pointers to a Reader and a Writer.
+    // It implements io.ReadWriter.
+
+.. This struct could be written as:
+
+これは次のようにも書くことも可能です。
+
+.. code-block:: cpp
 
   type ReadWriter struct {
       reader *Reader;
       writer *Writer;
   }
 
-but then to promote the methods of the fields and to satisfy the io interfaces, we would also need to provide forwarding methods, like this::
+.. but then to promote the methods of the fields and to satisfy the io interfaces, we would also need to provide forwarding methods, like this::
+
+しかし、こうしてしまうとフィールドのメソッドを使うため、そしてioインターフェースを満たすためには次のような転送メソッドを提供する必要があるでしょう。
+
+.. code-block:: cpp
 
   func (rw *ReadWriter) Read(p []byte) (n int, err os.Error) {
       return rw.reader.Read(p)
   }
 
-By embedding the structs directly, we avoid this bookkeeping. The methods of embedded types come along for free, which means that bufio.ReadWriter not only has the methods of bufio.Reader and bufio.Writer, it also satisfies all three interfaces: io.Reader, io.Writer, and io.ReadWriter.
+.. By embedding the structs directly, we avoid this bookkeeping. The methods of embedded types come along for free, which means that bufio.ReadWriter not only has the methods of bufio.Reader and bufio.Writer, it also satisfies all three interfaces: io.Reader, io.Writer, and io.ReadWriter.
 
-There's an important way in which embedding differs from subclassing. When we embed a type, the methods of that type become methods of the outer type, but when they are invoked the receiver of the method is the inner type, not the outer one. In our example, when the Read method of a bufio.ReadWriter is invoked, it has exactly the same effect as the forwarding method written out above; the receiver is the reader field of the ReadWriter, not the ReadWriter itself.
+structを直接埋め込むことにより、このbookkeepingを避けられます。埋め込まれた型のメソッドはただで手に入ります。つまりbufio.ReadWriterはbufio.Readerとbufio.Writerのメソッドを持つだけではなく、io.Reader、io.Writer、io.ReadWriterのインターフェースを満たします。
 
-Embedding can also be a simple convenience. This example shows an embedded field alongside a regular, named field::
+.. There's an important way in which embedding differs from subclassing. When we embed a type, the methods of that type become methods of the outer type, but when they are invoked the receiver of the method is the inner type, not the outer one. In our example, when the Read method of a bufio.ReadWriter is invoked, it has exactly the same effect as the forwarding method written out above; the receiver is the reader field of the ReadWriter, not the ReadWriter itself.
+
+埋め込みとサブクラスは重要な点で異なります。型が埋め込まれる時、その型のメソッドは外側の型のメソッドとなります。しかしそれらが呼び出される時、メソッドの受け取り側は内側の型であり、外側のものではありません。例では、bufio.ReadWriterのReadメソッドが呼び出される時、ちょうど前に書いた転送メソッドと同様の動作をします。つまり、受け側はReadWriterのreaderフィールドでありReadWriter自体ではありません。
+
+.. Embedding can also be a simple convenience. This example shows an embedded field alongside a regular, named field:
+
+埋め込みは簡単で便利なものです。次の例では埋め込みフィールドと通常の名前つきフィールドとが一緒になったものです。
+
+.. code-block: cpp
 
   type Job struct {
       Command    string;
       *log.Logger;
   }
 
-The Job type now has the Log, Logf and other methods of log.Logger. We could have given the Logger a field name, of course, but it's not necessary to do so. And now we can log to a Job::
+.. The Job type now has the Log, Logf and other methods of log.Logger. We could have given the Logger a field name, of course, but it's not necessary to do so. And now we can log to a Job:
+
+Job型はLogとLogf、そしてlog.Loggerのメソッドを持ちます。もちろんLoggerにフィールド名をつけることも出来ますが、なくてもかまいません。これで次のようにログを書き出せます。
+
+.. code-block:: cpp
 
   job.Log("starting now...");
 
-The Logger is a regular field of the struct and we can initialize it in the usual way::
+.. The Logger is a regular field of the struct and we can initialize it in the usual way:
+
+Loggerはstruct内の普通のフィールドであり、いつもの方法で初期化できます。
+
+.. code-block: cpp
 
   func NewJob(command string, logger *log.Logger) *Job {
       return &Job{command, logger}
   }
 
-If we need to refer to an embedded field directly, the type name of the field, ignoring the package qualifier, serves as a field name. If we needed to access the \*log.Logger of a Job variable job, we would write job.Logger. This would be useful if we wanted to refine the methods of Logger::
+.. If we need to refer to an embedded field directly, the type name of the field, ignoring the package qualifier, serves as a field name. If we needed to access the \*log.Logger of a Job variable job, we would write job.Logger. This would be useful if we wanted to refine the methods of Logger::
+
+埋め込まれたフィールドを直接参照する必要がある場合、そのフィールドの型名のパッケージ修飾を省いた形がフィールド名となります。Job変数、jobの\*log.Loggerにアクセスする場合job.Loggerとなるでしょう。これはLoggerのメソッドを改良する際に便利です。
+
+.. code-block:: cpp
 
   func (job *Job) Logf(format string, args ...) {
       job.Logger.Logf("%q: %s", job.Command, fmt.Sprintf(format, args));
   }
 
-Embedding types introduces the problem of name conflicts but the rules to resolve them are simple. First, a field or method X hides any other item X in a more deeply nested part of the type. If log.Logger contained a field or method called Command, the Command field of Job would dominate it.
+.. Embedding types introduces the problem of name conflicts but the rules to resolve them are simple. First, a field or method X hides any other item X in a more deeply nested part of the type. If log.Logger contained a field or method called Command, the Command field of Job would dominate it.
 
-Second, if the same name appears at the same nesting level, it is usually an error; it would be erroneous to embed log.Logger if Job struct contained another field or method called Logger. However, if the duplicate name is never mentioned in the program outside the type definition, it is OK. This qualification provides some protection against changes made to types embedded from outside; there is no problem if a field is added that conflicts with another field in another subtype if neither field is ever used.
+埋め込み型名前の衝突問題を発生させますが、それらを解決するルールは簡単なものです。まず、フィールドまたはメソッドXは奥深くにネストされた型のXを隠してしまいます。もしlog.LoggerがCommandというフィールドやメソッドを含んでいたら、JobのCommandフィールドが優先されます。
 
-Concurrency
-===========
+.. Second, if the same name appears at the same nesting level, it is usually an error; it would be erroneous to embed log.Logger if Job struct contained another field or method called Logger. However, if the duplicate name is never mentioned in the program outside the type definition, it is OK. This qualification provides some protection against changes made to types embedded from outside; there is no problem if a field is added that conflicts with another field in another subtype if neither field is ever used.
 
-Share by communicating
-----------------------
+次に、同じ階層に同じ名前が現われる場合は通常エラーとなります。Job structがLoggerというフィールドやメソッドを持つ時にlog.Loggerを埋め込むのは間違いでしょう。しかしその重複した名前が型定義の外で振れられない場合は問題とはなりません。これは外側で埋め込まれる型からの保護を提供します。そのフィールドが使用されない限りは名前が他の下位の型と衝突するものであっても問題はありません。
 
-Concurrent programming is a large topic and there is space only for some Go-specific highlights here.
+.. Concurrency
+   ===========
 
-Concurrent programming in many environments is made difficult by the subtleties required to implement correct access to shared variables. Go encourages a different approach in which shared values are passed around on channels and, in fact, never actively shared by separate threads of execution. Only one goroutine has access to the value at any given time. Data races cannot occur, by design. To encourage this way of thinking we have reduced it to a slogan:
+並列処理
+========
 
-Do not communicate by sharing memory; instead, share memory by communicating.
-This approach can be taken too far. Reference counts may be best done by putting a mutex around an integer variable, for instance. But as a high-level approach, using channels to control access makes it easier to write clear, correct programs.
+.. Share by communicating
+   ----------------------
 
-One way to think about this model is to consider a typical single-threaded program running on one CPU. It has no need for synchronization primitives. Now run another such instance; it too needs no synchronization. Now let those two communicate; if the communication is the synchronizer, there's still no need for other synchronization. Unix pipelines, for example, fit this model perfectly. Although Go's approach to concurrency originates in Hoare's Communicating Sequential Processes (CSP), it can also be seen as a type-safe generalization of Unix pipes.
+通信による共有
+--------------
+
+.. Concurrent programming is a large topic and there is space only for some Go-specific highlights here.
+
+並列プログラミングは大きなテーマなので、ここではGoに特化したハイライトだけを紹介します。
+
+.. Concurrent programming in many environments is made difficult by the subtleties required to implement correct access to shared variables. Go encourages a different approach in which shared values are passed around on channels and, in fact, never actively shared by separate threads of execution. Only one goroutine has access to the value at any given time. Data races cannot occur, by design. To encourage this way of thinking we have reduced it to a slogan:
+
+共有する変数に正しくアクセスする手段を提供するのに必要となる繊細さにより、多くの環境で並列プログラミングは難しいものとなっています。Goは異なるアプローチをとり、共有する値はチャンネル上でやりとりされ、実際スレッド間で活発に共有されることはありません。ある値へのアクセスはどんなときでもひとつのGoroutineしか持たず、設計上競合状態になることはありえません。このような考え方を奨励するため、次のスローガンにまとめました。\ ::
+
+   共有メモリを使って通信せず、通信によってメモリを共有せよ。
+
+.. Do not communicate by sharing memory; instead, share memory by communicating.
+
+.. This approach can be taken too far. Reference counts may be best done by putting a mutex around an integer variable, for instance. But as a high-level approach, using channels to control access makes it easier to write clear, correct programs.
+
+このアプローチは過剰だととることもできます。たとえばリファレンスカウントは整数の変数にmutexを使うことで最もうまく行なえるかもしれません。しかし、高レベルなアプローチではチャンネルを使ってアクセスを制御する方が明解で正しいプログラムをより簡単に書くことができます。
+
+.. One way to think about this model is to consider a typical single-threaded program running on one CPU. It has no need for synchronization primitives. Now run another such instance; it too needs no synchronization. Now let those two communicate; if the communication is the synchronizer, there's still no need for other synchronization. Unix pipelines, for example, fit this model perfectly. Although Go's approach to concurrency originates in Hoare's Communicating Sequential Processes (CSP), it can also be seen as a type-safe generalization of Unix pipes.
+
+このモデルについて考えてみるため、1つのCPU上で走る典型的なシングルスレッドのプログラムについて考察してみましょう。これに同期プリミティブは必要ありません。もうひとつそのようなプログラムを走らせてみましょう。これもまた同期は不要です。ではこれらを互いに通信させてみましょう。その通信がsynchronizerであれば、まだ同期は不要です。たとえばUnixのパイプラインがこのモデルに完全にあてはまります。Goの並列処理のアプローチはHoareのCommunicating Sequential Processes (CSP)に由来するものですが、Unixパイプのtype-safe generalizationとしてみることもできるでしょう。
 
 Goroutines
 ----------

@@ -762,6 +762,7 @@ fileパッケージで作成した簡易版のUnixコマンドのcat(1)が :file
 .. Since the switch value is just true, we could leave it off?as is also the situation in a for statement, a missing value means true. In fact, such a switch is a form of if-else chain. While we're here, it should be mentioned that in switch statements each case has an implicit break.
 
 .. FIXME
+
 switch値は単なるtrueなのですが、抜けられるのでしょうか。for文と同じように、値がない場合はtrueを意味します。実際、このようなswitch文はif-else形式です。この間、各ケースは暗黙のbreakを持っていると言えます。
 
 .. Line 25 calls Write() by slicing the incoming buffer, which is itself a slice. Slices provide the standard Go way to handle I/O buffers.
@@ -783,7 +784,9 @@ cat()サブルーチンはfのRead()とString()という2つのメソッドの�
    28        String() string;
    29    }
 
-Any type that has the two methods of reader?regardless of whatever other methods the type may also have?is said to implement the interface. Since file.File implements these methods, it implements the reader interface. We could tweak the cat subroutine to accept a reader instead of a \*file.File and it would work just fine, but let's embellish a little first by writing a second type that implements reader, one that wraps an existing reader and does rot13 on the data. To do this, we just define the type and implement the methods and with no other bookkeeping, we have a second implementation of the reader interface.
+.. Any type that has the two methods of reader?regardless of whatever other methods the type may also have?is said to implement the interface. Since file.File implements these methods, it implements the reader interface. We could tweak the cat subroutine to accept a reader instead of a \*file.File and it would work just fine, but let's embellish a little first by writing a second type that implements reader, one that wraps an existing reader and does rot13 on the data. To do this, we just define the type and implement the methods and with no other bookkeeping, we have a second implementation of the reader interface.
+
+どの型もreaderの2つのメソッドを持つのか。他のメソッドが何であるかに関わらず、型はメソッドを持つのか。というのはインタフェースの実装と言われています。file.Fileはこれらのメソッドを実装しているので、readerインタフェースを実装しています。catサブルーチンを\*file.Fileの代わりにreaderを受け付けるために微調整できます。そして、それはうまくいくでしょう。既存のreaderをラップし、データに対してrot13を行うreaderを実装する２番目の型を書いて、最初のものを少し装飾してみましょう。これを行うには、型を定義し、メソッドを実装するだけでよいのです。これがreaderインタフェースの２番目の実装です。
 
 .. code-block:: cpp
    
@@ -806,9 +809,11 @@ Any type that has the two methods of reader?regardless of whatever other methods
    47    func (r13 *rotate13) String() string {
    48        return r13.source.String()
    49    }
-   50    // end of rotate13 implementation
+   50    // rotate13の実装はここまで
 
-(The rot13 function called on line 42 is trivial and not worth reproducing here.)
+.. (The rot13 function called on line 42 is trivial and not worth reproducing here.)
+
+（42行目で呼ばれているrot13関数にはあまり意味がなく、ここで再作成する必要ありません。）
 
 .. To use the new feature, we define a flag:
 
@@ -818,10 +823,12 @@ Any type that has the two methods of reader?regardless of whatever other methods
  
    14    var rot13Flag = flag.Bool("rot13", false, "rot13 the input")
 
-and use it from within a mostly unchanged cat() function:
+.. and use it from within a mostly unchanged cat() function:
+
+そしてほとんど同じcat()関数内から使います。
 
 .. code-block:: cpp
- 
+    
    52    func cat(r reader) {
    53        const NBUF = 512;
    54        var buf [NBUF]byte;
@@ -1290,7 +1297,8 @@ sieve(ふるい)関数のメインループは、呼ばれる側の関数をフ�
 
 .. With channels, it's possible to serve multiple independent client goroutines without writing an explicit multiplexer. The trick is to send the server a channel in the message, which it will then use to reply to the original sender. A realistic client-server program is a lot of code, so here is a very simple substitute to illustrate the idea. It starts by defining a request type, which embeds a channel that will be used for the reply.
 
-.. FIXME:
+.. FIXME
+
 channelを使うことによって複数の独立したgoroutineをmultiplexerを書くことなく処理することが出来ます。channelをメッセージに含めてサーバーに送信し、それを使って送信元に返事をします。現実的なクライアントサーバープログラムはコード量が多いので、ここでは簡略化したものを使って説明を行います。これはリクエスト型の定義から始まり、その中には返事するために使用するchannelが組込まれています。
 
 .. code-block:: cpp
@@ -1404,6 +1412,7 @@ quit channelをサーバー関数に渡し、サーバーはそれを次のよ�
 .. All that's left is to strobe the quit channel at the end of main:
 
 .. FIXME
+
 あとはmainの終わりにあるquit channelをstrobeするだけです。
 
 .. code-block:: cpp

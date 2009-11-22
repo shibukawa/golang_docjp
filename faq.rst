@@ -2,29 +2,45 @@
 FAQ
 ===
 
-.. とりあえずファイルだけ作って、最初の項目に装飾の付け方だけ設定しました。
-   これを参考に日本語訳してください。渋川
+.. Origins
+   =======
 
-Origins
-=======
+Goの起源
+========
 
-**What is the purpose of the project?**
+.. **What is the purpose of the project?**
 
-No major systems language has emerged in over a decade, but over that time the computing landscape has changed tremendously. There are several trends:
+**このプロジェクトの目的は何か？**
 
-* Computers are enormously quicker but software development is not faster.
-* Dependency management is a big part of software development today but the “header files” of languages in the C tradition are antithetical to clean dependency analysis—and fast compilation.
-* There is a growing rebellion against cumbersome type systems like those of Java and C++, pushing people towards dynamically typed languages such as Python and JavaScript.
-* Some fundamental concepts such as garbage collection and parallel computation are not well supported by popular systems languages.
-* The emergence of multicore computers has generated worry and confusion.
+.. No major systems language has emerged in over a decade, but over that time the computing landscape has changed tremendously. There are several trends:
 
-We believe it's worth trying again with a new language, a concurrent, garbage-collected language with fast compilation. Regarding the points above:
+どんな主要なシステム言語も10年間以上の間現れていませんが、その時の間コンピューティング風景はものすごく変化しています。 いくつかの傾向があります:
 
-* It is possible to compile a large Go program in a few seconds on a single computer.
-* Go provides a model for software construction that makes dependency analysis easy and avoids much of the overhead of C-style include files and libraries.
-* Go's type system has no hierarchy, so no time is spent defining the relationships between types. Also, although Go has static types the language attempts to make types feel lighter weight than in typical OO languages.
-* Go is fully garbage-collected and provides fundamental support for concurrent execution and communication.
-* By its design, Go proposes an approach for the construction of system software on multicore machines.
+ここ10年以上の間、メジャーなシステム言語と呼ばれるものは登場していません。しかし、この間コンピュータをめぐる景色は大きく変化しています。この変化には以下のような傾向があります:
+
+.. * Computers are enormously quicker but software development is not faster.
+   * Dependency management is a big part of software development today but the “header files” of languages in the C tradition are antithetical to clean dependency analysis—and fast compilation.
+   * There is a growing rebellion against cumbersome type systems like those of Java and C++, pushing people towards dynamically typed languages such as Python and JavaScript.
+   * Some fundamental concepts such as garbage collection and parallel computation are not well supported by popular systems languages.
+   * The emergence of multicore computers has generated worry and confusion.
+
+* コンピュータはとてつもなく速くなりましたがが、ソフトウェア開発は速くなっていません。
+* 依存関係の管理というものが、今日のソフトウェア開発において、大きな位置を占めていますが、C言語の伝統のヘッダファイルはクリーンな依存性分析と高速なコンパイルとは対極です。
+* JavaやC++のような扱いにくい型システムに対する反乱が徐々に拡大しつつあります。PythonやJavaScriptのような、動的な型を持つ言語に対して、人々が押し寄せてきています。
+* 人気のあるシステム言語の中には、ガーベジコレクションや並列計算のような基本概念をサポートしていないものがあります。
+* マルチコアのコンピュータの出現によって、人々の間に、不安と混乱が発生しました。
+
+.. We believe it's worth trying again with a new language, a concurrent, garbage-collected language with fast compilation. Regarding the points above:
+
+私たちは、並列をサポートし、ガベージコレクションを備えた、コンパイルの速い言語に挑戦することは価値があることだと信じています。上記の点に関して:
+
+.. * It is possible to compile a large Go program in a few seconds on a single computer.
+   * Go provides a model for software construction that makes dependency analysis easy and avoids much of the overhead of C-style include files and libraries.
+   * Go's type system has no hierarchy, so no time is spent defining the relationships between types. Also, although Go has static types the language attempts to make types feel lighter weight than in typical OO languages.
+   * Go is fully garbage-collected and provides fundamental support for concurrent execution and communication.
+   * By its design, Go proposes an approach for the construction of system software on multicore machines.
+
+* 大きなGoのプログラムを一台のコンピュータで数秒で数秒以内にコンパイルすることが可能です。
 
 **What is the origin of the name?**
 
@@ -106,9 +122,12 @@ Other than being split into multiple files, the package will compile and test ju
 How do I write a unit test?
 Create a new file ending in _test.go in the same directory as your package sources. Inside that file, import "testing" and write functions of the form
 
-func TestFoo(t *testing.T) {
-    ...
-}
+.. code-block:: cpp
+
+   func TestFoo(t *testing.T) {
+       ...
+   }
+
 Run gotest in that directory. That script finds the Test functions, builds a test binary, and runs it.
 
 Where is assert?

@@ -39,15 +39,28 @@ Other than declaration syntax, the differences are not major and stem from two d
 Why are declarations backwards?
 They're only backwards if you're used to C. In C, the notion is that a variable is declared like an expression denoting its type, which is a nice idea, but the type and expression grammars don't mix very well and the results can be confusing; consider function pointers. Go mostly separates expression and type syntax and that simplifies things (using prefix * for pointers is an exception that proves the rule). In C, the declaration
 
+.. code-block:: c
+
 	int* a, b;
+
 declares a to be a pointer but not b; in Go
 
+.. code-block:: cpp
+
 	var a, b *int;
+
 declares both to be pointers. This is clearer and more regular. Also, the := short declaration form argues that a full variable declaration should present the same order as := so
 
+.. code-block:: cpp
+
 	var a uint64 = 1;
+
 has the same effect as
+
+.. code-block:: cpp
+
 	a := uint64(1);
+
 Parsing is also simplified by having a distinct grammar for types that is not just the expression grammar; keywords such as func and chan keep things clear.
 
 Why is there no pointer arithmetic?
