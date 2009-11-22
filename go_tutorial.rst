@@ -784,7 +784,9 @@ cat()サブルーチンはfのRead()とString()という2つのメソッドの�
    28        String() string;
    29    }
 
-Any type that has the two methods of reader?regardless of whatever other methods the type may also have?is said to implement the interface. Since file.File implements these methods, it implements the reader interface. We could tweak the cat subroutine to accept a reader instead of a \*file.File and it would work just fine, but let's embellish a little first by writing a second type that implements reader, one that wraps an existing reader and does rot13 on the data. To do this, we just define the type and implement the methods and with no other bookkeeping, we have a second implementation of the reader interface.
+.. Any type that has the two methods of reader?regardless of whatever other methods the type may also have?is said to implement the interface. Since file.File implements these methods, it implements the reader interface. We could tweak the cat subroutine to accept a reader instead of a \*file.File and it would work just fine, but let's embellish a little first by writing a second type that implements reader, one that wraps an existing reader and does rot13 on the data. To do this, we just define the type and implement the methods and with no other bookkeeping, we have a second implementation of the reader interface.
+
+どの型もreaderの2つのメソッドを持つのか。他のメソッドが何であるかに関わらず、型はメソッドを持つのか。というのはインタフェースの実装と言われています。file.Fileはこれらのメソッドを実装しているので、readerインタフェースを実装しています。catサブルーチンを\*file.Fileの代わりにreaderを受け付けるために微調整できます。そして、それはうまくいくでしょう。既存のreaderをラップし、データに対してrot13を行うreaderを実装する２番目の型を書いて、最初のものを少し装飾してみましょう。これを行うには、型を定義し、メソッドを実装するだけでよいのです。これがreaderインタフェースの２番目の実装です。
 
 .. code-block:: cpp
    
@@ -807,7 +809,7 @@ Any type that has the two methods of reader?regardless of whatever other methods
    47    func (r13 *rotate13) String() string {
    48        return r13.source.String()
    49    }
-   50    // end of rotate13 implementation
+   50    // rotate13の実装はここまで
 
 (The rot13 function called on line 42 is trivial and not worth reproducing here.)
 
@@ -819,10 +821,12 @@ Any type that has the two methods of reader?regardless of whatever other methods
  
    14    var rot13Flag = flag.Bool("rot13", false, "rot13 the input")
 
-and use it from within a mostly unchanged cat() function:
+.. and use it from within a mostly unchanged cat() function:
+
+そしてほとんど同じcat()関数内から使います。
 
 .. code-block:: cpp
- 
+    
    52    func cat(r reader) {
    53        const NBUF = 512;
    54        var buf [NBUF]byte;
