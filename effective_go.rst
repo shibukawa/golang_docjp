@@ -1510,36 +1510,80 @@ The server loop receives messages from the client, processes them, and returns t
 
 The client's non-blocking receive from freeList obtains a buffer if one is available; otherwise the client allocates a fresh one. The server's non-blocking send on freeList puts b back on the free list unless the list is full, in which case the buffer is dropped on the floor to be reclaimed by the garbage collector. (The assignment of the send operation to the blank identifier makes it non-blocking but ignores whether the operation succeeded.) This implementation builds a leaky bucket free list in just a few lines, relying on the buffered channel and the garbage collector for bookkeeping.
 
-Errors
+.. Errors
+.. ======
+
+エラー
 ======
 
-Library routines must often return some sort of error indication to the caller. As mentioned earlier, Go's multivalue return makes it easy to return a detailed error description alongside the normal return value. By convention, errors have type os.Error, a simple interface::
+.. Library routines must often return some sort of error indication to the caller. As mentioned earlier, Go's multivalue return makes it easy to return a detailed error description alongside the normal return value. By convention, errors have type os.Error, a simple interface::
+
+  .. type Error interface {
+  ..     String() string;
+  .. }
+
+ライブラリルーチンはしばしば、呼び出し元へエラー情報の一種を返さなければなりません。先に述べたように、Goの複数の値を返す機能は、通常の戻り値の一緒に詳細なエラー内容を返すことを容易にします。 エラーは以下に示す単純なインターフェースのos.Error型であることが規約によって決められています::
 
   type Error interface {
       String() string;
   }
 
-A library writer is free to implement this interface with a richer model under the covers, making it possible not only to see the error but also to provide some context. For example, os.Open returns an os.PathError::
 
-  // PathError records an error and the operation and
-  // file path that caused it.
+.. A library writer is free to implement this interface with a richer model under the covers, making it possible not only to see the error but also to provide some context. For example, os.Open returns an os.PathError::
+
+  .. // PathError records an error and the operation and
+  .. // file path that caused it.
+  .. type PathError struct {
+  ..     Op string;    // "open", "unlink", etc.
+  ..     Path string;  // The associated file.
+  ..     Error Error;  // Returned by the system call.
+  .. }
+
+  .. func (e *PathError) String() string {
+  ..     return e.Op + " " + e.Path + ": " + e.Error.String();
+  .. }
+
+
+ライブラリの作者は、このインターフェースを実装し、より高機能なモデルを秘匿して作ることが自由にできます。このことによって、単純なエラー内容を見せるだけではなく、より詳細なエラーコンテキストを提供することを可能にします。例として、os.Open が返す os.PathError を示します::
+
+  // PathError は、エラー内容、エラー発生時の動作およびファイルパスを保持します。  
   type PathError struct {
-      Op string;    // "open", "unlink", etc.
-      Path string;  // The associated file.
-      Error Error;  // Returned by the system call.
+      Op string;    // "open"、"unlink"など。
+      Path string;  // エラー発生に関連するファイルパス。
+      Error Error;  // システムコールによって返されるエラー内容。
   }
 
   func (e *PathError) String() string {
       return e.Op + " " + e.Path + ": " + e.Error.String();
   }
 
-PathError's String generates a string like this::
+.. PathError's String generates a string like this::
+
+  .. open /etc/passwx: no such file or directory
+
+PathErrorが生成するエラーメッセージは次のようなものです::
 
   open /etc/passwx: no such file or directory
 
-Such an error, which includes the problematic file name, the operation, and the operating system error it triggered, is useful even if printed far from the call that caused it; it is much more informative than the plain "no such file or directory".
+.. Such an error, which includes the problematic file name, the operation, and the operating system error it triggered, is useful even if printed far from the call that caused it; it is much more informative than the plain "no such file or directory".
 
-Callers that care about the precise error details can use a type switch or a type assertion to look for specific errors and extract details. For PathErrors this might include examining the internal Error field for recoverable failures::
+問題のあるファイル名、動作、およびそれらによって引き起こされたオペレーティングシステムのエラーを含む、このようなエラーメッセージは、呼び出し元から相当離れている位置で発生したものであってもなお有用です。なぜなら、簡素な"no such file or directory"というエラーメッセージに比べて、非常に有益だからです。
+
+.. Callers that care about the precise error details can use a type switch or a type assertion to look for specific errors and extract details. For PathErrors this might include examining the internal Error field for recoverable failures::
+
+  .. for try := 0; try < 2; try++ {
+  ..     file, err = os.Open(filename, os.O_RDONLY, 0);
+  ..     if err == nil {
+  ..         return
+  ..     }
+  ..     if e, ok := err.(*os.PathError); ok && e.Error == os.ENOSPC {
+  ..         deleteTempFiles();  // Recover some space.
+  ..         continue
+  ..     }
+  ..     return
+  .. }
+
+呼び出し元で、正確で詳細なエラー内容を必要とする場合は、type switch文や型アサーションによって、特定のエラー時の詳細なエラー内容を得ることができます。PathErrorsの場合は、復旧可能なエラーであるかどうかを、内部のエラー内容フィールドによって調べることができる場合があります::
 
   for try := 0; try < 2; try++ {
       file, err = os.Open(filename, os.O_RDONLY, 0);
