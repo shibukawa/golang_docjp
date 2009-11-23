@@ -1199,47 +1199,108 @@ init 関数
       flag.StringVar(&GOROOT, "goroot", GOROOT, "Go root directory")
   }
 
-Methods
+.. Methods
+
+関数
 =======
 
-Pointers vs. Values
+.. Pointers vs. Values
+
+ポインタ vs 値
 -------------------
 
-Methods can be defined for any named type that is not a pointer or an interface; the receiver does not have to be a struct.
+.. Methods can be defined for any named type that is not a pointer or an interface; the receiver does not have to be a struct.
 
-In the discussion of slices above, we wrote an Append function. We can define it as a method on slices instead. To do this, we first declare a named type to which we can bind the method, and then make the receiver for the method a value of that type::
+関数は、ポインタ型・インターフェースでない任意の型で定義することができます。受け側は、構造体でなければ定義する必要はありません。
 
-  type ByteSlice []byte
+.. In the discussion of slices above, we wrote an Append function. We can define it as a method on slices instead. 
+
+.. To do this, we first declare a named type to which we can bind the method, and then make the receiver for the method a value of that type::
+
+以下のサンプルは、スライスに追加する関数です。 我々のスライス上のメソッドの代わりとして定義することができます。
+これを行うには、まず名前付き型を宣言します、これを関数に結びつけます。受け側は、関数の返り値の型を定義します。
+
+.. type ByteSlice []byte
   
   func (slice ByteSlice) Append(data []byte) []slice {
       // Body exactly the same as above
   }
 
-This still requires the method to return the updated slice. We can eliminate that clumsiness by redefining the method to take a pointer to a ByteSlice as its receiver, so the method can overwrite the caller's slice::
+.. code-block:: cpp
+  
+  type ByteSlice []byte
+  
+  func (slice ByteSlice) Append(data []byte) []slice {
+      // 関数内の処理は、上記と同じ
+  }
 
-  func (p *ByteSlice) Append(data []byte) {
+
+.. This still requires the method to return the updated slice.  We can eliminate that clumsiness by redefining the method to take a pointer to a ByteSlice as its receiver, so the method can overwrite the caller's slice::
+
+まだ関数には、更新したスライスを返す処理が必要です。
+メソッドの再定義をすることで、受信側はByteSliceへのポインタを取ることができ、ぎこちなさを排除することができます
+この関数は、呼び出し元スライスを上書きすることができます。
+
+..  func (p *ByteSlice) Append(data []byte) {
       slice := *p;
       // Body as above, without the return.
       *p = slice;
   }
 
-In fact, we can do even better. If we modify our function so it looks like a standard Write method, like this::
+.. code-block:: cpp
 
-  func (p *ByteSlice) Write(data []byte) (n int, err os.Error) {
+  func (p *ByteSlice) Append(data []byte) {
+      slice := *p;
+      // 返り値は省略しています。
+      *p = slice;
+  }
+
+.. In fact, we can do even better. If we modify our function so it looks like a standard Write method, like this::
+
+実際、我々もよく使います。 もし、標準的なWriteメソッドを修正する場合は、
+
+..  func (p *ByteSlice) Write(data []byte) (n int, err os.Error) {
       slice := *p;
       // Again as above.
       *p = slice;
       return len(data), nil)
   }
 
-then the type \*ByteSlice satisfies the standard interface io.Writer, which is handy. For instance, we can print into one::
+.. code-block:: cpp
+
+  func (p *ByteSlice) Write(data []byte) (n int, err os.Error) {
+      slice := *p;
+      // 上記から
+      *p = slice;
+      return len(data), nil)
+  }
+
+.. then the type \*ByteSlice satisfies the standard interface io.Writer, which is handy. For instance, we can print into one::
+
+\*ByteSlice型を満たす標準的なインターフェースでは、io.Writerが便利です。
+例えば、スライスを一つとして表示することができます。
+
+..  var b ByteSlice;
+    fmt.Fprintf(&b, "This hour has %d days\n", 7);
+
+.. code-block:: cpp
 
     var b ByteSlice;
     fmt.Fprintf(&b, "This hour has %d days\n", 7);
 
-We pass the address of a ByteSlice because only \*ByteSlice satisfies io.Writer. The rule about pointers vs. values for receivers is that value methods can be invoked on pointers and values, but pointer methods can only be invoked on pointers. This is because pointer methods can modify the receiver; invoking them on a copy of the value would cause those modifications to be discarded.
+.. We pass the address of a ByteSlice because only \*ByteSlice satisfies io.Writer. 
 
-By the way, the idea of using Write on a slice of bytes is implemented by bytes.Buffer.
+.. The rule about pointers vs. values for receivers is that value methods can be invoked on pointers and values, but pointer methods can only be invoked on pointers. 
+
+.. This is because pointer methods can modify the receiver; invoking them on a copy of the value would cause those modifications to be discarded.
+
+io.Writerの*ByteSliceを渡す要求を満たすために、ByteSliceを渡す必要があります。
+受け側で、ポインタ型と値のどちらを使うかというと、値を受け取る関数は、ポインタ型と値を受け取りますが、ポインタ関数は、ポインタのみ受け取ります。
+ポインタ関数では、受け側を修正することができます。理由は、値のコピーによる変更の破棄を引き起こす恐れがあるためです。
+
+.. By the way, the idea of using Write on a slice of bytes is implemented by bytes.Buffer.
+
+ところで、bytes.Bufferは、このアイデアを使って、バイト単位でのスライス書き込みを実装しました。
 
 Interfaces and other types
 ==========================
