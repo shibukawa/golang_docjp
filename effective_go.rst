@@ -1587,26 +1587,46 @@ Loggerはstruct内の普通のフィールドであり、いつもの方法で�
 Goroutines
 ----------
 
-They're called goroutines because the existing terms?threads, coroutines, processes, and so on?convey inaccurate connotations. A goroutine has a simple model: it is a function executing in parallel with other goroutines in the same address space. It is lightweight, costing little more than the allocation of stack space. And the stacks start small, so they are cheap, and grow by allocating (and freeing) heap storage as required.
+.. They're called goroutines because the existing terms—threads, coroutines, processes, and so on—convey inaccurate connotations. A goroutine has a simple model: it is a function executing in parallel with other goroutines in the same address space. It is lightweight, costing little more than the allocation of stack space. And the stacks start small, so they are cheap, and grow by allocating (and freeing) heap storage as required.
 
-Goroutines are multiplexed onto multiple OS threads so if one should block, such as while waiting for I/O, others continue to run. Their design hides many of the complexities of thread creation and management.
+スレッド、コルーチン、プロセスなどの既存の用語は誤った意味合いを与えるので、goroutineと呼ばれます。goroutineは簡単なモデルで、他のgoroutineと同一のアドレススペース内で並列に実行される関数です。これは軽量でスタックスペースより少し多いほどのコストしかかかりません。スタックは小さく始まるためコストが小さく、必要に応じてヒープ領域を確保(または解放)することにより大きくなります。
 
-Prefix a function or method call with the go keyword to run the call in a new goroutine. When the call completes, the goroutine exits, silently. (The effect is similar to the Unix shell's & notation for running a command in the background.)::
+.. Goroutines are multiplexed onto multiple OS threads so if one should block, such as while waiting for I/O, others continue to run. Their design hides many of the complexities of thread creation and management.
 
-  go list.Sort();  // run list.Sort in parallel; don't wait for it. 
+goroutineは複数のOSスレッド上に多重化されているので、そのうちのひとつが入出力の待ち状態でブロックされているときでも他のものは実行し続けられます。これによりはスレッドの生成、管理に関する多くの複雑性は隠されます。
 
-A function literal can be handy in a goroutine invocation::
+.. Prefix a function or method call with the go keyword to run the call in a new goroutine. When the call completes, the goroutine exits, silently. (The effect is similar to the Unix shell's & notation for running a command in the background.)
+
+関数やメソッドの呼び出しの前に\ :keyword:`go`\ キーワードを置くと、呼び出しを新規のgoroutine内で実行することができます。処理が完了するとgoroutineは無言で終了します。(コマンドをバックグラウンドで起動するUnixシェルの&記法に似ています。)
+
+.. code-block:: cpp
+
+  go list.Sort();  // list.Sortを並列に実行し、完了を待たない。
+
+.. go list.Sort();  // run list.Sort in parallel; don't wait for it. 
+
+.. A function literal can be handy in a goroutine invocation.
+
+関数リテラルはgoroutineの起動をする際に重宝するでしょう。
+
+.. code-block:: cpp
 
   func Announce(message string, delay int64) {
       go func() {
           time.Sleep(delay);
           fmt.Println(message);
-      }()  // Note the parentheses - must call the function.
+      }()  // 括弧に注目。関数は呼び出される必要がある。
   }
 
-In Go, function literals are closures: the implementation makes sure the variables referred to by the function survive as long as they are active.
+..      }()  // Note the parentheses - must call the function.
 
-These examples aren't too practical because the functions have no way of signaling completion. For that, we need channels.
+.. In Go, function literals are closures: the implementation makes sure the variables referred to by the function survive as long as they are active.
+
+Goでは関数リテラルはクロージャなので、関数内で参照される変数はそれがアクティブな間存在することが保証されます。
+
+.. These examples aren't too practical because the functions have no way of signaling completion. For that, we need channels.
+
+以上の例は関数側からの処理の終了を通知する方法がないため、十分に実用的なものではありません。そのためにはチャンネルが必要となります。
 
 Channels
 --------
