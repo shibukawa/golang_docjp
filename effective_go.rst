@@ -1933,10 +1933,15 @@ PathErrorが生成するエラーメッセージは次のようなものです::
       return
   }
 
-A web server
+.. A web server
+.. ============
+
+ウェブサーバ
 ============
 
-Let's finish with a complete Go program, a web server. This one is actually a kind of web re-server. Google provides a service at http://chart.apis.google.com that does automatic formatting of data into charts and graphs. It's hard to use interactively, though, because you need to put the data into the URL as a query. The program here provides a nicer interface to one form of data: given a short piece of text, it calls on the chart server to produce a QR code, a matrix of boxes that encode the text. That image can be grabbed with your cell phone's camera and interpreted as, for instance, a URL, saving you typing the URL into the phone's tiny keyboard.
+.. Let's finish with a complete Go program, a web server. This one is actually a kind of web re-server. Google provides a service at http://chart.apis.google.com that does automatic formatting of data into charts and graphs. It's hard to use interactively, though, because you need to put the data into the URL as a query. The program here provides a nicer interface to one form of data: given a short piece of text, it calls on the chart server to produce a QR code, a matrix of boxes that encode the text. That image can be grabbed with your cell phone's camera and interpreted as, for instance, a URL, saving you typing the URL into the phone's tiny keyboard.
+
+最後に、Goの完全なプログラムとして、ウェブサーバを作ってみましょう。このプログラムは、実際にはウェブ中継サーバの一種です。Googleは、データを自動的に書式・体裁を整え、図表やグラフを作成するサービスを http://chart.apis.google.com にて提供しています。しかし、それは対話的に使用することは難しいです。なぜなら、クエリとしてURLにデータを埋め込む必要があるためです。これから作成するプログラムは、データの一形式を作成する優れたインターフェースを提供します。短いテキストが与えられると、プログラムはQRコード（与えられたテキストがエンコードされた粒子状の四角形）を生成するようにチャートサーバにリクエストをします。生成されたQRコードは携帯電話のカメラによって取り込むことができます。取り込まれたQRコードは、例えば（携帯電話のとても小さいキーでURLを打つのを省略するための）URLとして解読されます。
 
 Here's the complete program. An explanation follows::
 
