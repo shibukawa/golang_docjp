@@ -554,15 +554,13 @@ switchはインタフェース変数の動的な型を調べる時にも使わ�
 
 Goでは、関数やメソッドは複数の値を返すことが出来ます。これは珍しい特徴ですが、C言語の(EOFをあらわす-1のような)in-bandエラーの戻り値や,
 引数の変更といったような醜い構文を改善することが出来ます。
-clumsy idioms=不器用な熟語
-argument=引数
 
 
 .. In C, a write error is signaled by a negative count with the error code secreted away in a volatile location.
 .. In Go, Write can return a count and an error: “Yes, you wrote some bytes but not all of them because you filled the device”. 
 .. The signature of *File.Write in package os is::
 
-C言語では、書き込みエラーは、負の数値と非永続領域に隠蔽されたエラーコードによって通知されます。
+.. C言語では、書き込みエラーは、負の数値と非永続領域に隠蔽されたエラーコードによって通知されます。
 C言語では、書き込みエラーは負の数値で通知され、エラーコードはどこかに隠されてしまいます。
 
 G言語では、Writeオブジェクトは、数値と ”デバイスが一杯になったので、データの一部は書き込まれませんでした”というエラーを返します。
@@ -575,7 +573,7 @@ osパッケージの*File.Writeオブジェクトのシグネチャは以下の�
 .. and as the documentation says, it returns the number of bytes written and a non-nil Error when n != len(b).
 .. This is a common style; see the section on error handling for more examples.
 
-ドキュメントよるとWriteは戻り値として、書き込まれたデータのバイト数と、
+ドキュメントによるとWriteは戻り値として、書き込まれたデータのバイト数と、
 もし全てが書き込まれなかった場合(n != len(b)のとき)にはnilでないエラーを返すと書かれています。
 これは共通のスタイルです。もしもっとたくさんの例を見たければ、エラーのセクションを参照してください。
 
@@ -629,8 +627,8 @@ Goの関数の”戻り値”は、ちょうど入力値のように、名前を
 .. The names are not mandatory but they can make code shorter and clearer: they're documentation. 
 .. If we name the results of nextInt it becomes obvious which returned int is which::
 
-名前は必須ではありませんが、記述することで、コードを短く、読みやすく出来ます。
-ドキュメントでは、nextIntの戻り値に名前をつけ例が載っています。
+名前は必須ではありませんが、記述することでコードを短く、読みやすく出来ます。
+ドキュメントには、nextIntの戻り値に名前をつけた例が載っています。
 
 
 .. code-block:: cpp
@@ -642,7 +640,7 @@ Goの関数の”戻り値”は、ちょうど入力値のように、名前を
 
 名前付けされた戻り値は初期化され、名前付けされていない変数と結び付けられます。
 これらはとてもシンプルに記述できるだけでなく、分かりやすくすることができます。
-以下は、io.ReadFullをこれらを上手く用いて、書き直したものです。
+以下は、io.ReadFullをこれらを上手く用いて書き直したものです。
 
 
 .. code-block:: cpp
