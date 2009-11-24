@@ -669,7 +669,7 @@ new()によるメモリ割り当て
 
 .. Go has two allocation primitives, new() and make(). They do different things and apply to different types, which can be confusing, but the rules are simple. Let's talk about new() first. It's a built-in function essentially the same as its namesakes in other languages: new(T) allocates zeroed storage for a new item of type T and returns its address, a value of type \*T. In Go terminology, it returns a pointer to a newly allocated zero value of type T.
 
-Goはメモリ割り当てプリミティブとしてnew()とmake()の２つを持っています。これらは動作も適用される型も異なっている為、混乱を招くかもしれませんがルールは単純です。まずはnew()から始めましょう。new()は組み込み関数で、他の言語での同名のものと本質的に同じです。new(T)は、T型のゼロで初期化された新しい要素を割り当て、そのアドレスを*T型の値として返します。Goの用語では、new(T)は新しく確保されたT型のゼロ値へのポインタを返します。
+Goはメモリ割り当てプリミティブとしてnew()とmake()の２つを持っています。これらは動作も適用される型も異なっている為、混乱を招くかもしれませんがルールは単純です。まずはnew()から始めましょう。new()は組み込み関数で、他の言語での同名のものと本質的に同じです。new(T)は、T型のゼロで初期化された新しい要素を割り当て、そのアドレスを\*T型の値として返します。Goの用語では、new(T)は新しく確保されたT型のゼロ値へのポインタを返します。
 
 .. Since the memory returned by new() is zeroed, it's helpful to arrange that the zeroed object can be used without further initialization. This means a user of the data structure can create one with new() and get right to work. For example, the documentation for bytes.Buffer states that "the zero value for Buffer is an empty buffer ready to use." Similarly, sync.Mutex does not have an explicit constructor or Init method. Instead, the zero value for a sync.Mutex is defined to be an unlocked mutex.
 
@@ -677,7 +677,7 @@ new()に返されたメモリはゼロクリアされているため、初期値
 
 .. The zero-value-is-useful property works transitively. Consider this type declaration::
 
-「ゼロによる初期化は有用」という特徴は遷移的です。次の型宣言を考えてみましょう:
+「ゼロによる初期化は有用」という特徴はドミノ倒しに働きます。次の型宣言を考えてみましょう:
 
 .. code-block:: cpp
 
@@ -735,7 +735,7 @@ SyncedBuffer型の値はnew()によるメモリ割り当てでも、単なる宣
 
 .. Note that it's perfectly OK to return the address of a local variable; the storage associated with the variable survives after the function returns. In fact, taking the address of a composite literal allocates a fresh instance each time it is evaluated, so we can combine these last two lines::
 
-ここで注意すべき点は、ローカル変数のアドレスを戻り値にするのは完全に合法であり、変数領域は関数が帰った後も保持される、ということです。実のところ、複合リテラルのアドレスを取得すると、その式が評価されるごとに新しいインスタンスが割り当てられので、最後の2行は1行にまとめる事ができます:
+ここで注意すべき点は、ローカル変数のアドレスを戻り値にするのは完全に合法であり、変数領域は関数が帰った後も保持される、ということです。実のところ、複合リテラルのアドレスを取得すると、その式が評価されるごとに新しいインスタンスが割り当てられるので、最後の2行は1行にまとめる事ができます:
 
 .. code-block:: cpp
 
@@ -743,7 +743,7 @@ SyncedBuffer型の値はnew()によるメモリ割り当てでも、単なる宣
 
 .. The fields of a composite literal are laid out in order and must all be present. However, by labeling the elements explicitly as field:value pairs, the initializers can appear in any order, with the missing ones left as their respective zero values. Thus we could say::
 
-複合リテラルのフィールドは定義順通りで、かつ漏れなく指定する必要があります。しかしながら、要素を明示的に field:value ペアのように書く事で任意の順序で書く事ができます。また指定が無いフィールドはゼロに初期化されます。結局、以下のように書く事ができます:
+複合リテラルのフィールドは定義順通りに、かつ漏れなく指定する必要があります。しかしながら、要素を明示的に field:value ペアのように書く事で任意の順序で書く事もできます。また指定しなかったフィールドはゼロに初期化されます。結果、以下のように書く事ができます:
 
 .. code-block:: cpp
 
@@ -755,7 +755,7 @@ SyncedBuffer型の値はnew()によるメモリ割り当てでも、単なる宣
 
 .. Composite literals can also be created for arrays, slices, and maps, with the field labels being indices or map keys as appropriate. In these examples, the initializations work regardless of the values of Enone, Eio, and Einval, as long as they are distinct::
 
-複合リテラルは配列やスライス、マップの生成にも使えます。その場合フィールドにつけたラベルは、インデックスかマップのキーになります。以下の例では、Enone, Eio, Einvalは異なってさえいれば値に関わらず初期化は動作します:
+複合リテラルは配列やスライス、マップの生成にも使えます。その場合フィールドにつけたラベルは、インデックスかマップのキーになります。以下の例では、Enone, Eio, Einvalが相異なってさえいれば、値に関係なく初期化は動作します:
 
 .. code-block:: cpp
 
@@ -771,7 +771,7 @@ make()によるメモリ割り当て
 
 .. Back to allocation. The built-in function make(T, args) serves a purpose different from new(T). It creates slices, maps, and channels only, and it returns an initialized (not zero) value of type T, not \*T. The reason for the distinction is that these three types are, under the covers, references to data structures that must be initialized before use. A slice, for example, is a three-item descriptor containing a pointer to the data (inside an array), the length, and the capacity; until those items are initialized, the slice is nil. For slices, maps, and channels, make initializes the internal data structure and prepares the value for use. For instance::
 
-メモリ割り当てに戻りましょう。組み込み関数make(T, args)はnew(T)とは違った目的に使われます。make()はスライス、マップ、チャンネル専用で、初期化（ゼロではありません）したT型(\*T型ではありません）を返します。この区別をしている理由は、内部的にはこれら３つのタイプが、使用前に初期化が必要なデータ構造へのリファレンスとなっているためです。例えばスライスは３要素の記述子で（配列内の）データへのポインタ、長さ、容量を含んでいます。これらが初期化されるまで、スライスはnilです。スライス、マップ、チャンネルは make は内部構造を初期化し、使用する為の値を準備します。たとえば:
+メモリ割り当てに戻りましょう。組み込み関数make(T, args)はnew(T)とは違った目的に使われます。make()はスライス、マップ、チャンネル専用で、初期化（ゼロではありません）したT型(\*T型ではありません）を返します。この区別をしている理由は、内部的にはこれら３つのタイプが、使用前に初期化が必要なデータ構造への参照となっているためです。例えばスライスは３要素の記述子で（配列内の）データへのポインタ、長さ、容量を含んでいます。これらが初期化されるまで、スライスはnilです。スライス、マップ、チャンネルでは make は内部構造を初期化して、使用する値を作成します。たとえば:
 
 .. code-block:: cpp
 
@@ -779,7 +779,7 @@ make()によるメモリ割り当て
 
 .. allocates an array of 100 ints and then creates a slice structure with length 10 and a capacity of 100 pointing at the first 10 elements of the array. (When making a slice, the capacity can be omitted; see the section on slices for more information.) In contrast, new([]int) returns a pointer to a newly allocated, zeroed slice structure, that is, a pointer to a nil slice value.
 
-上記コードは100個のint配列を割り当て、その後、スライスの構造を長さ10で容量100(スライスを作る際、容量は無視されることがあります。詳細はスライスの節を参照してください)。対照的に new([]int)は新規に割り当てたゼロ値のスライス構造へのポインタ、すなわちnilスライスへのポインタを返します。
+上記コードは100個のint配列を割り当て、その後、スライスの構造を長さ10で容量100で作成します(スライスを作る際、容量は無視されることがあります。詳細はスライスの節を参照してください)。対照的に new([]int)は新規に割り当てたゼロ値のスライス構造へのポインタ、すなわちnilスライスへのポインタを返します。
 
 .. These examples illustrate the difference between new() and make()::
 
@@ -799,7 +799,7 @@ make()によるメモリ割り当て
 
 .. Remember that make() applies only to maps, slices and channels and does not return a pointer. To obtain an explicit pointer allocate with new().
 
-make()はマップ、スライス、チャネルのいずれかのみで、ポインタを返さないことを思い出してください。明示的にポインタを欲しいときはnew()で割り当てます。
+make()はマップ、スライス、チャネルのいずれかのみに適用でき、ポインタを返さないことに注意してください。明示的にポインタを取得するにはnew()で割り当てます。
 
 .. Arrays
    ------
@@ -807,18 +807,20 @@ make()はマップ、スライス、チャネルのいずれかのみで、ポ�
 配列
 ----
 
-Arrays are useful when planning the detailed layout of memory and sometimes can help avoid allocation, but primarily they are a building block for slices, the subject of the next section. To lay the foundation for that topic, here are a few words about arrays.
+.. Arrays are useful when planning the detailed layout of memory and sometimes can help avoid allocation, but primarily they are a building block for slices, the subject of the next section. To lay the foundation for that topic, here are a few words about arrays.
+
+配列は、メモリレイアウトの詳細が分かっている場合に有用で、時に割り当てを避けるのに役に立つ事がありますが、もっぱら次の節の題目である、スライスの素材として使われます。そのトピックの基礎を築くために、いくつかの配列についての言明があります。
 
 .. There are major differences between the ways arrays work in Go and C. In Go,
 
-配列の動作においてGoとCには大きな違いがある。
+配列どう動作するか、の点でGoとCとでは大きな違いがあります。Goでは、
 
 .. * Arrays are values. Assigning one array to another copies all the elements.
    * In particular, if you pass an array to a function, it will receive a copy of the array, not a pointer to it.
    * The size of an array is part of its type. The types [10]int and [20]int are distinct.
 
 * 配列は値です。ある配列を別の配列に代入することは全要素のコピーになります。
-* 特に、配列を関数に渡す場合、ポインタではなく、ポインタではなく配列のコピーを受け取る事になります。
+* 特に、配列を関数に渡す場合、ポインタではなく配列のコピーを受け取る事になります。
 * 配列のサイズは型の一部です。[10]int と [20]int は異なる型となります。
 
 .. The value property can be useful but also expensive; if you want C-like behavior and efficiency, you can pass a pointer to the array::
@@ -839,18 +841,21 @@ Arrays are useful when planning the detailed layout of memory and sometimes can 
 
 .. But even this style isn't idiomatic Go. Slices are.
 
-しかし、この書き方もまたGoの慣用的なスタイルではありません。スライスがそれです。
+しかし、この書き方もまたGoらしいスタイルではありません。Goらしいと言えばスライスです。
 
-Slices
-------
+.. Slices
+   ------
+
+スライス
+--------
 
 .. Slices wrap arrays to give a more general, powerful, and convenient interface to sequences of data. Except for items with explicit dimension such as transformation matrices, most array programming in Go is done with slices rather than simple arrays.
 
-スライスは配列をラップし、連続データへの汎用的・強力かつ便利なインターフェイスを提供します。変換行列のような明示的な次元を持つものを除き、Goでは殆どの配列プログラミングで、単純な配列よりむしろスライスの方が使われます。
+スライスは配列をラップし、連続データへの汎用的・強力かつ便利なインターフェイスを提供します。変換行列のように明示的な次元を持つものを除き、Goでは殆どの配列プログラミングが、単純な配列よりむしろスライスを使って行われます。
 
 .. Slices are reference types, which means that if you assign one slice to another, both refer to the same underlying array. For instance, if a function takes a slice argument, changes it makes to the elements of the slice will be visible to the caller, analogous to passing a pointer to the underlying array. A Read function can therefore accept a slice argument rather than a pointer and a count; the length within the slice sets an upper limit of how much data to read. Here is the signature of the Read method of the File type in package os::
 
-スライスは参照型、つまりスライスに別のスライスを代入した場合、双方のスライスは同じ配列を指している。例えば、スライスを引数にとる関数の場合、その関数がスライスの要素に行った変更は呼び出し元(caller)にも見えてしまう、という元の配列のポインタを渡すのと類似のことが起こる。Read関数は従ってポインタと数を渡すのではなく、スライスを受け付ける事ができる。スライスの長さパラメータはデータをどれだけ読むかの上限値になる。次の行はosパッケージ：File型のReadメソッドのシグネチャである。
+スライスは参照型、つまりスライスに別のスライスを代入した場合、双方のスライスは同じ元の配列を指します。例えば、スライスを引数にとる関数の場合、その関数がスライスの要素に行った変更は呼び出し元(caller)にも見えます。これは元の配列のポインタを渡すのと似ています。Read関数は従って、ポインタと要素数を受け取るのではなく、スライスを引数として受ける事ができます。スライス内部の長さはデータ数の上限値に設定されます。次の行はosパッケージ：File型のReadメソッドのシグネチャです。
 
 .. code-block:: cpp
 
@@ -859,6 +864,8 @@ Slices
 .. The method returns the number of bytes read and an error value, if any. To read into the first 32 bytes of a larger buffer b, slice (here used as a verb) the buffer::
 
 このメソッドはリードしたバイト数および（もしあれば）エラー値を返します。大きなバッファbから最初の32バイトを読むには以下のようにバッファをスライスします。
+
+.. code-block:: cpp
 
     n, err := f.Read(buf[0:32]);
 
@@ -881,7 +888,7 @@ Slices
 
 .. The length of a slice may be changed as long as it still fits within the limits of the underlying array; just assign it to a slice of itself. The capacity of a slice, accessible by the built-in function cap, reports the maximum length the slice may assume. Here is a function to append data to a slice. If the data exceeds the capacity, the slice is reallocated. The resulting slice is returned. The function uses the fact that len and cap are legal when applied to the nil slice, and return 0::
 
-スライスの長さは元の配列の大きさに収まっている限り、単にスライスに代入するだけで自由に変更できます。スライスの容量は、組み込み関数capにてアクセスする事ができます。スライスが仮定している最大の長さをレポートします。スライスにデータを追加する関数です。容量を超えた場合、スライスは再割り当てされます。結果のスライスが戻ります。このかんすうはlen, capは nilスライスに適用した場合でも 0を返す、ということを利用しています。
+スライスの長さは元の配列の大きさに収まっている限り、単にスライスに代入するだけで自由に変更できます。スライスの容量は、組み込み関数capにてアクセスする事ができます。スライスが仮定している最大の長さをレポートします。スライスにデータを追加する関数です。容量を超えた場合、スライスは再割り当てされます。結果のスライスが戻ります。この関数はlen, capは nilスライスに適用した場合でも 0を返す、ということを利用しています。
 
 .. code-block:: cpp
 
@@ -907,7 +914,7 @@ Slices
 
 .. FIXME
 
-スライスをあとから戻すべきです。なぜなら、APpendはスライスの要素を変更するかもしれないが、スライス自身（ポインタ、長さ、容量を持った実行時データ構造）が値として渡されるからです。
+スライスをあとから戻すべきです。なぜなら、Appendはスライスの要素を変更するかもしれませんが、スライス自身（ポインタ、長さ、容量を持った実行時データ構造）が値として渡されるからです。
 
 .. Maps
    ----
@@ -945,9 +952,7 @@ Slices
 
 .. For obvious reasons this is called the “comma ok” idiom. In this example, if tz is present, seconds will be set appropriately and ok will be true; if not, seconds will be set to zero and ok will be false. Here's a function that puts it together::
 
-.. FIXME
-
-これは明確な理由で"comma ok"イディオムと呼ばれます。この例ではtzが存在していれば２つ目の右辺値にtrueが、でなければfalseが代入sレマス。以下は両者を出力する関数です:
+これは、自明な理由から"comma ok"イディオムと呼ばれます。この例ではtzが存在していればsecondsには該当する値が設定されokにはtrueが、でなければsecondsにはゼロが設定され okには falseが入ります。以下は両者を出力する関数です:
 
 .. code-block:: cpp
 
@@ -959,45 +964,80 @@ Slices
       return 0;
   }
 
-To test for presence in the map without worrying about the actual value, you can use the blank identifier, a simple underscore (_). The blank identifier can be assigned or declared with any value of any type, with the value discarded harmlessly. For testing presence in a map, use the blank identifier in place of the usual variable for the value::
+.. To test for presence in the map without worrying about the actual value, you can use the blank identifier, a simple underscore (_). The blank identifier can be assigned or declared with any value of any type, with the value discarded harmlessly. For testing presence in a map, use the blank identifier in place of the usual variable for the value::
+
+値を読まずにマップ中の存在をチェックするには、空の識別子、単にアンダースコア(_)、を使います。空の識別子はあらゆる値、あらゆる型を代入/宣言する事ができ、値は安全に破棄する事ができます。マップ中での存在をテストには、空の識別子を値の普通の変数のところに配置します。
+
+.. code-block:: cpp
 
 _, present := timeZone[tz];
 
-To delete a map entry, turn the multiple assignment around by placing an extra boolean on the right; if the boolean is false, the entry is deleted. It's safe to do this even if the key is already absent from the map::
+.. To delete a map entry, turn the multiple assignment around by placing an extra boolean on the right; if the boolean is false, the entry is deleted. It's safe to do this even if the key is already absent from the map::
+
+マップのエントリを削除するには、並列代入をひっくり返して、追加の論理値を右に書きます。論理値がfalseならエントリは削除されます。キーが既にマップから削除済みであっても安全に行う事ができます。
+
+.. code-block:: cpp
 
   timeZone["PDT"] = 0, false;  // Now on Standard Time
 
-Printing
---------
+.. Printing
+   --------
 
-Formatted printing in Go uses a style similar to C's printf family but is richer and more general. The functions live in the fmt package and have capitalized names: fmt.Printf, fmt.Fprintf, fmt.Sprintf and so on. The string functions (Sprintf etc.) return a string rather than filling in a provided buffer.
+印字
+----
 
-You don't need to provide a format string. For each of Printf, Fprintf and Sprintf there is another pair of functions, for instance Print and Println. These functions do not take a format string but instead generate a default format for each argument. The ln version also inserts a blank between arguments if neither is a string and appends a newline to the output. In this example each line produces the same output::
+.. Formatted printing in Go uses a style similar to C's printf family but is richer and more general. The functions live in the fmt package and have capitalized names: fmt.Printf, fmt.Fprintf, fmt.Sprintf and so on. The string functions (Sprintf etc.) return a string rather than filling in a provided buffer.
+
+Goの書式付き表示はCのprintfファミリーと似ていますがより機能豊富で一般的です。それらの関数はfmtパッケージの内部にあり、先頭大文字の名前: fmt.Printf, fmt.Sprintf, などとなっています。文字列関数(Sprintfなど)は指定されたバッファに放り込むのではなく、文字列を返します。
+
+.. You don't need to provide a format string. For each of Printf, Fprintf and Sprintf there is another pair of functions, for instance Print and Println. These functions do not take a format string but instead generate a default format for each argument. The ln version also inserts a blank between arguments if neither is a string and appends a newline to the output. In this example each line produces the same output::
+
+書式文字列を指定する必要はありません。Printf, FPrintf, SprintfはそれぞれPrint, Printlnのペアを持っている。これらの関数は書式文字列をとらず、各引数のデフォルトの書式を生成する。lnバージョンは更に文字列でなければ各引数の間にスペースを挿入し、行の最後に改行を追加する
+
+.. code-block:: cpp
 
   fmt.Printf("Hello %d\n", 23);
   fmt.Fprint(os.Stdout, "Hello ", 23, "\n");
   fmt.Println(fmt.Sprint("Hello ", 23));
 
-As mentioned in the tutorial, fmt.Fprint and friends take as a first argument any object that implements the io.Writer interface; the variables os.Stdout and os.Stderr are familiar instances.
+.. As mentioned in the tutorial, fmt.Fprint and friends take as a first argument any object that implements the io.Writer interface; the variables os.Stdout and os.Stderr are familiar instances.
 
-Here things start to diverge from C. First, the numeric formats such as %d do not take flags for signedness or size; instead, the printing routines use the type of the argument to decide these properties::
+チュートリアルでも触れた通り、fmt.Fprintfとその仲間は第一引数として io.Writer インターフェイスを実装した任意のオブジェクトをとります。変数 os.Stdout, os.Stderr は見慣れた例です。
+
+.. Here things start to diverge from C. First, the numeric formats such as %d do not take flags for signedness or size; instead, the printing routines use the type of the argument to decide these properties::
+
+このあたりからCとの違いが出てきます。第一に%dなどの数値書式は符号やサイズなどのフラグを受け付けません。代わりに表示ルーチンは引数の型からこれらの性質を決定します。
+
+.. code-block:: cpp
 
   var x uint64 = 1<<64 - 1;
   fmt.Printf("%d %x; %d %x\n", x, x, int64(x), int64(x));
 
-prints::
+.. prints:
+
+表示はこうなります::
 
   18446744073709551615 ffffffffffffffff; -1 -1
 
-If you just want the default conversion, such as decimal for integers, you can use the catchall format %v (for “value”); the result is exactly what Print and Println would produce. Moreover, that format can print any value, even arrays, structs, and maps. Here is a print statement for the time zone map defined in the previous section::
+.. If you just want the default conversion, such as decimal for integers, you can use the catchall format %v (for “value”); the result is exactly what Print and Println would produce. Moreover, that format can print any value, even arrays, structs, and maps. Here is a print statement for the time zone map defined in the previous section::
+
+整数の場合の十進表示のようにデフォルトの変換だけでよければ、なんでもあり書式 %v (値のv)を使う事ができます。結果はPrintやPrintlnの出力と全く同じになります。さらにこの書式は任意の値、配列や構造体、マップであっても表示できます。次の例は前節でのタイムゾーンマップを表示する文です:
+
+.. code-block:: cpp
 
   fmt.Printf("%v\n", timeZone);  // or just fmt.Println(timeZone);
 
-which gives output::
+.. which gives output::
+
+以下の出力を得ます::
 
   map[CST:-21600 PST:-28800 EST:-18000 UTC:0 MST:-25200]
 
-For maps the keys may be output in any order, of course. When printing a struct, the modified format %+v annotates the fields of the structure with their names, and for any value the alternate format %#v prints the value in full Go syntax::
+.. For maps the keys may be output in any order, of course. When printing a struct, the modified format %+v annotates the fields of the structure with their names, and for any value the alternate format %#v prints the value in full Go syntax::
+
+マップの場合、キーの順序はもちろん任意です。構造体を表示する場合、変更書式 %+v は構造体のフィールドを名前付きで表示するように指示します。代替書式として %#vがあり、これは Goの完全な文法を表示します。
+
+.. code-block:: cpp
 
   type T struct {
       a int;
@@ -1010,45 +1050,61 @@ For maps the keys may be output in any order, of course. When printing a struct,
   fmt.Printf("%#v\n", t);
   fmt.Printf("%#v\n", timeZone);
 
-prints::
+.. prints :
+
+表示は以下の通り::
 
   &{7 -2.35 abc   def}
   &{a:7 b:-2.35 c:abc     def}
   &main.T{a:7, b:-2.35, c:"abc\tdef"}
   map[string] int{"CST":-21600, "PST":-28800, "EST":-18000, "UTC":0, "MST":-25200}
   
-(Note the ampersands.) That quoted string format is also available through %q when applied to a value of type string or []byte; the alternate format %#q will use backquotes instead if possible. Also, %x works on strings and arrays of bytes as well as on integers, generating a long hexadecimal string, and with a space in the format (% x) it puts spaces between the bytes.
+.. (Note the ampersands.) That quoted string format is also available through %q when applied to a value of type string or []byte; the alternate format %#q will use backquotes instead if possible. Also, %x works on strings and arrays of bytes as well as on integers, generating a long hexadecimal string, and with a space in the format (% x) it puts spaces between the bytes.
 
-Another handy format is %T, which prints the type of a value::
+(アンパサンド&に注意) クォートされたこれらの文字列書式は、対象が文字列型の値か[]byte型の場合 %qでも得る事ができます。別の書式 %#qは可能であればバッククォートをつけます。更に, %xは文字列とバイトおよびint配列で動作し、16進数の長い文字列を生成します。スペース付き書式% xだとバイト区切りにスペースを追加します。
+
+.. Another handy format is %T, which prints the type of a value::
+
+もう一つの便利な書式は %T です。これは値の型を出力します。
 
   fmt.Printf("%T\n", timeZone);
 
-prints::
+.. prints :
+
+表示は以下の通り::
 
   map[string] int
 
-If you want to control the default format for a custom type, all that's required is to define a method String() string on the type. For our simple type T, that might look like this::
+.. If you want to control the default format for a custom type, all that's required is to define a method String() string on the type. For our simple type T, that might look like this::
+
+もし、カスタム型について、デフォルトの書式を変更したければ、必要なのはその型についてString()メソッドを定義することです。単純な型 Tについて、以下のようになります。
+
+.. code-block:: cpp
 
   func (t *T) String() string {
       return fmt.Sprintf("%d/%g/%q", t.a, t.b, t.c);
   }
   fmt.Printf("%v\n", t);
 
-to print in the format::
+.. to print in the format::
+
+書式付きで表示すると以下のようになります::
 
   7/-2.35/"abc\tdef"
 
 .. Our String() method is able to call Sprintf because the print routines are fully reentrant and can be used recursively. We can even go one step further and pass a print routine's arguments directly to another such routine. The signature of Printf uses the ... type for its final argument to specify that an arbitrary number of parameters can appear after the format::
 
-.. FIXME
-
-printルーチンは完全に再入可能に書かれており、再帰的に利用する事ができ、この結果このString() メソッドはSprintfを呼び出す事ができます。
+printルーチンは完全に再入可能に書かれているので再帰的に利用する事ができます。結果、String()メソッドはSprintfを呼び出す事が可能です。更に進んで表示ルーチンの引数を直接他のそういったルーチンに渡す事すらできます。Printfのシグネチャの最後の引数に ... 型の使う事で、任意の数のパラメータを書式の後に書く事ができる事を示します。
 
 .. code-block:: cpp
 
   func Printf(format string, v ...) (n int, errno os.Error) {
 
-Within the function Printf, v is a variable that can be passed, for instance, to another print routine. Here is the implementation of the function log.Stderr we used above. It passes its arguments directly to fmt.Sprintln for the actual formatting::
+.. Within the function Printf, v is a variable that can be passed, for instance, to another print routine. Here is the implementation of the function log.Stderr we used above. It passes its arguments directly to fmt.Sprintln for the actual formatting::
+
+関数 Printfの中で、v は渡す事のできる変数で、例えば、他の表示ルーチンです。次の例は上で使った log.Stderr 関数の実装です。これはその引数を fmt.Sprintlnに直接実際の書式を送っています。
+
+.. code-block:: cpp
 
   // Stderr is a helper function for easy logging to stderr. It is analogous to Fprint(os.Stderr).
   func Stderr(v ...) {
@@ -1161,7 +1217,7 @@ init 関数
 
 .. Finally, each source file can define its own init() function to set up whatever state is required. The only restriction is that, although goroutines can be launched during initialization, they will not begin execution until it completes; initialization always runs as a single thread of execution. And finally means finally: init() is called after all the variable declarations in the package have evaluated their initializers, and those are evaluated only after all the imported packages have been initialized.
 
-最後に、各ソースファイルは必要なあらゆる状態を設定するために、独自のinit()関数を定義する事ができます。唯一の制約は、初期化中にgoroutineを起動する事はできますが、初期化が完了するまで実行されないという事です。つまり初期化は常にシングルスレッドとして実行されます。また「最後に」と言うのはまさしく「最後」で、init()が呼び出されるのはパッケージ中の全ての変数宣言が初期化子を評価し、全てのimportedパッケージが初期化された後です。
+最後に、各ソースファイルは必要なあらゆる状態を設定するために、独自のinit()関数を定義する事ができます。唯一の制約は、初期化中にgoroutineを起動する事はできますが、初期化が完了するまで実行されないという事です。つまり初期化は常にシングルスレッドとして実行されます。また「最後に」と言うのはまさしく「最後」で、init()が呼び出されるのはパッケージ中の全ての変数宣言が初期化子を評価し、全てのimportされているパッケージが初期化された後です。
 
 .. Besides initializations that cannot be expressed as declarations, a common use of init() functions is to verify or repair correctness of the program state before real execution begins::
 
@@ -1566,9 +1622,9 @@ structを直接埋め込むことにより、このbookkeepingを避けられま
 
 .. Embedding can also be a simple convenience. This example shows an embedded field alongside a regular, named field:
 
-埋め込みは簡単で便利なものです。次の例では埋め込みフィールドと通常の名前つきフィールドとが一緒になったものです。
+埋め込みは簡単で便利なものです。次の例では埋め込みフィールドと通常の名前つきフィールドとが一緒になったものです:
 
-.. code-block: cpp
+.. code-block:: cpp
 
   type Job struct {
       Command    string;
@@ -1587,7 +1643,7 @@ Job型はLogとLogf、そしてlog.Loggerのメソッドを持ちます。もち
 
 Loggerはstruct内の普通のフィールドであり、いつもの方法で初期化できます。
 
-.. code-block: cpp
+.. code-block:: cpp
 
   func NewJob(command string, logger *log.Logger) *Job {
       return &Job{command, logger}
