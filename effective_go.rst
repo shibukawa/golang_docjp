@@ -2001,6 +2001,66 @@ PathErrorが生成するエラーメッセージは次のようなものです::
 
 Here's the complete program. An explanation follows::
 
+  .. package main
+  
+  .. import (
+  ..     "flag";
+  ..     "http";
+  ..     "io";
+  ..     "log";
+  ..     "strings";
+  ..     "template";
+  .. )
+  
+  .. var addr = flag.String("addr", ":1718", "http service address") // Q=17, R=18
+  .. var fmap = template.FormatterMap{
+  ..     "html": template.HtmlFormatter,
+  ..     "url+html": UrlHtmlFormatter,
+  .. }
+  .. var templ = template.MustParse(templateStr, fmap)
+  
+  .. func main() {
+  ..     flag.Parse();
+  ..     http.Handle("/", http.HandlerFunc(QR));
+  ..     err := http.ListenAndServe(*addr, nil);
+  ..     if err != nil {
+  ..         log.Exit("ListenAndServe:", err);
+  ..     }
+  .. }
+  
+  .. func QR(c *http.Conn, req *http.Request) {
+  ..     templ.Execute(req.FormValue("s"), c);
+  .. }
+  
+  .. func UrlHtmlFormatter(w io.Writer, v interface{}, fmt string) {
+  ..     template.HtmlEscape(w, strings.Bytes(http.URLEscape(v.(string))));
+  .. }
+  
+  
+  .. const templateStr = `
+  .. <html>
+  .. <head>
+  .. <title>QR Link Generator</title>
+  .. </head>
+  .. <body>
+  .. {.section @}
+  .. <img src="http://chart.apis.google.com/chart?chs=300x300&cht=qr&choe=UTF-8&chl={@|url+html}"
+  .. />
+  .. <br>
+  .. {@|html}
+  .. <br>
+  .. <br>
+  .. {.end}
+  .. <form action="/" name=f method="GET"><input maxLength=1024 size=70
+  .. name=s value="" title="Text to QR Encode"><input type=submit
+  .. value="Show QR" name=qr>
+  .. </form>
+  .. </body>
+  .. </html>
+  .. `
+
+以下に示すのが、プログラム全体です。 ソースコードの後で、プログラムについて説明します::
+
   package main
   
   import (
@@ -2059,7 +2119,9 @@ Here's the complete program. An explanation follows::
   </html>
   `
 
-The pieces up to main should be easy to follow. The one flag sets a default HTTP port for our server. The template variable templ is where the fun happens. It builds an HTML template that will be executed by the server to display the page; more about that in a moment.
+.. The pieces up to main should be easy to follow. The one flag sets a default HTTP port for our server. The template variable templ is where the fun happens. It builds an HTML template that will be executed by the server to display the page; more about that in a moment.
+
+上記のソースコードは、mainメソッドまで、処理内容を容易に追うことができるはずです。flagはこのサーバのデフォルトHTTPポートを設定します。テンプレート変数のtemplでは、面白いことが起こります。このテンプレート変数は、ページを表示するためにサーバにより実行されるHTMLテンプレートを生成します。詳細は、すぐ後で説明します。
 
 The main function parses the flags and, using the mechanism we talked about above, binds the function QR to the root path for the server. Then http.ListenAndServe is called to start the server; it blocks while the server runs.
 
