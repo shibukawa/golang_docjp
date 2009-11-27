@@ -10,11 +10,9 @@ Goの起源
 
 .. **What is the purpose of the project?**
 
-**このプロジェクトの目的は何か？**
+**このプロジェクトの目的は何ですか？**
 
 .. No major systems language has emerged in over a decade, but over that time the computing landscape has changed tremendously. There are several trends:
-
-どんな主要なシステム言語も10年間以上の間現れていませんが、その時の間コンピューティング風景はものすごく変化しています。 いくつかの傾向があります:
 
 ここ10年以上の間、メジャーなシステム言語と呼ばれるものは登場していません。しかし、この間コンピュータをめぐる景色は大きく変化しています。この変化には以下のような傾向があります:
 
@@ -41,22 +39,46 @@ Goの起源
    * By its design, Go proposes an approach for the construction of system software on multicore machines.
 
 * 大きなGoのプログラムを一台のコンピュータで数秒で数秒以内にコンパイルすることが可能です。
+* Goは、依存性の分析を簡単にし、C言語スタイルのインクルードファイルや、ライブラリの持つオーバーヘッドのほとんどを解消するようなソフトウェアの構成が行えるモデルを提供します。
+* Goの型システムには階層構造がないため、型同士の関係を定義するに貴重な時間を使う必要はありません。また、Goは静的な型システムを持つ言語ですが、典型的なオブジェクト指向言語と比べると型を作成するのが気軽に行えるような言語になっています。
+* Goは完全なガーベジコレクションを備え、言語レベルで並列実行とコミュニケーションの機能をサポートしています。
+* これらのデザインにより、Goはマルチコアのマシン上で動作する、システムソフトウェアの構築を行える様々な機能を提供しています。
 
-**What is the origin of the name?**
+.. **What is the origin of the name?**
 
-“Ogle” would be a good name for a Go debugger.
+**名前の由来は？**
 
-**What kind of a name is 6g?**
+.. “Ogle” would be a good name for a Go debugger.
 
-The 6g (and 8g and 5g) compiler is named in the tradition of the Plan 9 C compilers, described in http://plan9.bell-labs.com/sys/doc/compiler.html (see the table in section 2). 6 is the architecture letter for amd64 (or x86-64, if you prefer), while g stands for Go.
+"Ogle"というのはGoのデバッガーの名前としていい名前になると思います。
 
-**Why not just write some libraries for C++ to do communication?**
+.. **What kind of a name is 6g?**
 
-We considered doing that, but too many of the problems—lack of garbage collection, long dependency chains, nested include files, lack of concurrency awareness—are rooted in the design of the C and C++ languages themselves. We felt a viable solution required a more complete approach.
+**6gというのは何を指す名前ですか？**
 
-**Why doesn't Go run on Windows?**
+.. The 6g (and 8g and 5g) compiler is named in the tradition of the Plan 9 C compilers, described in http://plan9.bell-labs.com/sys/doc/compiler.html (see the table in section 2). 6 is the architecture letter for amd64 (or x86-64, if you prefer), while g stands for Go.
 
-We understand that a significant fraction of computers in the world run Windows and it would be great if those computers could run Go programs. However, the Go team is small and we don't have the resources to do a Windows port at the moment. We would be more than willing to answer questions and offer advice to anyone willing to develop a Windows version.
+6g(と、8g, 5g)というのは伝統的なPlan 9のC言語のコンパイラの名前です。詳しい説明は http://plan9.bell-labs.com/sys/doc/compiler.html のSection 2の表を参照してください。6というのはアーキテクチャを表す文字で、AMD64(あるいはx86-64という呼び方が好きな人もいるでしょう)を表します。gはGoを表しています。
+
+.. **Why not just write some libraries for C++ to do communication?**
+
+**C++のライブラリとコミュニケーションを行うために、なぜライブラリをかく必要があるのですか？**
+
+.. We considered doing that, but too many of the problems—lack of garbage collection, long dependency chains, nested include files, lack of concurrency awareness—are rooted in the design of the C and C++ languages themselves. We felt a viable solution required a more complete approach.
+
+私たちもこのことについて考えました。ですが、ガーベジコレクションが無い、依存性のチェーンが異様に長い、ネストされたインクルード、並列実行のサポートがないなど、C/C++の言語設計そのものに起因する多くの問題があります。C/C++をサポートするには、もっと根本からアプローチしていかなければ実現可能な解は得られないだろう、と考えています。
+
+.. **Why doesn't Go run on Windows?**
+
+**なぜGoはWindows上で実行できないのですか？**
+
+.. We understand that a significant fraction of computers in the world run Windows and it would be great if those computers could run Go programs. However, the Go team is small and we don't have the resources to do a Windows port at the moment. We would be more than willing to answer questions and offer advice to anyone willing to develop a Windows version.
+
+私たちも、世界中のコンピュータのうちのWindowsが走っているものが大多数を占めていて、それらのコンピュータの上でGoのプログラムが動けばどれだけすばらしいことだろう、と思います。しかし、Goのチームは小さいために、Windowsに今すぐ移植を行うリソースがありません。ただ、もしもWindows版の開発をしたいと考えている人がいるのであれば、質問に答えたりアドバイスをしたりというのは積極的に行っていきたいと思っています。
+
+.. note::
+
+   訳注) Windowsに限らず、 `様々な環境への移植 <http://go-lang.cat-v.org/os-ports>`_ が行われています。
 
 Usage
 =====
