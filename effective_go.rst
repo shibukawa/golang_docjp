@@ -2133,11 +2133,11 @@ QR関数がフォームデータを含むリクエストを受け取ると、フ
 
 .. The template package, inspired by json-template, is powerful; this program just touches on its capabilities. In essence, it rewrites a piece of text on the fly by substituting elements derived from data items passed to templ.Execute, in this case the form value. Within the template text (templateStr), brace-delimited pieces denote template actions. The piece from the {.section @} to {.end} executes with the value of the data item @, which is a shorthand for “the current item”, which is the form value. (When the string is empty, this piece of the template is suppressed.)
 
-json-templateに影響を受けたtemplateパッケージは強力です。このプログラムは、単にtemplateパッケージの能力を、ほんの一部使用しているだけです。端的に説明すると、templ.Executeに渡されたデータ（この場合はフォームデータ）から得た要素に逐次代入することで、テキストを書き換えています。テンプレートテキスト(templateStr)においては、波括弧{}で囲まれた要素がテンプレートアクションであることを意味します。{.section @}から{.end}の間の部分はデータ@とともに処理されます。@は『現在の要素』の簡便な記法です。現在の要素、とはフォームの値のことです。（もしフォームの値が空の場合には、この部分（{.section @}から{.end}の間）は出力されません。）
+json-templateに影響を受けたtemplateパッケージは強力です。このプログラムは、単にtemplateパッケージの能力を、ほんの一部使用しているだけです。端的に説明すると、templ.Executeに渡されたデータ（この場合はフォームデータ）から得た要素に逐次代入することで、テキストを書き換えています。テンプレートテキスト(templateStr)においては、波括弧{}で囲まれた要素がテンプレートアクションであることを意味します。 ``{.section @}`` から ``{.end}`` の間の部分はデータ@とともに処理されます。@は『現在の要素』の簡便な記法です。現在の要素、とはフォームの値のことです。（もしフォームの値が空の場合には、この部分（ ``{.section @}`` から ``{.end}`` の間）は出力されません。）
 
 .. The snippet {@|url+html} says to run the data through the formatter installed in the formatter map (fmap) under the name "url+html". That is the function UrlHtmlFormatter, which sanitizes the string for safe display on the web page.
 
-{@|url+html}という記述は、フォーマッタマップ(fmap)に"url+html"という名前でインストールされたフォーマッタを利用してデータを処理するように命令します。
+``{@|url+html}`` という記述は、フォーマッタマップ(fmap)に"url+html"という名前でインストールされたフォーマッタを利用してデータを処理するように命令します。
 
 .. The rest of the template string is just the HTML to show when the page loads. If this is too quick an explanation, see the documentation for the template package for a more thorough discussion.
 
@@ -2145,7 +2145,7 @@ json-templateに影響を受けたtemplateパッケージは強力です。こ�
 
 .. And there you have it: a useful webserver in a few lines of code plus some data-driven HTML text. Go is powerful enough to make a lot happen in a few lines.
 
-そして、あなたはわずかな行数のコードに加えて、いくらかのデータ駆動のHTMLテキストで記述された便利なウェブサーバを手に入れることができました。Goはわずかな行数で、非常に多彩な機能を実現できる強力な言語なのです。
+そして、あなたはわずかな行数のコードに加えて、いくらかのデータ駆動のHTMLテキストを記述することで、便利なウェブサーバを手に入れることができました。Goはわずかな行数で、非常に多彩な機能を実現できる強力な言語なのです。
 
 .. Except as noted, this content is licensed under Creative Commons Attribution 3.0.
 
