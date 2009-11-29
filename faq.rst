@@ -85,23 +85,74 @@ C++のライブラリとコミュニケーションを行うために、なぜ�
 
    訳注) Windowsに限らず、 `様々な環境への移植 <http://go-lang.cat-v.org/os-ports>`_ が行われています。
 
-Usage
-=====
+.. Usage
 
-**Who should use the language?**
+扱い方
+=======
 
-Go is an experiment. We hope adventurous users will give it a try and see if they enjoy it. Not every programmer will, but we hope enough will find satisfaction in the approach it offers to justify further development.
+.. **Who should use the language?**
 
-Is Google using Go internally?
-The Go project was conceived to make it easier to write the kind of servers and other software Google uses internally, but the implementation isn't quite mature enough yet for large-scale production use. While we continue development we are also doing experiments with the language as a candidate server environment. It's getting there. For instance, the server behind http://golang.org is a Go program; in fact it's just the godoc document server running in a production configuration.
+だれが言語を使うのですか？
+---------------------------
 
-Do Go programs link with C/C++ programs?
-There are two Go compiler implementations, 6g and friends, generically called gc, and gccgo. Gc uses a different calling convention and linker and can therefore only be linked with C programs using the same convention. There is such a C compiler but no C++ compiler. Gccgo is a GCC front-end that can, with care, be linked with GCC-compiled C or C++ programs. However, because Go is garbage-collected it will be unwise to do so, at least naively.
+.. Go is an experiment. We hope adventurous users will give it a try and see if they enjoy it.
+.. Not every programmer will, but we hope enough will find satisfaction in the approach it offers to justify further development.
 
-There is a “foreign function interface” to allow safe calling of C-written libraries from Go code. We expect to use SWIG to extend this capability to C++ libraries. There is no safe way to call Go code from C or C++ yet.
+Go は、実験中です。 我々は、冒険心があり、いろいろと試し楽しめる人を望んでいます。
+すべてのプログラマではないです、しかし我々は十分にさらなる発展を正当化するため提供しているアプローチで満足感を得ることを望んでいます。
 
-Does Go support Google's protocol buffers?
-Protocol buffers are supported. We plan to have the next release of the protocol buffer source code include Go code generators and a Go library for them. The implementation uses data reflection at run time so it is slow, but a new implementation is planned.
+.. Is Google using Go internally?
+
+Google内部でGoを使うのですか？
+--------------------------------
+
+.. The Go project was conceived to make it easier to write the kind of servers and other software Google uses internally, but the implementation isn't quite mature enough yet for large-scale production use.
+.. While we continue development we are also doing experiments with the language as a candidate server environment.
+.. It's getting there.
+.. For instance, the server behind http://golang.org is a Go program; in fact it's just the godoc document server running in a production configuration.
+
+Go プロジェクトでは、Google 内部で、簡単にいろいろな種類のサーバーや他のGoogle ソフトウェアを記述するように考案されています。
+しかし、まだ大規模なプロダクトで使用するために、十分に成熟してはいません。
+一方で、我々はまたサーバ環境としての候補として、Goを使って、実験を続け開発をしています。
+もう一息というところです。
+例えば、http://golang.org/ の背後にあるサーバーは、Goでできています。
+それはちょうどgodocドキュメントサーバーが動作しているという事実です。
+
+.. Do Go programs link with C/C++ programs?
+
+Go は、C/C++プログラムとリンクできますか？
+----------------------------------------------
+
+.. There are two Go compiler implementations, 6g and friends, generically called gc, and gccgo.
+.. Gc uses a different calling convention and linker and can therefore only be linked with C programs using the same convention.  There is such a C compiler but no C++ compiler.
+.. Gccgo is a GCC front-end that can, with care, be linked with GCC-compiled C or C++ programs. However, because Go is garbage-collected it will be unwise to do so, at least naively.
+
+2つのGoコンパイラの実装では、"6g"他がり、一般的にGCかgccgoが呼ばれています。
+GCを使用すると、別の呼び出し規約とリンカのため、唯一のCプログラムとリンクすることができます。
+これは、Cコンパイラであって、C++コンパイラではありません。
+Gccgo は、GCCのフロントエンドとして使うことができ、GCCでコンパイルされた、C/C++プログラムとリンクすることができます。
+Go は、ガベージコレクションをするため、単純にリンクさせることは、賢明ではありません。
+
+.. There is a “foreign function interface” to allow safe calling of C-written libraries from Go code.
+.. We expect to use SWIG to extend this capability to C++ libraries. There is no safe way to call Go code from C or C++ yet.
+
+"外部関数インターフェイス"は、Goのコードから安全に、"C"で書かれたライブラリを呼び出すことができます。
+我々は、SWIGを使って、C++ライブラリが利用できるようになることを期待しています。
+C/C++からGoコードを安全に呼び出す方法はまだありません。
+
+.. Does Go support Google's protocol buffers?
+
+Go は、Googleの"protocol buffers"をサポートしますか？
+--------------------------------------------------------
+
+.. Protocol buffers are supported.
+.. We plan to have the next release of the protocol buffer source code include Go code generators and a Go library for them. 
+.. The implementation uses data reflection at run time so it is slow, but a new implementation is planned.
+
+Protocol buffers は、サポートします。
+我々の計画では、次のリリースに、"protocol buffer"のライブラリとジェネレータを取り込みます。
+データリフレクションを使っていますので処理時間は遅いです。しかし、新しい実装を計画しています。
+
 
 .. Design
 
