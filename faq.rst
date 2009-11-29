@@ -10,7 +10,8 @@ Goの起源
 
 .. **What is the purpose of the project?**
 
-**このプロジェクトの目的は何ですか？**
+このプロジェクトの目的は何ですか？
+----------------------------------
 
 .. No major systems language has emerged in over a decade, but over that time the computing landscape has changed tremendously. There are several trends:
 
@@ -46,7 +47,8 @@ Goの起源
 
 .. **What is the origin of the name?**
 
-**名前の由来は？**
+名前の由来は？
+--------------
 
 .. “Ogle” would be a good name for a Go debugger.
 
@@ -54,7 +56,8 @@ Goの起源
 
 .. **What kind of a name is 6g?**
 
-**6gというのは何を指す名前ですか？**
+6gというのは何を指す名前ですか？
+--------------------------------
 
 .. The 6g (and 8g and 5g) compiler is named in the tradition of the Plan 9 C compilers, described in http://plan9.bell-labs.com/sys/doc/compiler.html (see the table in section 2). 6 is the architecture letter for amd64 (or x86-64, if you prefer), while g stands for Go.
 
@@ -62,7 +65,8 @@ Goの起源
 
 .. **Why not just write some libraries for C++ to do communication?**
 
-**C++のライブラリとコミュニケーションを行うために、なぜライブラリをかく必要があるのですか？**
+C++のライブラリとコミュニケーションを行うために、なぜライブラリを書く必要があるのですか？
+-----------------------------------------------------------------------------------------
 
 .. We considered doing that, but too many of the problems—lack of garbage collection, long dependency chains, nested include files, lack of concurrency awareness—are rooted in the design of the C and C++ languages themselves. We felt a viable solution required a more complete approach.
 
@@ -70,7 +74,8 @@ Goの起源
 
 .. **Why doesn't Go run on Windows?**
 
-**なぜGoはWindows上で実行できないのですか？**
+なぜGoはWindows上で実行できないのですか？
+-----------------------------------------
 
 .. We understand that a significant fraction of computers in the world run Windows and it would be great if those computers could run Go programs. However, the Go team is small and we don't have the resources to do a Windows port at the moment. We would be more than willing to answer questions and offer advice to anyone willing to develop a Windows version.
 
@@ -98,25 +103,55 @@ There is a “foreign function interface” to allow safe calling of C-written l
 Does Go support Google's protocol buffers?
 Protocol buffers are supported. We plan to have the next release of the protocol buffer source code include Go code generators and a Go library for them. The implementation uses data reflection at run time so it is slow, but a new implementation is planned.
 
-Design[Top]
-Why doesn't Go have feature X?
-Every language contains novel features and omits someone's favorite feature. Go was designed with an eye on felicity of programming, speed of compilation, orthogonality of concepts, and the need to support features such as concurrency and garbage collection. Your favorite feature may be missing because it doesn't fit, because it affects compilation speed or clarity of design, or because it would make the fundamental system model too difficult.
+.. Design
 
-If it bothers you that Go is missing feature X, please forgive us and investigate the features that Go does have. You might find that they compensate in interesting ways for the lack of X.
+設計
+====
 
-Why is the syntax so different from C++?
+.. Why doesn't Go have feature X?
+
+なぜGoにはXという機能がないのですか？
+-------------------------------------
+
+.. Every language contains novel features and omits someone's favorite feature. Go was designed with an eye on felicity of programming, speed of compilation, orthogonality of concepts, and the need to support features such as concurrency and garbage collection. Your favorite feature may be missing because it doesn't fit, because it affects compilation speed or clarity of design, or because it would make the fundamental system model too difficult.
+
+どんな言語であっても、目新しい機能が含まれている反面、誰かが好きな機能を省略することがありえます。Goはプログラミングの喜び、コンパイル速度、概念の直交性、並列実行やガーベジコレクション機能のサポートに重点をおいてデザインされています。みなさんの好きな機能がないとすれば、それはコンパイル速度や明確な設計などとマッチしないか、基本的なシステムのモデルを複雑にしてしまうから、という理由からだと思います。
+
+.. If it bothers you that Go is missing feature X, please forgive us and investigate the features that Go does have. You might find that they compensate in interesting ways for the lack of X.
+
+もしもGoに機能Xがないために苦労を強いられているのであれば、私たちに恨みを向けないで、Goが持っている機能を調べてみてください。もしかしたらXの機能が欠けている部分が、面白い方法で補完されているの、というのを見つけることができるかもしれません。
+
+.. Why is the syntax so different from C++?
+
+なぜ文法はC++と異なっているのですか？
+-------------------------------------
+
 This and other language design questions are answered in the separate language design FAQ.
 
-Object-Oriented Programming[Top]
-Is Go an object-oriented language?
-Yes and no. Although Go has types and methods and allows an object-oriented style of programming, there is no type hierarchy. The concept of “interface” in Go provides a different approach that we believe is easy to use and in some ways more general. There are also ways to embed types in other types to provide something analogous—but not identical—to subclassing. Moreover, methods in Go are more general than in C++ or Java: they can be defined for any sort of data, not just structs.
+この質問や、言語設計に関するその他の質問に関しては、 :ref:`language_design_faq` にて回答します。
+
+.. Object-Oriented Programming
+
+オブジェクト指向プログラミング
+==============================
+
+.. Is Go an object-oriented language?
+
+Goはオブジェクト指向言語ですか？
+------------------------------------
+
+.. Yes and no. Although Go has types and methods and allows an object-oriented style of programming, there is no type hierarchy. The concept of “interface” in Go provides a different approach that we believe is easy to use and in some ways more general. There are also ways to embed types in other types to provide something analogous—but not identical—to subclassing. Moreover, methods in Go are more general than in C++ or Java: they can be defined for any sort of data, not just structs.
 
 Also, the lack of type hierarchy makes “objects” in Go feel much more lightweight than in languages such as C++ or Java.
 
 How do I get dynamic dispatch of methods?
 The only way to have dynamically dispatched methods is through an interface. Methods on structs or other types are always resolved statically.
 
-Concurrent programming[Top]
+.. Concurrent programming
+
+並列プログラミング
+==================
+
 What operations are atomic? What about mutexes?
 We haven't fully defined it all yet, but some details about atomicity are available in the Go Memory Model specification. Also, some concurrency questions are answered in more detail in the language design FAQ.
 
