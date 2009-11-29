@@ -126,7 +126,7 @@ Protocol buffers are supported. We plan to have the next release of the protocol
 なぜ文法はC++と異なっているのですか？
 -------------------------------------
 
-This and other language design questions are answered in the separate language design FAQ.
+.. This and other language design questions are answered in the separate language design FAQ.
 
 この質問や、言語設計に関するその他の質問に関しては、 :ref:`language_design_faq` にて回答します。
 
@@ -142,10 +142,20 @@ Goはオブジェクト指向言語ですか？
 
 .. Yes and no. Although Go has types and methods and allows an object-oriented style of programming, there is no type hierarchy. The concept of “interface” in Go provides a different approach that we believe is easy to use and in some ways more general. There are also ways to embed types in other types to provide something analogous—but not identical—to subclassing. Moreover, methods in Go are more general than in C++ or Java: they can be defined for any sort of data, not just structs.
 
-Also, the lack of type hierarchy makes “objects” in Go feel much more lightweight than in languages such as C++ or Java.
+イエスとも言えますし、ノーとも言えます。Goは型もメソッドもあり、オブジェクト指向のスタイルのプログラミングを行うことができますが、型には階層はありません。Goでは"インタフェース"という概念が提供されていて、今までとは異なるアプローチを行うことができます。私たちは簡単に使えると信じていますし、いくつかの方法の中ではより汎用的だと思っています。また、他の型に対して、型を埋め込んで類似のモノを提供するということもできますが、サブクラスとは異なります。そのうえ、GoメソッドはC++かJavaよりも汎用的です。構造体だけでなく、あらゆる種類のデータに対して定義することができます。
 
-How do I get dynamic dispatch of methods?
-The only way to have dynamically dispatched methods is through an interface. Methods on structs or other types are always resolved statically.
+.. Also, the lack of type hierarchy makes “objects” in Go feel much more lightweight than in languages such as C++ or Java.
+
+また、型の階層がないということは、Goの"オブジェクト"はC++やJavaなどの他の言語よりも軽量である感覚を与えます。
+
+.. How do I get dynamic dispatch of methods?
+
+どのようにすれば動的ディスパッチが行えますか？
+----------------------------------------------
+
+.. The only way to have dynamically dispatched methods is through an interface. Methods on structs or other types are always resolved statically.
+
+メソッドのダイナミックディスパッチを行う唯一の方法は、インタフェースを通じて呼び出す方法になります。構造体やその他の型に定義されたメソッドは、常に静的に解決されます。
 
 .. Concurrent programming
 
