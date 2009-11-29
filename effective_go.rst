@@ -1999,7 +1999,7 @@ PathErrorが生成するエラーメッセージは次のようなものです::
 
 最後に、Goの完全なプログラムとして、ウェブサーバを作ってみましょう。このプログラムは、実際にはウェブ中継サーバの一種です。Googleは、データを自動的に書式・体裁を整え、図表やグラフを作成するサービスを http://chart.apis.google.com にて提供しています。しかし、それは対話的に使用することは難しいです。なぜなら、クエリとしてURLにデータを埋め込む必要があるためです。これから作成するプログラムは、データの一形式を作成する優れたインターフェースを提供します。短いテキストが与えられると、プログラムはQRコード（与えられたテキストがエンコードされた粒子状の四角形）を生成するようにチャートサーバにリクエストをします。生成されたQRコードは携帯電話のカメラによって取り込むことができます。取り込まれたQRコードは、例えば（携帯電話のとても小さいキーでURLを打つのを省略するための）URLとして解読されます。
 
-Here's the complete program. An explanation follows::
+.. Here's the complete program. An explanation follows::
 
   .. package main
   
@@ -2074,7 +2074,7 @@ Here's the complete program. An explanation follows::
   
   var addr = flag.String("addr", ":1718", "http service address") // Q=17, R=18
   var fmap = template.FormatterMap{
-      "html": template.HtmlFormatter,
+      "html": template.HTMLFormatter,
       "url+html": UrlHtmlFormatter,
   }
   var templ = template.MustParse(templateStr, fmap)
@@ -2093,7 +2093,7 @@ Here's the complete program. An explanation follows::
   }
   
   func UrlHtmlFormatter(w io.Writer, v interface{}, fmt string) {
-      template.HtmlEscape(w, strings.Bytes(http.URLEscape(v.(string))));
+      template.HTMLEscape(w, strings.Bytes(http.URLEscape(v.(string))));
   }
   
   
@@ -2121,18 +2121,32 @@ Here's the complete program. An explanation follows::
 
 .. The pieces up to main should be easy to follow. The one flag sets a default HTTP port for our server. The template variable templ is where the fun happens. It builds an HTML template that will be executed by the server to display the page; more about that in a moment.
 
-上記のソースコードは、mainメソッドまで、処理内容を容易に追うことができるはずです。flagはこのサーバのデフォルトHTTPポートを設定します。テンプレート変数のtemplでは、面白いことが起こります。このテンプレート変数は、ページを表示するためにサーバにより実行されるHTMLテンプレートを生成します。詳細は、すぐ後で説明します。
+上記のソースコードは、main関数まで、処理内容を容易に追うことができるはずです。flagはこのサーバのデフォルトHTTPポートを設定します。テンプレート変数のtemplでは、面白いことが起こります。このテンプレート変数は、ページを表示するためにサーバにより実行されるHTMLテンプレートを生成します。詳細は、すぐ後で説明します。
 
-The main function parses the flags and, using the mechanism we talked about above, binds the function QR to the root path for the server. Then http.ListenAndServe is called to start the server; it blocks while the server runs.
+.. The main function parses the flags and, using the mechanism we talked about above, binds the function QR to the root path for the server. Then http.ListenAndServe is called to start the server; it blocks while the server runs.
 
-QR just receives the request, which contains form data, and executes the template on the data in the form value named s.
+main関数はフラグ変数を処理してから、上述したメカニズムを用いて、このサーバのルート(/)パスにQR関数をバインドします。そして、このサーバを起動するためにhttp.ListenAndServe関数を呼びます。この関数は、サーバが起動している間は排他的に動作します。
 
-The template package, inspired by json-template, is powerful; this program just touches on its capabilities. In essence, it rewrites a piece of text on the fly by substituting elements derived from data items passed to templ.Execute, in this case the form value. Within the template text (templateStr), brace-delimited pieces denote template actions. The piece from the {.section @} to {.end} executes with the value of the data item @, which is a shorthand for “the current item”, which is the form value. (When the string is empty, this piece of the template is suppressed.)
+.. QR just receives the request, which contains form data, and executes the template on the data in the form value named s.
 
-The snippet {@|url+html} says to run the data through the formatter installed in the formatter map (fmap) under the name "url+html". That is the function UrlHtmlFormatter, which sanitizes the string for safe display on the web page.
+QR関数がフォームデータを含むリクエストを受け取ると、フォームデータのsパラメータの値に基づいて、テンプレートを処理して出力します。
 
-The rest of the template string is just the HTML to show when the page loads. If this is too quick an explanation, see the documentation for the template package for a more thorough discussion.
+.. The template package, inspired by json-template, is powerful; this program just touches on its capabilities. In essence, it rewrites a piece of text on the fly by substituting elements derived from data items passed to templ.Execute, in this case the form value. Within the template text (templateStr), brace-delimited pieces denote template actions. The piece from the {.section @} to {.end} executes with the value of the data item @, which is a shorthand for “the current item”, which is the form value. (When the string is empty, this piece of the template is suppressed.)
 
-And there you have it: a useful webserver in a few lines of code plus some data-driven HTML text. Go is powerful enough to make a lot happen in a few lines.
+json-templateに影響を受けたtemplateパッケージは強力です。このプログラムは、単にtemplateパッケージの能力を、ほんの一部使用しているだけです。端的に説明すると、templ.Executeに渡されたデータ（この場合はフォームデータ）から得た要素に逐次代入することで、テキストを書き換えています。テンプレートテキスト(templateStr)においては、波括弧{}で囲まれた要素がテンプレートアクションであることを意味します。{.section @}から{.end}の間の部分はデータ@とともに処理されます。@は『現在の要素』の簡便な記法です。現在の要素、とはフォームの値のことです。（もしフォームの値が空の場合には、この部分（{.section @}から{.end}の間）は出力されません。）
 
-Except as noted, this content is licensed under Creative Commons Attribution 3.0.
+.. The snippet {@|url+html} says to run the data through the formatter installed in the formatter map (fmap) under the name "url+html". That is the function UrlHtmlFormatter, which sanitizes the string for safe display on the web page.
+
+{@|url+html}という記述は、フォーマッタマップ(fmap)に"url+html"という名前でインストールされたフォーマッタを利用してデータを処理するように命令します。
+
+.. The rest of the template string is just the HTML to show when the page loads. If this is too quick an explanation, see the documentation for the template package for a more thorough discussion.
+
+テンプレートの残りのテキストは、ページが読み込まれる際に表示される単なるHTMLです。もし、これまでの説明が不十分だと感じるなら、templateパッケージのより徹底的な解説ドキュメントを参照してください。
+
+.. And there you have it: a useful webserver in a few lines of code plus some data-driven HTML text. Go is powerful enough to make a lot happen in a few lines.
+
+そして、あなたはわずかな行数のコードに加えて、いくらかのデータ駆動のHTMLテキストで記述された便利なウェブサーバを手に入れることができました。Goはわずかな行数で、非常に多彩な機能を実現できる強力な言語なのです。
+
+.. Except as noted, this content is licensed under Creative Commons Attribution 3.0.
+
+特に断りが無い限り、このドキュメント内容は、Creative Commons Attribution 3.0の元にライセンスされます。
