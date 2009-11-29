@@ -214,6 +214,8 @@ Goはオブジェクト指向言語ですか？
 ==================
 
 What operations are atomic? What about mutexes?
+----------------------------------------------
+
 We haven't fully defined it all yet, but some details about atomicity are available in the Go Memory Model specification. Also, some concurrency questions are answered in more detail in the language design FAQ.
 
 Regarding mutexes, the sync package implements them, but we hope Go programming style will encourage people to try higher-level techniques. In particular, consider structuring your program so that only one goroutine at a time is ever responsible for a particular piece of data.
@@ -221,23 +223,35 @@ Regarding mutexes, the sync package implements them, but we hope Go programming 
 Do not communicate by sharing memory. Instead, share memory by communicating.
 
 Writing Code[Top]
+==================
+
 How are libraries documented?
+----------------------------------------------
+
 There is a program, godoc, written in Go, that extracts package documentation from the source code. It can be used on the command line or on the web. An instance is running at http://golang.org/pkg/. In fact, godoc implements the full site at http://golang.org/.
 
 Is there a Go programming style guide?
+----------------------------------------------
+
 Eventually, there may be a small number of rules to guide things like naming, layout, and file organization. The document Effective Go contains some style advice. More directly, the program gofmt is a pretty-printer whose purpose is to enforce layout rules; it replaces the usual compendium of do's and don'ts that allows interpretation. All the Go code in the repository has been run through gofmt.
 
 How do I submit patches to the Go libraries?
+----------------------------------------------
+
 The library sources are in go/src/pkg. If you want to make a significant change, please discuss on the mailing list before embarking.
 
 See the document Contributing to the Go project for more information about how to proceed.
 
 How do I create a multifile package?
+----------------------------------------------
+
 Put all the source files for the package in a directory by themselves. Source files can refer to items from different files at will; there is no header file or need for forward declarations.
 
 Other than being split into multiple files, the package will compile and test just like a single-file package.
 
 How do I write a unit test?
+----------------------------------------------
+
 Create a new file ending in _test.go in the same directory as your package sources. Inside that file, import "testing" and write functions of the form
 
 .. code-block:: cpp
@@ -249,6 +263,8 @@ Create a new file ending in _test.go in the same directory as your package sourc
 Run gotest in that directory. That script finds the Test functions, builds a test binary, and runs it.
 
 Where is assert?
+----------------------------------------------
+
 Go doesn't provide assertions. They are undeniably convenient, but our experience has been that programmers use them as a crutch to avoid thinking about proper error handling and reporting. Proper error handling means that servers continue operation after non-fatal errors instead of crashing. Proper error reporting means that errors are direct and to the point, saving the programmer from interpreting a large crash trace. Precise errors are particularly important when the programmer seeing the errors is not familiar with the code.
 
 The same arguments apply to the use of assert() in test programs. Proper error handling means letting other tests run after one has failed, so that the person debugging the failure gets a complete picture of what is wrong. It is more useful for a test to report that isPrime gives the wrong answer for 2, 3, 5, and 7 (or for 2, 4, 8, and 16) than to report that isPrime gives the wrong answer for 2 and therefore no more tests were run. The programmer who triggers the test failure may not be familiar with the code that fails. Time invested writing a good error message now pays off later when the test breaks.
@@ -258,7 +274,11 @@ In testing, if the amount of extra code required to write good errors seems repe
 We understand that this is a point of contention. There are many things in the Go language and libraries that differ from modern practices, simply because we feel it's sometimes worth trying a different approach.
 
 Implementation[Top]
+==================
+
 What compiler technology is used to build the compilers?
+----------------------------------------------
+
 Gccgo has a C++ front-end with a recursive descent parser coupled to the standard GCC back end. Gc is written in C using yacc/bison for the parser. Although it's a new program, it fits in the Plan 9 C compiler suite (http://plan9.bell-labs.com/sys/doc/compiler.html) and uses a variant of the Plan 9 loader to generate ELF binaries.
 
 We considered writing 6g, the original Go compiler, in Go itself but elected not to do so because of the difficulties of bootstrapping and especially of open source distribution—you'd need a Go compiler to set up a Go environment. Gccgo, which came later, makes it possible to consider writing a compiler in Go, which might well happen. (Go would be a fine language in which to implement a compiler; a native lexer and parser are already available in /pkg/go.)
@@ -266,4 +286,6 @@ We considered writing 6g, the original Go compiler, in Go itself but elected not
 We also considered using LLVM for 6g but we felt it was too large and slow to meet our performance goals.
 
 How is the runtime implemented?
+----------------------------------------------
+
 Again due to bootstrapping issues, the runtime is mostly in C (with a tiny bit of assembler) although Go is capable of implementing most of it now. Gccgo's runtime uses glibc. Gc uses a custom library, to keep the footprint under control; it is compiled with a version of the Plan 9 C compiler that supports segmented stacks for goroutines. Work is underway to provide the same stack management in gccgo.
