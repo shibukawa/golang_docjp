@@ -10,11 +10,10 @@ Goの起源
 
 .. **What is the purpose of the project?**
 
-**このプロジェクトの目的は何か？**
+このプロジェクトの目的は何ですか？
+----------------------------------
 
 .. No major systems language has emerged in over a decade, but over that time the computing landscape has changed tremendously. There are several trends:
-
-どんな主要なシステム言語も10年間以上の間現れていませんが、その時の間コンピューティング風景はものすごく変化しています。 いくつかの傾向があります:
 
 ここ10年以上の間、メジャーなシステム言語と呼ばれるものは登場していません。しかし、この間コンピュータをめぐる景色は大きく変化しています。この変化には以下のような傾向があります:
 
@@ -41,60 +40,179 @@ Goの起源
    * By its design, Go proposes an approach for the construction of system software on multicore machines.
 
 * 大きなGoのプログラムを一台のコンピュータで数秒で数秒以内にコンパイルすることが可能です。
+* Goは、依存性の分析を簡単にし、C言語スタイルのインクルードファイルや、ライブラリの持つオーバーヘッドのほとんどを解消するようなソフトウェアの構成が行えるモデルを提供します。
+* Goの型システムには階層構造がないため、型同士の関係を定義するに貴重な時間を使う必要はありません。また、Goは静的な型システムを持つ言語ですが、典型的なオブジェクト指向言語と比べると型を作成するのが気軽に行えるような言語になっています。
+* Goは完全なガーベジコレクションを備え、言語レベルで並列実行とコミュニケーションの機能をサポートしています。
+* これらのデザインにより、Goはマルチコアのマシン上で動作する、システムソフトウェアの構築を行える様々な機能を提供しています。
 
-**What is the origin of the name?**
+.. **What is the origin of the name?**
 
-“Ogle” would be a good name for a Go debugger.
+名前の由来は？
+--------------
 
-**What kind of a name is 6g?**
+.. “Ogle” would be a good name for a Go debugger.
 
-The 6g (and 8g and 5g) compiler is named in the tradition of the Plan 9 C compilers, described in http://plan9.bell-labs.com/sys/doc/compiler.html (see the table in section 2). 6 is the architecture letter for amd64 (or x86-64, if you prefer), while g stands for Go.
+"Ogle"というのはGoのデバッガーの名前としていい名前になると思います。
 
-**Why not just write some libraries for C++ to do communication?**
+.. **What kind of a name is 6g?**
 
-We considered doing that, but too many of the problems—lack of garbage collection, long dependency chains, nested include files, lack of concurrency awareness—are rooted in the design of the C and C++ languages themselves. We felt a viable solution required a more complete approach.
+6gというのは何を指す名前ですか？
+--------------------------------
 
-**Why doesn't Go run on Windows?**
+.. The 6g (and 8g and 5g) compiler is named in the tradition of the Plan 9 C compilers, described in http://plan9.bell-labs.com/sys/doc/compiler.html (see the table in section 2). 6 is the architecture letter for amd64 (or x86-64, if you prefer), while g stands for Go.
 
-We understand that a significant fraction of computers in the world run Windows and it would be great if those computers could run Go programs. However, the Go team is small and we don't have the resources to do a Windows port at the moment. We would be more than willing to answer questions and offer advice to anyone willing to develop a Windows version.
+6g(と、8g, 5g)というのは伝統的なPlan 9のC言語のコンパイラの名前です。詳しい説明は http://plan9.bell-labs.com/sys/doc/compiler.html のSection 2の表を参照してください。6というのはアーキテクチャを表す文字で、AMD64(あるいはx86-64という呼び方が好きな人もいるでしょう)を表します。gはGoを表しています。
 
-Usage
-=====
+.. **Why not just write some libraries for C++ to do communication?**
 
-**Who should use the language?**
+C++のライブラリとコミュニケーションを行うために、なぜライブラリを書く必要があるのですか？
+-----------------------------------------------------------------------------------------
 
-Go is an experiment. We hope adventurous users will give it a try and see if they enjoy it. Not every programmer will, but we hope enough will find satisfaction in the approach it offers to justify further development.
+.. We considered doing that, but too many of the problems—lack of garbage collection, long dependency chains, nested include files, lack of concurrency awareness—are rooted in the design of the C and C++ languages themselves. We felt a viable solution required a more complete approach.
 
-Is Google using Go internally?
-The Go project was conceived to make it easier to write the kind of servers and other software Google uses internally, but the implementation isn't quite mature enough yet for large-scale production use. While we continue development we are also doing experiments with the language as a candidate server environment. It's getting there. For instance, the server behind http://golang.org is a Go program; in fact it's just the godoc document server running in a production configuration.
+私たちもこのことについて考えました。ですが、ガーベジコレクションが無い、依存性のチェーンが異様に長い、ネストされたインクルード、並列実行のサポートがないなど、C/C++の言語設計そのものに起因する多くの問題があります。C/C++をサポートするには、もっと根本からアプローチしていかなければ実現可能な解は得られないだろう、と考えています。
 
-Do Go programs link with C/C++ programs?
-There are two Go compiler implementations, 6g and friends, generically called gc, and gccgo. Gc uses a different calling convention and linker and can therefore only be linked with C programs using the same convention. There is such a C compiler but no C++ compiler. Gccgo is a GCC front-end that can, with care, be linked with GCC-compiled C or C++ programs. However, because Go is garbage-collected it will be unwise to do so, at least naively.
+.. **Why doesn't Go run on Windows?**
 
-There is a “foreign function interface” to allow safe calling of C-written libraries from Go code. We expect to use SWIG to extend this capability to C++ libraries. There is no safe way to call Go code from C or C++ yet.
+なぜGoはWindows上で実行できないのですか？
+-----------------------------------------
 
-Does Go support Google's protocol buffers?
-Protocol buffers are supported. We plan to have the next release of the protocol buffer source code include Go code generators and a Go library for them. The implementation uses data reflection at run time so it is slow, but a new implementation is planned.
+.. We understand that a significant fraction of computers in the world run Windows and it would be great if those computers could run Go programs. However, the Go team is small and we don't have the resources to do a Windows port at the moment. We would be more than willing to answer questions and offer advice to anyone willing to develop a Windows version.
 
-Design[Top]
-Why doesn't Go have feature X?
-Every language contains novel features and omits someone's favorite feature. Go was designed with an eye on felicity of programming, speed of compilation, orthogonality of concepts, and the need to support features such as concurrency and garbage collection. Your favorite feature may be missing because it doesn't fit, because it affects compilation speed or clarity of design, or because it would make the fundamental system model too difficult.
+私たちも、世界中のコンピュータのうちのWindowsが走っているものが大多数を占めていて、それらのコンピュータの上でGoのプログラムが動けばどれだけすばらしいことだろう、と思います。しかし、Goのチームは小さいために、Windowsに今すぐ移植を行うリソースがありません。ただ、もしもWindows版の開発をしたいと考えている人がいるのであれば、質問に答えたりアドバイスをしたりというのは積極的に行っていきたいと思っています。
 
-If it bothers you that Go is missing feature X, please forgive us and investigate the features that Go does have. You might find that they compensate in interesting ways for the lack of X.
+.. note::
 
-Why is the syntax so different from C++?
-This and other language design questions are answered in the separate language design FAQ.
+   訳注) Windowsに限らず、 `様々な環境への移植 <http://go-lang.cat-v.org/os-ports>`_ が行われています。
 
-Object-Oriented Programming[Top]
-Is Go an object-oriented language?
-Yes and no. Although Go has types and methods and allows an object-oriented style of programming, there is no type hierarchy. The concept of “interface” in Go provides a different approach that we believe is easy to use and in some ways more general. There are also ways to embed types in other types to provide something analogous—but not identical—to subclassing. Moreover, methods in Go are more general than in C++ or Java: they can be defined for any sort of data, not just structs.
+.. Usage
 
-Also, the lack of type hierarchy makes “objects” in Go feel much more lightweight than in languages such as C++ or Java.
+扱い方
+=======
 
-How do I get dynamic dispatch of methods?
-The only way to have dynamically dispatched methods is through an interface. Methods on structs or other types are always resolved statically.
+.. **Who should use the language?**
 
-Concurrent programming[Top]
+だれが言語を使うのですか？
+---------------------------
+
+.. Go is an experiment. We hope adventurous users will give it a try and see if they enjoy it.
+.. Not every programmer will, but we hope enough will find satisfaction in the approach it offers to justify further development.
+
+Go は、実験中です。 我々は、冒険心があり、いろいろと試し楽しめる人を望んでいます。
+すべてのプログラマではないです、しかし我々は十分にさらなる発展を正当化するため提供しているアプローチで満足感を得ることを望んでいます。
+
+.. Is Google using Go internally?
+
+Google内部でGoを使うのですか？
+--------------------------------
+
+.. The Go project was conceived to make it easier to write the kind of servers and other software Google uses internally, but the implementation isn't quite mature enough yet for large-scale production use.
+.. While we continue development we are also doing experiments with the language as a candidate server environment.
+.. It's getting there.
+.. For instance, the server behind http://golang.org is a Go program; in fact it's just the godoc document server running in a production configuration.
+
+Go プロジェクトでは、Google 内部で、簡単にいろいろな種類のサーバーや他のGoogle ソフトウェアを記述するように考案されています。
+しかし、まだ大規模なプロダクトで使用するために、十分に成熟してはいません。
+一方で、我々はまたサーバ環境としての候補として、Goを使って、実験を続け開発をしています。
+もう一息というところです。
+例えば、http://golang.org/ の背後にあるサーバーは、Goでできています。
+それはちょうどgodocドキュメントサーバーが動作しているという事実です。
+
+.. Do Go programs link with C/C++ programs?
+
+Go は、C/C++プログラムとリンクできますか？
+----------------------------------------------
+
+.. There are two Go compiler implementations, 6g and friends, generically called gc, and gccgo.
+.. Gc uses a different calling convention and linker and can therefore only be linked with C programs using the same convention.  There is such a C compiler but no C++ compiler.
+.. Gccgo is a GCC front-end that can, with care, be linked with GCC-compiled C or C++ programs. However, because Go is garbage-collected it will be unwise to do so, at least naively.
+
+2つのGoコンパイラの実装では、"6g"他がり、一般的にGCかgccgoが呼ばれています。
+GCを使用すると、別の呼び出し規約とリンカのため、唯一のCプログラムとリンクすることができます。
+これは、Cコンパイラであって、C++コンパイラではありません。
+Gccgo は、GCCのフロントエンドとして使うことができ、GCCでコンパイルされた、C/C++プログラムとリンクすることができます。
+Go は、ガベージコレクションをするため、単純にリンクさせることは、賢明ではありません。
+
+.. There is a “foreign function interface” to allow safe calling of C-written libraries from Go code.
+.. We expect to use SWIG to extend this capability to C++ libraries. There is no safe way to call Go code from C or C++ yet.
+
+"外部関数インターフェイス"は、Goのコードから安全に、"C"で書かれたライブラリを呼び出すことができます。
+我々は、SWIGを使って、C++ライブラリが利用できるようになることを期待しています。
+C/C++からGoコードを安全に呼び出す方法はまだありません。
+
+.. Does Go support Google's protocol buffers?
+
+Go は、Googleの"protocol buffers"をサポートしますか？
+--------------------------------------------------------
+
+.. Protocol buffers are supported.
+.. We plan to have the next release of the protocol buffer source code include Go code generators and a Go library for them. 
+.. The implementation uses data reflection at run time so it is slow, but a new implementation is planned.
+
+Protocol buffers は、サポートします。
+我々の計画では、次のリリースに、"protocol buffer"のライブラリとジェネレータを取り込みます。
+データリフレクションを使っていますので処理時間は遅いです。しかし、新しい実装を計画しています。
+
+
+.. Design
+
+設計
+====
+
+.. Why doesn't Go have feature X?
+
+なぜGoにはXという機能がないのですか？
+-------------------------------------
+
+.. Every language contains novel features and omits someone's favorite feature. Go was designed with an eye on felicity of programming, speed of compilation, orthogonality of concepts, and the need to support features such as concurrency and garbage collection. Your favorite feature may be missing because it doesn't fit, because it affects compilation speed or clarity of design, or because it would make the fundamental system model too difficult.
+
+どんな言語であっても、目新しい機能が含まれている反面、誰かが好きな機能を省略することがありえます。Goはプログラミングの喜び、コンパイル速度、概念の直交性、並列実行やガーベジコレクション機能のサポートに重点をおいてデザインされています。みなさんの好きな機能がないとすれば、それはコンパイル速度や明確な設計などとマッチしないか、基本的なシステムのモデルを複雑にしてしまうから、という理由からだと思います。
+
+.. If it bothers you that Go is missing feature X, please forgive us and investigate the features that Go does have. You might find that they compensate in interesting ways for the lack of X.
+
+もしもGoに機能Xがないために苦労を強いられているのであれば、私たちに恨みを向けないで、Goが持っている機能を調べてみてください。もしかしたらXの機能が欠けている部分が、面白い方法で補完されているの、というのを見つけることができるかもしれません。
+
+.. Why is the syntax so different from C++?
+
+なぜ文法はC++と異なっているのですか？
+-------------------------------------
+
+.. This and other language design questions are answered in the separate language design FAQ.
+
+この質問や、言語設計に関するその他の質問に関しては、 :ref:`language_design_faq` にて回答します。
+
+.. Object-Oriented Programming
+
+オブジェクト指向プログラミング
+==============================
+
+.. Is Go an object-oriented language?
+
+Goはオブジェクト指向言語ですか？
+------------------------------------
+
+.. Yes and no. Although Go has types and methods and allows an object-oriented style of programming, there is no type hierarchy. The concept of “interface” in Go provides a different approach that we believe is easy to use and in some ways more general. There are also ways to embed types in other types to provide something analogous—but not identical—to subclassing. Moreover, methods in Go are more general than in C++ or Java: they can be defined for any sort of data, not just structs.
+
+イエスとも言えますし、ノーとも言えます。Goは型もメソッドもあり、オブジェクト指向のスタイルのプログラミングを行うことができますが、型には階層はありません。Goでは"インタフェース"という概念が提供されていて、今までとは異なるアプローチを行うことができます。私たちは簡単に使えると信じていますし、いくつかの方法の中ではより汎用的だと思っています。また、他の型に対して、型を埋め込んで類似のモノを提供するということもできますが、サブクラスとは異なります。そのうえ、GoメソッドはC++かJavaよりも汎用的です。構造体だけでなく、あらゆる種類のデータに対して定義することができます。
+
+.. Also, the lack of type hierarchy makes “objects” in Go feel much more lightweight than in languages such as C++ or Java.
+
+また、型の階層がないということは、Goの"オブジェクト"はC++やJavaなどの他の言語よりも軽量である感覚を与えます。
+
+.. How do I get dynamic dispatch of methods?
+
+どのようにすれば動的ディスパッチが行えますか？
+----------------------------------------------
+
+.. The only way to have dynamically dispatched methods is through an interface. Methods on structs or other types are always resolved statically.
+
+メソッドのダイナミックディスパッチを行う唯一の方法は、インタフェースを通じて呼び出す方法になります。構造体やその他の型に定義されたメソッドは、常に静的に解決されます。
+
+.. Concurrent programming
+
+並列プログラミング
+==================
+
 What operations are atomic? What about mutexes?
 We haven't fully defined it all yet, but some details about atomicity are available in the Go Memory Model specification. Also, some concurrency questions are answered in more detail in the language design FAQ.
 
