@@ -1743,48 +1743,85 @@ Goでは関数リテラルはクロージャなので、関数内で参照され
 
 以上の例は関数側からの処理の終了を通知する方法がないため、十分に実用的なものではありません。そのためにはチャンネルが必要となります。
 
-Channels
---------
+.. Channels
+   --------
 
-Like maps, channels are a reference type and are allocated with make. If an optional integer parameter is provided, it sets the buffer size for the channel. The default is zero, for an unbuffered or synchronous channel::
+チャンネル
+----------
 
-  ci := make(chan int);            // unbuffered channel of integers
-  cj := make(chan int, 0);         // unbuffered channel of integers
-  cs := make(chan *os.File, 100);  // buffered channel of pointers to Files
+.. Like maps, channels are a reference type and are allocated with make. If an optional integer parameter is provided, it sets the buffer size for the channel. The default is zero, for an unbuffered or synchronous channel:
 
-Channels combine communication?the exchange of a value?with synchronization?guaranteeing that two calculations (goroutines) are in a known state.
+map同様、チャンネルは参照型であり\ :keyword:`make`\ によって領域が割り当てられます。整数パラメータが与えられている場合、それがチャンネルのバッファサイズとなります。デフォルトは0であり、その際はバッファされない、または同期チャンネルとなります。
 
-There are lots of nice idioms using channels. Here's one to get us started. In the previous section we launched a sort in the background. A channel can allow the launching goroutine to wait for the sort to complete::
+.. code-block:: cpp
 
-  c := make(chan int);  // Allocate a channel.
-  // Start the sort in a goroutine; when it completes, signal on the channel.
+  ci := make(chan int);            // バッファされない整数のチャンネル
+  cj := make(chan int, 0);         // バッファされない整数のチャンネル
+  cs := make(chan *os.File, 100);  // バッファされるファイルのポインタのチャンネル
+
+.. ci := make(chan int);            // unbuffered channel of integers
+   cj := make(chan int, 0);         // unbuffered channel of integers
+   cs := make(chan *os.File, 100);  // buffered channel of pointers to Files
+
+.. Channels combine communication?the exchange of a value?with synchronization?guaranteeing that two calculations (goroutines) are in a known state.
+
+チャンネルは通信(値のやりとり)と同期(2つの演算(goroutine)が機知の状態であることを保証すること)を同時に実現します。
+
+.. There are lots of nice idioms using channels. Here's one to get us started. In the previous section we launched a sort in the background. A channel can allow the launching goroutine to wait for the sort to complete:
+
+チャンネルを使った便利なイディオムが多く存在します。ここで1つ紹介しましょう。前節ではソートをバックグラウンドで実行しました。チャンネルは開始したgoroutineにソートの完了を待たせることができます。
+
+.. code-block:: cpp
+
+  c := make(chan int);  // チャンネルを確保
+  // ソートをgoroutine内で実行し、終了次第シグナル
   go func() {
       list.Sort();
-      c <- 1;  // Send a signal; value does not matter. 
+      c <- 1;  // シグナルの発行。値は何でもOK。
   }();
   doSomethingForAWhile();
-  <-c;   // Wait for sort to finish; discard sent value.
+  <-c;   // ソートの完了を待つ。送られてくる値は破棄。
 
-Receivers always block until there is data to receive. If the channel is unbuffered, the sender blocks until the receiver has received the value. If the channel has a buffer, the sender blocks only until the value has been copied to the buffer; if the buffer is full, this means waiting until some receiver has retrieved a value.
+..  c := make(chan int);  // Allocate a channel.
+    // Start the sort in a goroutine; when it completes, signal on the channel.
+    c <- 1;  // Send a signal; value does not matter. 
+    <-c;   // Wait for sort to finish; discard sent value.
 
-A buffered channel can be used like a semaphore, for instance to limit throughput. In this example, incoming requests are passed to handle, which sends a value into the channel, processes the request, and then receives a value from the channel. The capacity of the channel buffer limits the number of simultaneous calls to process::
+.. Receivers always block until there is data to receive. If the channel is unbuffered, the sender blocks until the receiver has received the value. If the channel has a buffer, the sender blocks only until the value has been copied to the buffer; if the buffer is full, this means waiting until some receiver has retrieved a value.
+
+受け取り側は受け取るデータが来るまでブロックされます。チャンネルがバッファなしのものであれば、送信側は受け取り側が値を受け取るまでブロックされます。チャンネルがバッファされている場合、送信側がブロックされるのは値がバッファにコピーされるまでだけです。バッファが一杯になっている場合、受け取り側が値を取得するまでブロックされることになります。
+
+.. A buffered channel can be used like a semaphore, for instance to limit throughput. In this example, incoming requests are passed to handle, which sends a value into the channel, processes the request, and then receives a value from the channel. The capacity of the channel buffer limits the number of simultaneous calls to process:
+
+バッファされたチャンネルは、例えばスループットを制御するなどのセマフォとして利用することができます。以下の例では、受信したリクエストはhandleに渡され、それが値をチャンネルに送り、リクエストを処理、そしてチャンネルからの値の受信を行います。チャンネルバッファの容量は同時に処理できる呼び出しを制限することになります。
+
+.. code-block:: cpp
 
   var sem = make(chan int, MaxOutstanding)
   
   func handle(r *Request) {
-      sem <- 1;    // Wait for active queue to drain.
-      process(r);  // May take a long time.
-      <-sem;       // Done; enable next request to run.
+      sem <- 1;    // アクティブなキューがなくなるまで待つ。
+      process(r);  // 長時間かかるかもしれない。
+      <-sem;       // 終了。次に実行するリクエストを有効化する。
   }
   
   func Serve(queue chan *Request) {
       for {
           req := <-queue;
-          go handle(req);  // Don't wait for handle to finish.
+          go handle(req);  // handleの終了を待たない。
       }
   }
 
-Here's the same idea implemented by starting a fixed number of handle goroutines all reading from the request channel. The number of goroutines limits the number of simultaneous calls to process. This Serve function also accepts a channel on which it will be told to exit; after launching the goroutines it blocks receiving from that channel::
+..      sem <- 1;    // Wait for active queue to drain.
+        process(r);  // May take a long time.
+        <-sem;       // Done; enable next request to run.
+            go handle(req);  // Don't wait for handle to finish.
+
+.. Here's the same idea implemented by starting a fixed number of handle goroutines all reading from the request channel. The number of goroutines limits the number of simultaneous calls to process. This Serve function also accepts a channel on which it will be told to exit; after launching the goroutines it blocks receiving from that channel:
+
+次のものは同様のことをリクエストチャンネルから読み込みを行う一定数のhandle goroutineを開始することによって実現しています。goroutineの数が同時呼び出し可能な数を制限することになります。Serve関数は終了指示を受けとるためのチャンネルも受け付けます。goroutineの起動後、そのチャンネルからの読み込みでブロックします。
+
+.. code-block:: cpp
 
   func handle(queue chan *Request) {
       for r := range queue {
@@ -1793,12 +1830,15 @@ Here's the same idea implemented by starting a fixed number of handle goroutines
   }
   
   func Serve(clientRequests chan *clientRequests, quit chan bool) {
-      // Start handlers
+      // ハンドラの開始
       for i := 0; i < MaxOutstanding; i++ {
           go handle(clientRequests)
       }
-      <-quit;    // Wait to be told to exit.
+      <-quit;    // 終了指示待ち。
   }
+
+..      // Start handlers
+..      <-quit;    // Wait to be told to exit.
 
 Channels of channels
 --------------------
