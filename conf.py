@@ -37,7 +37,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'golang_docjp'
+project = u'プログラミング言語 Go ドキュメント'
 copyright = u'2009, The Go Authors(Translated by pyspa.org)'
 
 # The version info for the project you're documenting, acts as replacement for

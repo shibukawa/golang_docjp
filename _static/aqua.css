@@ -1,0 +1,406 @@
+/* 
+CSS Document 
+Wink Hosting (www.winkhosting.com)
+Designed By Alexis Corredor
+alexis.corredor@gmail.com
+*/
+body {
+	margin-top: 0px;
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+}
+
+/*HEADER*/
+#header{
+	width: 800px;
+	position:relative; 
+	height: 162px;
+	background-image:url(images/header.jpg);
+	background-repeat:no-repeat;
+}
+/*SITE NAME IN HEADER*/
+#sitename {
+	position:absolute;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	color: #FFFFFF;
+	font-size: 36px;
+	font-weight: bold;
+	margin-top:50px;
+	margin-left:40px;
+	left: 0px;
+	top: 0px;
+}
+#sitename a {
+	color: #FFFFFF;
+	text-decoration: none;
+}
+#sitename a:hover {
+	color: #FFFFFF;
+	text-decoration: underline;
+}
+/*MENU IN HEADER*/
+#menu{
+	position:absolute;
+	bottom: 20px;
+	right: 30px;
+}
+.links_menu {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	font-weight: bold;
+}
+.links_menu a{
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	font-weight: bold;
+	color:#333333;
+	text-decoration:none;
+}
+.links_menu a:hover {
+	text-decoration:underline;
+}
+
+/*LEFT PANEL (News, Links, etc.)*/
+#leftpanel{
+	float:left;
+	width:200px;
+}
+
+/*CONTENT*/
+#content{
+	width: 800px;
+}
+#contenttext{
+	float:right;
+	width: 580px;
+	text-align: left;
+}
+
+/*FOOTER*/
+.footer{
+	width: 779px;
+	height: 32px;
+	background-image:url(images/bg_footer.gif);
+	background-repeat:no-repeat;
+	clear:both;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	font-weight: bold;
+	color:#FFFFFF;
+}
+/*FOOTER LINKS*/
+.footer a{
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	font-weight: bold;
+	color:#FFFFFF;
+	text-decoration:none;
+}
+.footer a:hover {
+	text-decoration:underline;
+}
+
+/*TABLE*/
+.table_top{
+	width: 204px;
+	height: 27px;
+	background-image:url(images/table_top.jpg);
+	background-repeat:no-repeat;
+}
+.table_content{
+	width: 204px;
+	background-image:url(images/table_content.jpg);
+	background-repeat:repeat-y;
+	margin-top: -14px;
+}
+.table_text{
+	margin-left:15px;
+	margin-right:15px;
+	text-align:justify;
+}
+.table_bottom{
+	width: 204px;
+	height: 23px;
+	margin-top: -14px;
+}
+
+/*TEXT STYLES*/
+.news_date {	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	font-weight: bold;
+	color: #0099CC;
+}
+.body_text {	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+}
+.news_more {	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	color: #FF9900;
+	font-weight: bold;
+}
+.news_text {	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+}
+
+.subtitle_gray {	font-family:Verdana, Arial, Helvetica, sans-serif;	
+	font-weight: bold;
+	font-size: 14px;
+	color: #CCCCCC;
+}
+.title_blue {font-family: Verdana, Arial, Helvetica, sans-serif; font-weight: bold; font-size: 26px; color: #7DA5E0; }
+.title_panel {	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+
+/* -- admonitions ----------------------------------------------------------- */
+
+div.admonition {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 7px;
+}
+
+div.admonition dt {
+    font-weight: bold;
+}
+
+div.admonition dl {
+    margin-bottom: 0;
+}
+
+p.admonition-title {
+    margin: 0px 10px 5px 0px;
+    font-weight: bold;
+}
+
+div.body p.centered {
+    text-align: center;
+    margin-top: 25px;
+}
+
+/* -- tables ---------------------------------------------------------------- */
+
+table.docutils {
+    border: 0;
+    border-collapse: collapse;
+}
+
+table.docutils td, table.docutils th {
+    padding: 1px 8px 1px 0;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 1px solid #aaa;
+}
+
+table.field-list td, table.field-list th {
+    border: 0 !important;
+}
+
+table.footnote td, table.footnote th {
+    border: 0 !important;
+}
+
+th {
+    text-align: left;
+    padding-right: 5px;
+}
+
+/* -- other body styles ----------------------------------------------------- */
+
+dl {
+    margin-bottom: 15px;
+}
+
+dd p {
+    margin-top: 0px;
+}
+
+dd ul, dd table {
+    margin-bottom: 10px;
+}
+
+dd {
+    margin-top: 3px;
+    margin-bottom: 10px;
+    margin-left: 30px;
+}
+
+dt:target, .highlight {
+    background-color: #e0ffd0;
+}
+
+dl.glossary dt {
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.field-list ul {
+    margin: 0;
+    padding-left: 1em;
+}
+
+.field-list p {
+    margin: 0;
+}
+
+.refcount {
+    color: #060;
+}
+
+.optional {
+    font-size: 1.3em;
+}
+
+.versionmodified {
+    font-style: italic;
+}
+
+.system-message {
+    background-color: #fda;
+    padding: 5px;
+    border: 3px solid red;
+}
+
+.footnote:target  {
+    background-color: #ffa
+}
+
+/* -- code displays --------------------------------------------------------- */
+
+pre {
+    overflow: auto;
+}
+
+td.linenos pre {
+    padding: 5px 0px;
+    border: 0;
+    background-color: transparent;
+    color: #aaa;
+}
+
+table.highlighttable {
+    margin-left: 0.5em;
+}
+
+table.highlighttable td {
+    padding: 0 0.5em 0 0.5em;
+}
+
+tt.descname {
+    background-color: transparent;
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+tt.descclassname {
+    background-color: transparent;
+}
+
+tt.xref, a tt {
+    background-color: transparent;
+    font-weight: bold;
+}
+
+h1 tt, h2 tt, h3 tt, h4 tt, h5 tt, h6 tt {
+    background-color: transparent;
+}
+
+/* -- math display ---------------------------------------------------------- */
+
+img.math {
+    vertical-align: middle;
+}
+
+div.math p {
+    text-align: center;
+}
+
+span.eqno {
+    float: right;
+}
+
+/* -- printout stylesheet --------------------------------------------------- */
+
+@media print {
+    div.document,
+    div.documentwrapper,
+    div.bodywrapper {
+        margin: 0;
+        width: 100%;
+    }
+
+    div.sphinxsidebar,
+    div.related,
+    div.footer,
+    #top-link {
+        display: none;
+    }
+}
+
+/* default.css_t */
+
+div.body h1,
+div.body h2,
+div.body h3,
+div.body h4,
+div.body h5,
+div.body h6 {
+    font-family: 'Trebuchet MS',sans-serif;
+    /*background-color: #F2F2F2;*/
+    font-weight: bold;
+    color: #60a0d0;
+    border-bottom: 1px solid #ccc;
+    margin: 20px 0px 10px 0px;
+    padding: 3px 0 3px 10px;
+}
+
+div.body h1 { margin-top: 0; font-size: 200%; }
+div.body h2 { font-size: 160%; }
+div.body h3 { font-size: 140%; }
+div.body h4 { font-size: 120%; }
+div.body h5 { font-size: 110%; }
+div.body h6 { font-size: 100%; }
+
+a.headerlink {
+    visibility: hidden;
+}
+
+h1:hover > a.headerlink,
+h2:hover > a.headerlink,
+h3:hover > a.headerlink,
+h4:hover > a.headerlink,
+h5:hover > a.headerlink,
+h6:hover > a.headerlink,
+dt:hover > a.headerlink {
+    visibility: visible;
+}
+
+pre {
+    padding: 5px;
+    background-color: #eeffcc;
+    color: #333333;
+    line-height: 120%;
+    border: 1px solid #ac9;
+    border-left: none;
+    border-right: none;
+}
+
+tt {
+    background-color: #ecf0f3;
+    padding: 0 1px 0 1px;
+    font-size: 0.95em;
+}
+
+
+/* customize */
+
+.right { float: right; }
+.logo a img { border-width: 0; }
+
+ul {
+    padding-left: 16px;
+}
