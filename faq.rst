@@ -213,14 +213,23 @@ Goはオブジェクト指向言語ですか？
 並列プログラミング
 ==================
 
-What operations are atomic? What about mutexes?
-----------------------------------------------
+.. What operations are atomic? What about mutexes?
+   ----------------------------------------------
 
-We haven't fully defined it all yet, but some details about atomicity are available in the Go Memory Model specification. Also, some concurrency questions are answered in more detail in the language design FAQ.
+アトミックな操作というのはどれでしょうか？ミューテックスはどうなっているんでしょうか？
+---------------------------------------------------------------------------------------
 
-Regarding mutexes, the sync package implements them, but we hope Go programming style will encourage people to try higher-level techniques. In particular, consider structuring your program so that only one goroutine at a time is ever responsible for a particular piece of data.
+.. We haven't fully defined it all yet, but some details about atomicity are available in the Go Memory Model specification. Also, some concurrency questions are answered in more detail in the language design FAQ.
 
-Do not communicate by sharing memory. Instead, share memory by communicating.
+私たちは、まだそれを完璧には定義していませんが、アトミックという状態に関する詳細情報は、Goのメモリモデルの定義の中で読むことができます。また、並列に関する質問に関しての詳細については、言語設計のFAQの中で説明しています。
+
+.. Regarding mutexes, the sync package implements them, but we hope Go programming style will encourage people to try higher-level techniques. In particular, consider structuring your program so that only one goroutine at a time is ever responsible for a particular piece of data.
+
+ミューテックスに関しては、syncパッケージで実装されていますが、多くのプログラマが、より高級なテクニックにトライしようとすることを願っています。一度に一つのgoroutineだけが特定のデータに関する責任を持つようにプログラムする、という構造にすることを考えてください。
+
+.. Do not communicate by sharing memory. Instead, share memory by communicating.
+
+共有メモリを使ったコミュニケーションはしなようにしてください。代わりに、コミュニケーションを利用した共有メモリを使用してください。
 
 Writing Code[Top]
 ==================
