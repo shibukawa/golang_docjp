@@ -7,7 +7,7 @@
 
 {%- macro relbar() %}
 	{%- for rellink in rellinks %}
-	<span class="right" {% if loop.first %}style="margin-right: 10px"{% endif %}>
+	<span class="right">
 		<a href="{{ pathto(rellink[0]) }}" title="{{ rellink[1]|striptags }}"
 		 {{ accesskey(rellink[2]) }}>{{ rellink[3] }}</a>
 		{%- if not loop.first %}{{ reldelim2 }}{% endif %}</span>
@@ -29,6 +29,7 @@
 	{%- endif %}
 	<title>{{ title|striptags }}{{ titlesuffix }}</title>
 	<link rel="stylesheet" href="{{ pathto('_static/aqua.css', 1) }}" type="text/css" />
+	<link rel="stylesheet" href="{{ pathto('_static/aqua-liquid.css', 1) }}" type="text/css" />
 	<link rel="stylesheet" href="{{ pathto('_static/pygments.css', 1) }}" type="text/css" />
 	{%- if not embedded %}
 	<script type="text/javascript">
@@ -81,14 +82,17 @@
 <body>
 	<div id="page" align="center">
 		<div id="header">
-			<div id="sitename" align="left">
-				<a href="{{ pathto(master_doc) }}">{{project|e}}</a>
-			</div>
-			<div align="right" class="links_menu" id="menu">
-				{{ relbar() }}
+			<div class="header-left">
+				<div id="sitename" align="left">
+					<a href="{{ pathto(master_doc) }}">{{project|e}}</a>
+				</div>
+				<div align="right" class="links_menu" id="menu">
+					{{ relbar() }}
+				</div>
+				<div class="header-right"></div>
 			</div>
 		</div>
-		<br />
+
 		<div id="content">
 			<div id="leftpanel">
 
@@ -103,15 +107,11 @@
 				</div>
 
 				{%- if toc %}
-				<div class="table_top">
-					<div align="center">
-						<span class="title_panel">
-							<a href="{{ pathto(master_doc) }}">{{ _('Table Of Contents') }}</a>
-						</span>
+				<div class="portlet">
+					<div class="portlet-top portlet-title">
+						<a href="{{ pathto(master_doc) }}">{{ _('Table Of Contents') }}</a>
 					</div>
-				</div>
-				<div class="table_content">
-					<div class="table_text">
+					<div class="portlet-body">
 						<div class="sphinxsidebarwrapper">
 							{%- block sidebartoc %}
 							{%- if display_toc %}
@@ -120,23 +120,16 @@
 							{%- endblock %}
 						</div>
 					</div>
+					<div class="portlet-bottom"></div>
 				</div>
-				<div class="table_bottom">
-					<img src="_static/images/table_bottom.jpg" width="204" height="23" border="0" alt="" />
-				</div>
-				<br />
 				{%- endif %}
 
 				{%- if prev and next and sho_source and has_source and sourcename %}
-				<div class="table_top">
-					<div align="center">
-						<span class="title_panel">
-							関連
-						</span>
+				<div class="portlet">
+					<div class="portlet-top portlet-title">
+						関連
 					</div>
-				</div>
-				<div class="table_content">
-					<div class="table_text">
+					<div class="portlet-body">
 						<div class="sphinxsidebarwrapper">
 							{%- block sidebarrel %}
 							{%- if prev %}
@@ -164,23 +157,16 @@
 							{%- endif %}
 						</div>
 					</div>
+					<div class="portlet-bottom"></div>
 				</div>
-				<div class="table_bottom">
-					<img src="_static/images/table_bottom.jpg" width="204" height="23" border="0" alt="" />
-				</div>
-				<br />
 				{%- endif %}
 
 				{%- if pagename != "search" %}
-				<div class="table_top">
-					<div align="center">
-						<span class="title_panel">
-							{{ _('Quick search') }}
-						</span>
+				<div class="portlet">
+					<div class="portlet-top portlet-title">
+						{{ _('Quick search') }}
 					</div>
-				</div>
-				<div class="table_content">
-					<div class="table_text">
+					<div class="portlet-body">
 						<div class="sphinxsidebarwrapper">
 							{%- block sidebarsearch %}
 							<div id="searchbox" style="display: none">
@@ -190,7 +176,7 @@
 										<input type="hidden" name="check_keywords" value="yes" />
 										<input type="hidden" name="area" value="default" />
 									</form>
-									<p class="searchtip" style="font-size: 90%">
+									<p class="searchtip">
 									{{ _('Enter search terms or a module, class or function name.') }}
 									</p>
 							</div>
@@ -198,21 +184,18 @@
 							{%- endblock %}
 						</div>
 					</div>
-				</div>
-				<div class="table_bottom">
-					<img src="_static/images/table_bottom.jpg" width="204" height="23" border="0" alt="" />
+					<div class="portlet-bottom"></div>
 				</div>
 				{%- endif %}
-				<br />
 			</div>
 			<div id="contenttext" class="body">
 				{% block body %} {% endblock %}
+
+				<div id="menu-bottom" class="links_menu">
+					{{ relbar() }}
+				</div>
 			</div>
-			<br />
-			<div style="clear:both;text-align:right;" class="links_menu">
-				{{ relbar() }}
-			</div>
-			<br />
+
 			{%- block footer %}
 			<div class="footer">
 			{%- if hasdoc('copyright') %}
