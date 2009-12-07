@@ -45,6 +45,11 @@ body {
 	bottom: 20px;
 	right: 30px;
 }
+#menu-bottom {
+	clear: both;
+	text-align:right;
+	margin-right: 20px;
+}
 .links_menu {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 10px;
@@ -410,4 +415,8 @@ tt {
 
 ul {
     padding-left: 16px;
+}
+
+.searchtip {
+	font-size: 90%;
 }
