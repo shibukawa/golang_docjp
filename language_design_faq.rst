@@ -4,15 +4,20 @@
 言語設計FAQ
 ===========
 
-.. 先頭の項目だけ、参考にフォーマット済みにしてあります。これを参考にして
-   ください。(渋川)
+.. Origins
+.. =======
 
-Origins
-=======
+生立ち
+======
 
-**What is the history of the project?**
+.. **What is the history of the project?**
 
-Robert Griesemer, Rob Pike and Ken Thompson started sketching the goals for a new language on the white board on September 21, 2007. Within a few days the goals had settled into a plan to do something and a fair idea of what it would be. Design continued part-time in parallel with unrelated work. By January 2008, Ken had started work on a compiler with which to explore ideas; it generated C code as its output. By mid-year the language had become a full-time project and had settled enough to attempt a production compiler. In May 2008, Ian Taylor independently started on a GCC front end for Go using the draft specification. Russ Cox joined in late 2008 and helped move the language and libraries from prototype to reality.
+**このプロジェクトにはどのような歴史がありますか？**
+
+.. Robert Griesemer, Rob Pike and Ken Thompson started sketching the goals for a new language on the white board on September 21, 2007. Within a few days the goals had settled into a plan to do something and a fair idea of what it would be. Design continued part-time in parallel with unrelated work. By January 2008, Ken had started work on a compiler with which to explore ideas; it generated C code as its output. By mid-year the language had become a full-time project and had settled enough to attempt a production compiler. In May 2008, Ian Taylor independently started on a GCC front end for Go using the draft specification. Russ Cox joined in late 2008 and helped move the language and libraries from prototype to reality.
+
+Robert Griesemer、Rob PikeおよびKen THompsonは2007年9月21日にホワイトボードに新しい言語の目標をスケッチすることを始めました。数日かけて、数ある目標から、何をするのかという計画と、この言語の美しい理想像が定まりました。他の仕事と並行して、隙間時間を利用して設計が続けられました。2008年1月までに、Kenはコンパイラについてのアイディアを追求することを始めました。それは、コンパイラの出力としてCのコードを生成することでした。この年の中頃までに、この言語はフルタイムのプロジェクトとなり、製品版コンパイラを製作するために十分な時間を費やすことになりました。2008年5月には、Ian Taylorが自主的に、ドラフト版の仕様をもとにして、GCC用のフロントエンド作りに取りかかりました。Russ Coxは2008年の終わり頃に参加し、言語とライブラリをプロトタイプから現実的な実装に導くことを助けました。
+
 
 Many others have contributed ideas, discussions, and code.
 
