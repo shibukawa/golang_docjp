@@ -19,11 +19,17 @@
 Robert Griesemer、Rob PikeおよびKen THompsonは2007年9月21日にホワイトボードに新しい言語の目標をスケッチすることを始めました。数日かけて、数ある目標から、何をするのかという計画と、この言語の美しい理想像が定まりました。他の仕事と並行して、隙間時間を利用して設計が続けられました。2008年1月までに、Kenはコンパイラについてのアイディアを追求することを始めました。それは、コンパイラの出力としてCのコードを生成することでした。この年の中頃までに、この言語はフルタイムのプロジェクトとなり、製品版コンパイラを製作するために十分な時間を費やすことになりました。2008年5月には、Ian Taylorが自主的に、ドラフト版の仕様をもとにして、GCC用のフロントエンド作りに取りかかりました。Russ Coxは2008年の終わり頃に参加し、言語とライブラリをプロトタイプから現実的な実装に導くことを助けました。
 
 
-Many others have contributed ideas, discussions, and code.
+.. Many others have contributed ideas, discussions, and code.
 
-**Why are you creating a new language?**
+ほかにも沢山の人々にアイディアを出していただき、議論をし、ソースコードに寄与していただきました。
 
-Go was born out of frustration with existing languages and environments for systems programming. Programming had become too difficult and the choice of languages was partly to blame. One had to choose either efficient compilation, efficient execution, or ease of programming; all three were not available in the same mainstream language. Programmers who could were choosing ease over safety and efficiency by moving to dynamically typed languages such as Python and JavaScript rather than C++ or, to a lesser extent, Java.
+.. **Why are you creating a new language?**
+
+**なぜ新しい言語を作るのですか？**
+
+.. Go was born out of frustration with existing languages and environments for systems programming. Programming had become too difficult and the choice of languages was partly to blame. One had to choose either efficient compilation, efficient execution, or ease of programming; all three were not available in the same mainstream language. Programmers who could were choosing ease over safety and efficiency by moving to dynamically typed languages such as Python and JavaScript rather than C++ or, to a lesser extent, Java.
+
+Goは、既存のシステムプログラミング用言語と環境への欲求不満から生まれた言語です。プログラミングはとても難しいものとなってしまいましたが、それは言語の選択が一因でもあります。効率的なコンパイル、効率的な実行、または容易なプログラミングのいずれかを選ばなければなりません。なぜなら、主要言語において、これら3つを満たす言語は無かったからです。プログラマは、安全性と効率を楽に得ることを選択するために、C++ではなく、PythonやJavaScriptのような動的型付け言語や、C++より自由度を下げて拡張したJavaに乗り換えることが可能ではありました。
 
 Go is an attempt to combine the ease of programming of an interpreted, dynamically typed language with the efficiency and safety of a statically typed, compiled language. It also aims to be modern, with support for networked and multicore computing. Finally, it is intended to be fast: it should take at most a few seconds to build a large executable on a single computer. To meet these goals required addressing a number of linguistic issues: an expressive but lightweight type system; concurrency and garbage collection; rigid dependency specification; and so on. These cannot be addressed well by libraries or tools; a new language was called for.
 
