@@ -433,7 +433,7 @@ Goでは、ほとんどの型は値です。 :ctype:`int` や :ctype:`struct` �
 .. code-block:: cpp
 
     type T struct { a, b int }
-    var t *T = new(T);
+    var t \*T = new(T);
 
 .. or the more idiomatic
 
@@ -550,34 +550,38 @@ I/O Package
 
 .. The first few lines declare the name of the package?file?and then import two packages. The os package hides the differences between various operating systems to give a consistent view of files and so on; here we're going to use its error handling utilities and reproduce the rudiments of its file I/O.
 
-最初の数行でパッケージ名-ファイル名を宣言してから、2つのパッケージをインポートしています。\ :mod:`os`\ パッケージは様々なオペレーティングシステム間の違いを吸収して、ファイルなどを一貫して利用できる様にします。ここで、エラー制御ユーティリティを使用し、ファイルI/Oの基本を再生します。
+最初の数行でパッケージ名-ファイル名を宣言してから、2つのパッケージをインポートしています。\ :mod:`os`\ パッケージは様々なオペレーティングシステム間の違いを吸収して、ファイルなどを一貫して利用できる様にします。ここで、エラー制御機構を使用し、ファイルI/Oの基本を実装します。
 
 .. The other item is the low-level, external syscall package, which provides a primitive interface to the underlying operating system's calls.
 
-もう一方のパッケージは、基本的なオペレーティングシステムの呼び出しに原始的なインターフェイスを提供する、低レベルな外部\ :mod:`syscall`\ パッケージです。
+もう一方のパッケージは、オペレーティングシステムを呼び出す、低レベルな\ :mod:`syscall`\ パッケージです。
 
 .. Next is a type definition: the type keyword introduces a type declaration, in this case a data structure called File. To make things a little more interesting, our File includes the name of the file that the file descriptor refers to.
 
-次は、型の定義です。\ ``File``\ というデータ構造を定義している様に、\ ``type``\ キーワードは型の宣言をする時に使用します。これの興味深い点は、この\ ``File``\ 型はファイル記述子が示すファイルの名前を含んでいるという点です。
+次は、型の定義です。\ ``File``\ というデータ構造を定義している様に、\ ``type``\ キーワードは型の宣言をする時に使用します。趣向を凝らして、この\ ``File``\ 構造体はファイル記述子とその参照先であるファイル名を含んでいます。
 
-Because File starts with a capital letter, the type is available outside the package, that is, by users of the package. In Go the rule about visibility of information is simple: if a name (of a top-level type, function, method, constant or variable, or of a structure field or method) is capitalized, users of the package may see it. Otherwise, the name and hence the thing being named is visible only inside the package in which it is declared. This is more than a convention; the rule is enforced by the compiler. In Go, the term for publicly visible names is ''exported''.
+.. Because File starts with a capital letter, the type is available outside the package, that is, by users of the package. In Go the rule about visibility of information is simple: if a name (of a top-level type, function, method, constant or variable, or of a structure field or method) is capitalized, users of the package may see it. Otherwise, the name and hence the thing being named is visible only inside the package in which it is declared. This is more than a convention; the rule is enforced by the compiler. In Go, the term for publicly visible names is ''exported''.
 
-\ ``File``\ 型は、大文字から始まるため、型はパッケージの外部、つまり、パッケージを使用する側から見る事が出来ます。Go言語の情報可視性に関するルールは簡単です。もし(トップレベルの型、関数、メソッド、定数、変数、もしくは構造体のフィールド、メソッドの)名前が大文字で書かれている場合、パッケージを使用する側から見る事が出来ます。
+\ ``File``\ 型は、大文字から始まるため、型はパッケージの外部、つまり、パッケージを利用する側から参照する事が出来ます。Go言語の情報可視性に関するルールは簡単です。もし(トップレベルの型、関数、メソッド、定数、変数、もしくは構造体のフィールド、メソッドの)名前が大文字で書かれている場合、パッケージを利用する側から参照する事が出来ます。
+つまり、大文字にしなければ、それらが宣言されたパッケージ内でのみ参照できません。このルールはコンパイラによって行われます。Go言語では、外部から参照出来る状態であることを"エクスポートされた(exported)"と呼びます。
 
-In the case of File, all its fields are lower case and so invisible to users, but we will soon give it some exported, upper-case methods.
+.. In the case of File, all its fields are lower case and so invisible to users, but we will soon give it some exported, upper-case methods.
+\ ``File型``\ の場合、そのフィールドが全て小文字のためパッケージの利用側から参照出来ませんが、大文字で始まるエクスポートされたメソッドを後程追加します。
 
-First, though, here is a factory to create a File:
+.. First, though, here is a factory to create a File:
+まず、これはFile型のオブジェクトをを生成するファクトリです。
 
 .. code-block:: cpp
 
-   17    func newFile(fd int, name string) *File {
+   17    func newFile(fd int, name string) \*File {
    18        if fd < 0 {
    19            return nil
    20        }
    21        return &File{fd, name}
    22    }
 
-This returns a pointer to a new File structure with the file descriptor and name filled in. This code uses Go's notion of a ''composite literal'', analogous to the ones used to build maps and arrays, to construct a new heap-allocated object. We could write
+.. This returns a pointer to a new File structure with the file descriptor and name filled in. This code uses Go's notion of a ''composite literal'', analogous to the ones used to build maps and arrays, to construct a new heap-allocated object. We could write
+この関数の戻り値は、新しく作られたFile構造体のポインタで、フィールドにファイル記述子とファイル名が格納されています。このコードはマップや配列を作成する際の書き方に似ています。これはGo言語の”複合リテラルCcomposite literal”という概念で、これを使ってオブジェクトに新しいヒープ領域を割り当てます。次のような書き方もできます。
 
 .. code-block:: cpp
 
@@ -587,9 +591,11 @@ This returns a pointer to a new File structure with the file descriptor and name
       return n
 
 
-but for simple structures like File it's easier to return the address of a nonce composite literal, as is done here on line 21.
+.. but for simple structures like File it's easier to return the address of a nonce composite literal, as is done here on line 21.
+Fileのような単純構造でなければ、21行目で行っているように複合リテラルでアドレスを返す方が、より簡単です。
 
-We can use the factory to construct some familiar, exported variables of type \*File:
+.. We can use the factory to construct some familiar, exported variables of type \*File:
+エクスポートされた\*File型の変数を作成するためには、ファクトリ関数を使用することができます。
 
 .. code-block:: cpp
 
@@ -599,11 +605,12 @@ We can use the factory to construct some familiar, exported variables of type \*
    27        Stderr = newFile(2, "/dev/stderr");
    28    )
 
-The newFile function was not exported because it's internal. The proper, exported factory to use is Open:
+.. The newFile function was not exported because it's internal. The proper, exported factory to use is Open:
+newFile関数は内部にあるため、エキスポートされません。エクスポートするべきものはOpen関数です。
 
 .. code-block:: cpp 
 
-   30    func Open(name string, mode int, perm int) (file *File, err os.Error) {
+   30    func Open(name string, mode int, perm int) (file \*File, err os.Error) {
    31        r, e := syscall.Open(name, mode, perm);
    32        if e != 0 {
    33            err = os.Errno(e);
@@ -611,15 +618,21 @@ The newFile function was not exported because it's internal. The proper, exporte
    35        return newFile(r, name), err
    36    }
 
-There are a number of new things in these few lines. First, Open returns multiple values, an File and an error (more about errors in a moment). We declare the multi-value return as a parenthesized list of declarations; syntactically they look just like a second parameter list. The function syscall.Open also has a multi-value return, which we can grab with the multi-variable declaration on line 31; it declares r and e to hold the two values, both of type int (although you'd have to look at the syscall package to see that). Finally, line 35 returns two values: a pointer to the new File and the error. If syscall.Open fails, the file descriptor r will be negative and NewFile will return nil.
+.. There are a number of new things in these few lines. First, Open returns multiple values, an File and an error (more about errors in a moment). We declare the multi-value return as a parenthesized list of declarations; syntactically they look just like a second parameter list. The function syscall.Open also has a multi-value return, which we can grab with the multi-variable declaration on line 31; it declares r and e to hold the two values, both of type int (although you'd have to look at the syscall package to see that). Finally, line 35 returns two values: a pointer to the new File and the error. If syscall.Open fails, the file descriptor r will be negative and NewFile will return nil.
+この数行には、新しく出てきた要素が多くあります。まず、Open関数は、Fileやエラー(エラーについては後述)といった複数の値を返します。複数の値を返す場合には、カッコで囲んだリストで記述します。構文的には第2引数のリストのように見えます。
 
-About those errors: The os library includes a general notion of an error. It's a good idea to use its facility in your own interfaces, as we do here, for consistent error handling throughout Go code. In Open we use a conversion to translate Unix's integer errno value into the integer type os.Errno, which implements os.Error.
+\ ``syscall.Open``\ 関数も、31行目の様に複数の変数に代入できるような、複数の返却値を持ちます。\ ``r``\ と\ ``e``\ が2つのint型の値(syscallパッケージを参照する必要があります)を保持するということです。
 
-Now that we can build Files, we can write methods for them. To declare a method of a type, we define a function to have an explicit receiver of that type, placed in parentheses before the function name. Here are some methods for \*File, each of which declares a receiver variable file.
+最後は、35行目で新しいファイルへのポインタとエラーの2つの値を返している点です。もし、\ ``syscall.Open``\ が失敗した場合に、ファイル記述子である\ ``r``\ は負の値となり、\ ``NewFile``\ 関数はnilを返します。
 
+.. About those errors: The os library includes a general notion of an error. It's a good idea to use its facility in your own interfaces, as we do here, for consistent error handling throughout Go code. In Open we use a conversion to translate Unix's integer errno value into the integer type os.Errno, which implements os.Error.
+これらのエラーについては、OSライブラリは包括的な概念が含まれています。 ここで示す様に、関数間でエラー情報を受け渡す際に、共通のエラー機能を仕様するのは、Goコード内で一貫したエラー処理を行うための良い方法です。Openメソッドでは、Unixの整数で表されるerrno値を、os.Error型を使用し、os.Errno型に変換します。
+
+.. Now that we can build Files, we can write methods for them. To declare a method of a type, we define a function to have an explicit receiver of that type, placed in parentheses before the function name. Here are some methods for \*File, each of which declares a receiver variable file.
+これで、Fileを作成することが出来るようになったので、それらのメソッドを書くことができます。型のメソッドを記述するためには、定義する関数名の前のカッコ内に、レシーバを型を明示して記述します。以下に記述する\*Fileの各メソッドでは、それぞれfileレシーバ変数を宣言しています。
 .. code-block:: cpp
  
-   38    func (file *File) Close() os.Error {
+   38    func (file \*File) Close() os.Error {
    39        if file == nil {
    40            return os.EINVAL
    41        }
@@ -632,7 +645,7 @@ Now that we can build Files, we can write methods for them. To declare a method 
    48    }
 
 
-   50    func (file *File) Read(b []byte) (ret int, err os.Error) {
+   50    func (file \*File) Read(b []byte) (ret int, err os.Error) {
    51        if file == nil {
    52            return -1, os.EINVAL
    53        }
@@ -644,7 +657,7 @@ Now that we can build Files, we can write methods for them. To declare a method 
    59    }
 
 
-   61    func (file *File) Write(b []byte) (ret int, err os.Error) {
+   61    func (file \*File) Write(b []byte) (ret int, err os.Error) {
    62        if file == nil {
    63            return -1, os.EINVAL
    64        }
@@ -656,17 +669,21 @@ Now that we can build Files, we can write methods for them. To declare a method 
    70    }
 
 
-   72    func (file *File) String() string {
+   72    func (file \*File) String() string {
    73        return file.name
    74    }
 
-There is no implicit this and the receiver variable must be used to access members of the structure. Methods are not declared within the struct declaration itself. The struct declaration defines only data members. In fact, methods can be created for almost any type you name, such as an integer or array, not just for structs. We'll see an example with arrays later.
+.. There is no implicit this and the receiver variable must be used to access members of the structure. Methods are not declared within the struct declaration itself. The struct declaration defines only data members. In fact, methods can be created for almost any type you name, such as an integer or array, not just for structs. We'll see an example with arrays later.
+レシーバ変数は明示的に定義する必要があり、構造体のメンバにアクセスするためには、レシーバ変数を使用する必要があります。メソッドは構造体内では宣言しません。構造体の宣言内で定義するのはデータメンバのみです。実際はメソッドは構造体だけではなく、整数や配列などほぼすべての型に作成することができます。配列を使った例は後で記述します。
 
-The String method is so called because of a printing convention we'll describe later.
+.. The String method is so called because of a printing convention we'll describe later.
+Stringメソッドは、後ほど説明する文字出力変換に利用されるメソッドです。
 
-The methods use the public variable os.EINVAL to return the (os.Error version of the) Unix error code EINVAL. The os library defines a standard set of such error values.
+.. The methods use the public variable os.EINVAL to return the (os.Error version of the) Unix error code EINVAL. The os library defines a standard set of such error values.
+これらのメソッドはUnixのエラーコードEINVAL(これをos.Errorに変換したもの)を返すためパブリックな変数であるos.EINVALを使用しています。osライブラリにはこのような標準的なエラー値が定義されています。
 
-We can now use our new package:
+.. We can now use our new package:
+以下の例では、新しいパッケージを使用します。
 
 .. code-block:: cpp
  
@@ -690,9 +707,11 @@ We can now use our new package:
    20        }
    21    }
 
-The ''./'' in the import of ''./file'' tells the compiler to use our own package rather than something from the directory of installed packages.
+.. The ''./'' in the import of ''./file'' tells the compiler to use our own package rather than something from the directory of installed packages.
+\ ``import``\ 内の、\ ``./file``\ の\ ``./``\ の部分は、コンパイラに対して、パッケージがインストールされているディレクトリからではなく、このパッケージ自身のディレクトリからインポートするように指示しています。
 
-Finally we can run the program:
+.. Finally we can run the program:
+最後にプログラムを実行してみましょう。
 
 .. code-block:: sh
 
