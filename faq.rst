@@ -231,37 +231,64 @@ Goはオブジェクト指向言語ですか？
 
 共有メモリを使ったコミュニケーションはしなようにしてください。代わりに、コミュニケーションを利用した共有メモリを使用してください。
 
-Writing Code[Top]
+.. Writing Code[Top]
+
+コードの記述
 ==================
 
-How are libraries documented?
+.. How are libraries documented?
+
+ライブラリのドキュメントはどのように記述されますか？
+-----------------------------------------------------
+
+.. There is a program, godoc, written in Go, that extracts package documentation from the source code. It can be used on the command line or on the web. An instance is running at http://golang.org/pkg/ . In fact, godoc implements the full site at http://golang.org/ .
+
+Goにはソース中からドキュメントの部分のみを抽出するgodocという機能があります。これはコマンドラインやWeb上で使用することができます。 http://golang.org/pkg/ はその一例です。実は http://golang.org/ 全体がgodocで実装されています。
+
+.. Is there a Go programming style guide?
+
+Goのプログラミングスタイルガイドはありますか？
+--------------------------------------------------
+
+.. Eventually, there may be a small number of rules to guide things like naming, layout, and file organization. The document Effective Go contains some style advice. More directly, the program gofmt is a pretty-printer whose purpose is to enforce layout rules; it replaces the usual compendium of do's and don'ts that allows interpretation. All the Go code in the repository has been run through gofmt.
+
+結論から言うと、命名やレイアウト、ファイルの構成といった最小限のルールしか存在しないでしょう。 Effective Goのドキュメントにも、いくつかコーディングスタイルの参考になるものがあります。もっと直接的には、gofmtがレイアウトのルールを強制するpretty-printerになっています。gofmtはソースを、構文として許された妥当な要約(すべきもの、せざるべきもの)に置換します。リポジトリ内のすべてのGoのコードは、gofmtを通してあります。
+
+
+.. How do I submit patches to the Go libraries?
+
+Goのライブラリにパッチを当てるにはどうすればいいですか？
+-----------------------------------------------------------
+
+.. The library sources are in go/src/pkg. If you want to make a significant change, please discuss on the mailing list before embarking.
+
+ライブラリのソースはgo/src/pkgにあります。もし重要な変更をしたければ、着手する前にメーリングリストで議論するようにしてください。
+
+.. See the document Contributing to the Go project for more information about how to proceed.
+
+Goプロジェクトに貢献するために、どのな手順で進めたら良いかについてのより詳しく書かれたドキュメントがあるので、それを見てください。
+
+.. How do I create a multifile package?
+
+複数ファイルからなるパッケージを構成するにはどうすればいいですか？
+-----------------------------------------------------------------------
+
+.. Put all the source files for the package in a directory by themselves. Source files can refer to items from different files at will; there is no header file or need for forward declarations.
+
+ディレクトリにパーケージ化したい全てのソースファイルをまとれば、ソースファイルは必要に応じて他のファイルのアイテムを参照出来ます。ヘッダーの定義や事前の宣言等は必要ありません。
+
+.. Other than being split into multiple files, the package will compile and test just like a single-file package.
+
+また、複数ファイルからなるパーケージも、単一ファイルのようにコンパイルやテストをすることができます。
+
+.. How do I write a unit test?
+
+ユニットテストはどのように記述しますか？
 ----------------------------------------------
 
-There is a program, godoc, written in Go, that extracts package documentation from the source code. It can be used on the command line or on the web. An instance is running at http://golang.org/pkg/. In fact, godoc implements the full site at http://golang.org/.
+.. Create a new file ending in _test.go in the same directory as your package sources. Inside that file, import "testing" and write functions of the form
 
-Is there a Go programming style guide?
-----------------------------------------------
-
-Eventually, there may be a small number of rules to guide things like naming, layout, and file organization. The document Effective Go contains some style advice. More directly, the program gofmt is a pretty-printer whose purpose is to enforce layout rules; it replaces the usual compendium of do's and don'ts that allows interpretation. All the Go code in the repository has been run through gofmt.
-
-How do I submit patches to the Go libraries?
-----------------------------------------------
-
-The library sources are in go/src/pkg. If you want to make a significant change, please discuss on the mailing list before embarking.
-
-See the document Contributing to the Go project for more information about how to proceed.
-
-How do I create a multifile package?
-----------------------------------------------
-
-Put all the source files for the package in a directory by themselves. Source files can refer to items from different files at will; there is no header file or need for forward declarations.
-
-Other than being split into multiple files, the package will compile and test just like a single-file package.
-
-How do I write a unit test?
-----------------------------------------------
-
-Create a new file ending in _test.go in the same directory as your package sources. Inside that file, import "testing" and write functions of the form
+パッケージのディレクトリ内に_test.goで終わるファイルを新規作成してください。ファイル内で"testing"モジュールをインポートし以下のような関数を定義します。
 
 .. code-block:: cpp
 
@@ -269,18 +296,30 @@ Create a new file ending in _test.go in the same directory as your package sourc
        ...
    }
 
-Run gotest in that directory. That script finds the Test functions, builds a test binary, and runs it.
+.. Run gotest in that directory. That script finds the Test functions, builds a test binary, and runs it.
 
-Where is assert?
+ディレクトリ内でgotestを実行します。スクリプトはテスト関数を見つけるとテストバイナリをビルドし、テストを実行します。
+
+.. Where is assert?
+
+アサートは無いのですか？
 ----------------------------------------------
 
-Go doesn't provide assertions. They are undeniably convenient, but our experience has been that programmers use them as a crutch to avoid thinking about proper error handling and reporting. Proper error handling means that servers continue operation after non-fatal errors instead of crashing. Proper error reporting means that errors are direct and to the point, saving the programmer from interpreting a large crash trace. Precise errors are particularly important when the programmer seeing the errors is not familiar with the code.
+.. Go doesn't provide assertions. They are undeniably convenient, but our experience has been that programmers use them as a crutch to avoid thinking about proper error handling and reporting. Proper error handling means that servers continue operation after non-fatal errors instead of crashing. Proper error reporting means that errors are direct and to the point, saving the programmer from interpreting a large crash trace. Precise errors are particularly important when the programmer seeing the errors is not familiar with the code.
 
-The same arguments apply to the use of assert() in test programs. Proper error handling means letting other tests run after one has failed, so that the person debugging the failure gets a complete picture of what is wrong. It is more useful for a test to report that isPrime gives the wrong answer for 2, 3, 5, and 7 (or for 2, 4, 8, and 16) than to report that isPrime gives the wrong answer for 2 and therefore no more tests were run. The programmer who triggers the test failure may not be familiar with the code that fails. Time invested writing a good error message now pays off later when the test breaks.
+Goはアサーション機能を提供しません。アサーションが便利なのは否定できませんが、我々の経験上プログラマは、それを適切なエラー処理とエラー出力を避けるために使っています。適切なエラー処理とは、サーバがクラッシュする代わりに致命的ではないエラーを発生するにとどめ、処理を続けられるということを意味しています。適切なエラー出力は、エラーが直接的や部分的だったとき、クラッシュ時の膨大なトレースを翻訳する作業からプログラマを開放することを意味します。正確なエラー出力は、エラーを見つけたプログラマーがそのコードに精通していない時ほど重要です。
 
-In testing, if the amount of extra code required to write good errors seems repetitive and overwhelming, it might work better as a table-driven test instead. Go has excellent support for data structure literals.
+.. The same arguments apply to the use of assert() in test programs. Proper error handling means letting other tests run after one has failed, so that the person debugging the failure gets a complete picture of what is wrong. It is more useful for a test to report that isPrime gives the wrong answer for 2, 3, 5, and 7 (or for 2, 4, 8, and 16) than to report that isPrime gives the wrong answer for 2 and therefore no more tests were run. The programmer who triggers the test failure may not be familiar with the code that fails. Time invested writing a good error message now pays off later when the test breaks.
 
-We understand that this is a point of contention. There are many things in the Go language and libraries that differ from modern practices, simply because we feel it's sometimes worth trying a different approach.
+同じことが、テストプログラムにassert()を使った時にも言えます。適切なエラー処理は、例えば、あるテストが失敗しても、そこで停止せず次のテストも続けて実行することができるということを意味しています。そうすることで、あるバグを直そうとしたとき、全体として何がおかしいのかを把握することができるからです。例えば、isPrimeという素数判定をテストするとき、2,3,5,7（もしくは2,4,8,16）という入力に対し、2という数字で誤った答えを返してそこでテストが停止してしまうよりも、誤った答えを返しながらもテストを続行し、全ての数字を評価する方が、原因を探る上で都合が良いでしょう。テストを実行してバグを出したプログラマがそのコードに精通しているとは限りません。今良質のエラーメッセージを記述するために費やした時間は、後にテストが失敗したときに報われるでしょう。
+
+.. In testing, if the amount of extra code required to write good errors seems repetitive and overwhelming, it might work better as a table-driven test instead. Go has excellent support for data structure literals.
+
+テストで、もし良いエラーを書くために何度も何度も大量に余分なコードをかく必要があるように見えても、それは良い机上テストの代わりになる可能性があります。Goはデータ構造のリテラルに対するすばらしいサポートを備えています。
+
+.. We understand that this is a point of contention. There are many things in the Go language and libraries that differ from modern practices, simply because we feel it's sometimes worth trying a different approach.
+
+Goの言語使用やライブラリには、最近の言語の慣習に反する部分があることは理解しています。それは、単純に私たちがそれらの慣習とは違ったアプローチを試してみる価値があると考えたからなのです。
 
 Implementation[Top]
 ==================
