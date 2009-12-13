@@ -47,49 +47,86 @@ Go attempts to reduce the amount of typing in both senses of the word. Throughou
 
 Another important principle is to keep the concepts orthogonal. Methods can be implemented for any type; structures represent data while interfaces represent abstraction; and so on. Orthogonality makes it easier to understand what happens when things combine.
 
-Changes from C[Top]
-Why is the syntax so different from C?
-Other than declaration syntax, the differences are not major and stem from two desires. First, the syntax should feel light, without too many mandatory keywords, repetition, or arcana. Second, the language has been designed to be easy to analyze and can be parsed without a symbol table. This makes it much easier to build tools such as debuggers, dependency analyzers, automated documentation extractors, IDE plug-ins, and so on. C and its descendants are notoriously difficult in this regard.
+.. Changes from C
 
-Why are declarations backwards?
-They're only backwards if you're used to C. In C, the notion is that a variable is declared like an expression denoting its type, which is a nice idea, but the type and expression grammars don't mix very well and the results can be confusing; consider function pointers. Go mostly separates expression and type syntax and that simplifies things (using prefix * for pointers is an exception that proves the rule). In C, the declaration
+C言語からの変化点
+====================
+
+.. Why is the syntax so different from C?
+
+なぜC言語とこんなに文法が違うんですか？
+------------------------------------------
+
+.. Other than declaration syntax, the differences are not major and stem from two desires. First, the syntax should feel light, without too many mandatory keywords, repetition, or arcana. Second, the language has been designed to be easy to analyze and can be parsed without a symbol table. This makes it much easier to build tools such as debuggers, dependency analyzers, automated documentation extractors, IDE plug-ins, and so on. C and its descendants are notoriously difficult in this regard.
+
+宣言文を除くと、違いは大きくはありません。2つの希望によってこのようになっています。まず最初に、文法は軽く感じるようにすべきで、義務的なキーワードがあまりにも多かったり、繰り返し書かなければならなかったり、呪文のようだったりというのは辞めたいと考えていました。二つ目は、プログラミング言語はシンボルテーブルをパースしなくても簡単に分析できるように設計されました。この設計方針の影で、デバッガー、依存関係のアナライザ、自動ドキュメント抽出ツール、IDEプラグインなどのツールの開発がより簡単になります。C言語とその子孫の言語はこの点が困難で悪名をとどろかせていました。
+
+.. Why are declarations backwards?
+
+なぜ型宣言が後方になったのですか？
+----------------------------------
+
+.. They're only backwards if you're used to C. In C, the notion is that a variable is declared like an expression denoting its type, which is a nice idea, but the type and expression grammars don't mix very well and the results can be confusing; consider function pointers. Go mostly separates expression and type syntax and that simplifies things (using prefix * for pointers is an exception that proves the rule). In C, the declaration
+
+もしもC言語を使用してきたのであれば、後方だけになります。C言語では、変数は式のように宣言され、型が指示されます。これは良い考えで、型と式の文法がごちゃごちゃに混ざることはありませんが、実行結果は混乱することがあります。関数ポインタの例を思い出してください。Goでは式と型の文法はほぼ切り離されていて、シンプルになっています。ポインタのための*プリフィックスはこのルールの例外として拡張しています。C言語では以下の宣言があったとすると:
 
 .. code-block:: c
 
 	int* a, b;
 
-declares a to be a pointer but not b; in Go
+.. declares a to be a pointer but not b; in Go
+
+この宣言ではaはポインタになりますが、bはなりません。Goの場合は
 
 .. code-block:: cpp
 
 	var a, b *int;
 
-declares both to be pointers. This is clearer and more regular. Also, the := short declaration form argues that a full variable declaration should present the same order as := so
+.. declares both to be pointers. This is clearer and more regular. Also, the := short declaration form argues that a full variable declaration should present the same order as := so
+
+このどちらもポインタになります。こちらの方が明快で、より整然としています。また、 := の短い宣言の形態についても、完全な変数宣言と同じ順序であるべきです。そのため
 
 .. code-block:: cpp
 
 	var a uint64 = 1;
 
-has the same effect as
+.. has the same effect as
+
+これと、以下の宣言は同じ意味になります。
 
 .. code-block:: cpp
 
 	a := uint64(1);
 
-Parsing is also simplified by having a distinct grammar for types that is not just the expression grammar; keywords such as func and chan keep things clear.
+.. Parsing is also simplified by having a distinct grammar for types that is not just the expression grammar; keywords such as func and chan keep things clear.
+
+型のための文法と、式の文法がまったく異なっているため、パースをするのが簡単になります。 ``func`` や ``chan`` といったキーワードも、文法を分かりやすく維持するのに役立っています。
 
 Why is there no pointer arithmetic?
+-----------------------------------
+
 Safety. Without pointer arithmetic it's possible to create a language that can never derive an illegal address that succeeds incorrectly. Compiler and hardware technology have advanced to the point where a loop using array indices can be as efficient as a loop using pointer arithmetic. Also, the lack of pointer arithmetic can simplify the implementation of the garbage collector.
 
 Why are ++ and -- statements and not expressions? And why postfix, not prefix?
+------------------------------------------------------------------------------
+
 Without pointer arithmetic, the convenience value of pre- and postfix increment operators drops. By removing them from the expression hierarchy altogether, expression syntax is simplified and the messy issues around order of evaluation of ++ and -- (consider f(i++) and p[i] = q[++i]) are eliminated as well. The simplification is significant. As for postfix vs. prefix, either would work fine but the postfix version is more traditional; insistence on prefix arose with the STL, a library for a language whose name contains, ironically, a postfix increment.
 
 Why do garbage collection? Won't it be too expensive?
+-----------------------------------------------------
+
 One of the biggest sources of bookkeeping in systems programs is memory management. We feel it's critical to eliminate that programmer overhead, and advances in garbage collection technology in the last few years give us confidence that we can implement it with low enough overhead and no significant latency. (The current implementation is a plain mark-and-sweep collector but a replacement is in the works.)
 
 Another point is that a large part of the difficulty of concurrent and multi-threaded programming is memory management; as objects get passed among threads it becomes cumbersome to guarantee they become freed safely. Automatic garbage collection makes concurrent code far easier to write. Of course, implementing garbage collection in a concurrent environment is itself a challenge, but meeting it once rather than in every program helps everyone.
 
 Finally, concurrency aside, garbage collection makes interfaces simpler because they don't need to specify how memory is managed across them.
+
+What's up with Unicode identifiers?
+===================================
+
+It was important to us to extend the space of identifiers from the confines of ASCII. Go's rule—identifier characters must be letters or digits as defined by Unicode—is simple to understand and to implement but has restrictions. Combining characters are excluded by design, for instance. Until there is an agreed external definition of what an identifier might be, plus a definition of canonicalization of identifiers that guarantees no ambiguity, it seemed better to keep combining characters out of the mix. Thus we have a simple rule that can be expanded later without breaking programs, one that avoids bugs that would surely arise from a rule that admits ambiguous identifiers.
+
+On a related note, since an exported identifier must begin with an upper-case letter, identifiers created from “letters” in some languages can, by definition, not be exported. For now the only solution is to use something like X日本語, which is clearly unsatisfactory; we are considering other options. The case-for-visibility rule is unlikely to change however; it's one of our favorite features of Go.
 
 Absent features[Top]
 Why does Go not have generic types?
