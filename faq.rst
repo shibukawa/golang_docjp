@@ -321,19 +321,57 @@ Goはアサーション機能を提供しません。アサーションが便利
 
 Goの言語使用やライブラリには、最近の言語の慣習に反する部分があることは理解しています。それは、単純に私たちがそれらの慣習とは違ったアプローチを試してみる価値があると考えたからなのです。
 
-Implementation[Top]
+.. Implementation
+
+実装
 ==================
 
-What compiler technology is used to build the compilers?
+.. What compiler technology is used to build the compilers?
+
+コンパイラを構築するために、どのようなコンパイラ技術を使用してますか？
+------------------------------------------------------------------------
+
+.. Gccgo has a C++ front-end with a recursive descent parser coupled to the standard GCC back end.
+
+Gccgo は、 C++ フロントエンドとなり、再帰パーサーにより、標準のGCCのバックエンドを利用できます。
+
+.. Gc is written in C using yacc/bison for the parser.
+
+Gc は、C から yacc/bision をパーサとして利用し書かれています。
+
+.. Although it's a new program, it fits in the Plan 9 C compiler suite (http://plan9.bell-labs.com/sys/doc/compiler.html) and uses a variant of the Plan 9 loader to generate ELF binaries.
+
+しかし、Gc は新しいプログラムです。 それは Plan 9 の Cコンパイラ(http://plan9.bell-labs.com/sys/doc/compiler.html)に適しており、そして Plan 9 ローダとは異なるELFバイナリを使用します。
+
+.. We considered writing 6g, the original Go compiler, in Go itself but elected not to do so because of the difficulties of bootstrapping and especially of open source distribution—you'd need a Go compiler to set up a Go environment.
+
+我々は、6gを書く上で、オリジナルの Go コンパイラに関して熟考しました。Go そのものではなく、ブーストラップの難しさとオープンソースでの配布、特にGo環境をセットアップをする上で、Goコンパイラは必要であるためです。
+
+.. Gccgo, which came later, makes it possible to consider writing a compiler in Go, which might well happen.
+.. (Go would be a fine language in which to implement a compiler; a native lexer and parser are already available in /pkg/go.) 
+
+Gccgo は後から出ました。 これは熟考して書かれた Go に適したコンパイラです。
+Go は、優れた言語で、コンパイラのための実装があります。Go ネイティブのレクサーとパーサはすでに用意してあり、 /pkg/go から使えます。
+
+.. We also considered using LLVM for 6g but we felt it was too large and slow to meet our performance goals.
+
+我々は、6g で LLVM を使うことを熟考しました。 しかし、LLVMではとても大きく遅かったため、パフォーマンス目標を満たせないと感じました。
+
+.. How is the runtime implemented?
+
+どのようなランタイム実装ですか？
 ----------------------------------------------
 
-Gccgo has a C++ front-end with a recursive descent parser coupled to the standard GCC back end. Gc is written in C using yacc/bison for the parser. Although it's a new program, it fits in the Plan 9 C compiler suite (http://plan9.bell-labs.com/sys/doc/compiler.html) and uses a variant of the Plan 9 loader to generate ELF binaries.
+.. Again due to bootstrapping issues, the runtime is mostly in C (with a tiny bit of assembler) although Go is capable of implementing most of it now. 
 
-We considered writing 6g, the original Go compiler, in Go itself but elected not to do so because of the difficulties of bootstrapping and especially of open source distribution—you'd need a Go compiler to set up a Go environment. Gccgo, which came later, makes it possible to consider writing a compiler in Go, which might well happen. (Go would be a fine language in which to implement a compiler; a native lexer and parser are already available in /pkg/go.)
+今回も問題の独立のために、ランタイムは、C言語と少しのアセンブラです。とはいえ、 Go は、今ではほとんどの実装が可能です。
 
-We also considered using LLVM for 6g but we felt it was too large and slow to meet our performance goals.
+.. Gccgo's runtime uses glibc. Gc uses a custom library, to keep the footprint under control;
 
-How is the runtime implemented?
-----------------------------------------------
+Googo ランタイムは、glibcを使っています。 Gc は、カスタムライブラリを使っており、変更履歴を管理しています。
 
-Again due to bootstrapping issues, the runtime is mostly in C (with a tiny bit of assembler) although Go is capable of implementing most of it now. Gccgo's runtime uses glibc. Gc uses a custom library, to keep the footprint under control; it is compiled with a version of the Plan 9 C compiler that supports segmented stacks for goroutines. Work is underway to provide the same stack management in gccgo.
+.. it is compiled with a version of the Plan 9 C compiler that supports segmented stacks for goroutines. Work is underway to provide the same stack management in gccgo.
+
+Plan 9 Cコンパイラとコンパイルしたものは、セグメントスタックのgoroutinesをサポートします。
+Gccgo にスタック管理機能を提供するために進行中です。
+
