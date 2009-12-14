@@ -102,24 +102,43 @@ C言語からの変化点
 
 型のための文法と、式の文法がまったく異なっているため、パースをするのが簡単になります。 ``func`` や ``chan`` といったキーワードも、文法を分かりやすく維持するのに役立っています。
 
-Why is there no pointer arithmetic?
------------------------------------
+.. Why is there no pointer arithmetic?
+   -----------------------------------
 
-Safety. Without pointer arithmetic it's possible to create a language that can never derive an illegal address that succeeds incorrectly. Compiler and hardware technology have advanced to the point where a loop using array indices can be as efficient as a loop using pointer arithmetic. Also, the lack of pointer arithmetic can simplify the implementation of the garbage collector.
+なぜポインタ演算がないんですか？
+--------------------------------
 
-Why are ++ and -- statements and not expressions? And why postfix, not prefix?
-------------------------------------------------------------------------------
+.. Safety. Without pointer arithmetic it's possible to create a language that can never derive an illegal address that succeeds incorrectly. Compiler and hardware technology have advanced to the point where a loop using array indices can be as efficient as a loop using pointer arithmetic. Also, the lack of pointer arithmetic can simplify the implementation of the garbage collector.
 
-Without pointer arithmetic, the convenience value of pre- and postfix increment operators drops. By removing them from the expression hierarchy altogether, expression syntax is simplified and the messy issues around order of evaluation of ++ and -- (consider f(i++) and p[i] = q[++i]) are eliminated as well. The simplification is significant. As for postfix vs. prefix, either would work fine but the postfix version is more traditional; insistence on prefix arose with the STL, a library for a language whose name contains, ironically, a postfix increment.
+安全のためのです。ポインタ演算がないおかげで、不正なアドレスを算出するようなことができないような言語を作ることができました。コンパイラとハードウェアの技術が進歩したおかげでポインタ演算を使ってループで実現するのと同じぐらい効率的に、配列のインデックスを使ったループでアドレスをポイントすることができるようになりました。また、ポインタ演算がないおかげで、ガーベジコレクタの実装もシンプルになりました。
 
-Why do garbage collection? Won't it be too expensive?
------------------------------------------------------
+.. Why are ++ and -- statements and not expressions? And why postfix, not prefix?
+   ------------------------------------------------------------------------------
 
-One of the biggest sources of bookkeeping in systems programs is memory management. We feel it's critical to eliminate that programmer overhead, and advances in garbage collection technology in the last few years give us confidence that we can implement it with low enough overhead and no significant latency. (The current implementation is a plain mark-and-sweep collector but a replacement is in the works.)
+なぜ ++ と - - と not が式なんですか？なぜ後置なんですか？前置ではないのですか？
+-------------------------------------------------------------------------------------
 
-Another point is that a large part of the difficulty of concurrent and multi-threaded programming is memory management; as objects get passed among threads it becomes cumbersome to guarantee they become freed safely. Automatic garbage collection makes concurrent code far easier to write. Of course, implementing garbage collection in a concurrent environment is itself a challenge, but meeting it once rather than in every program helps everyone.
+.. Without pointer arithmetic, the convenience value of pre- and postfix increment operators drops. By removing them from the expression hierarchy altogether, expression syntax is simplified and the messy issues around order of evaluation of ++ and -- (consider f(i++) and p[i] = q[++i]) are eliminated as well. The simplification is significant. As for postfix vs. prefix, either would work fine but the postfix version is more traditional; insistence on prefix arose with the STL, a library for a language whose name contains, ironically, a postfix increment.
 
-Finally, concurrency aside, garbage collection makes interfaces simpler because they don't need to specify how memory is managed across them.
+ポインタ演算がないので、使い勝手の良い、値の前置、後置のインクリメント演算子はなくなりました。式の階層構造からこれらが取り除かれたことによって、式の文法はシンプルになり、++と--の評価順に関する複雑な問題(``f(i++)`` と ``p[i] = q[++i]`` の式がいつiを増やすのかという問題)をうまく除去することができます。シンプルというのは重要なことです。後置か前置かという点に関しては、どちらもうまく動作しますが、後置バージョンの方が伝統的に使われてきました。名前に後置のインクリメントを含む言語では、そのライブラリのSTLでは、皮肉なことに、前置を強制させていました。
+
+.. Why do garbage collection? Won't it be too expensive?
+   -----------------------------------------------------
+
+なぜガーベジコレクタを動作させるのですか？実行コストが高いのではないですか？
+-------------------------------------------------------------------------
+
+.. One of the biggest sources of bookkeeping in systems programs is memory management. We feel it's critical to eliminate that programmer overhead, and advances in garbage collection technology in the last few years give us confidence that we can implement it with low enough overhead and no significant latency. (The current implementation is a plain mark-and-sweep collector but a replacement is in the works.)
+
+システムプログラミングのおいて、定型的な作業の中でもっともソースコードを占めているものの一つがメモリ管理です。私たちは、プログラマーのオーバーヘッドを取り除くことが重要だと考えています。ここ数年のガーベジコレクタの技術の進歩により、システムプログラムを作る上で作業上のオーバーヘッドを十分に減らしつつ、実行時に大きな遅延の影響を受けることもなくなりました。現在の実装は単純なマーク・アンド・スイープのガーベジコレクタを使用していますが、現在置き換えの作業を行っています。
+
+.. Another point is that a large part of the difficulty of concurrent and multi-threaded programming is memory management; as objects get passed among threads it becomes cumbersome to guarantee they become freed safely. Automatic garbage collection makes concurrent code far easier to write. Of course, implementing garbage collection in a concurrent environment is itself a challenge, but meeting it once rather than in every program helps everyone.
+
+もう一つのポイントは、並列のマルチスレッドプログラミングの難しさの大部分を占めているのがメモリ管理だ、という点です。オブジェクトがスレッド間でやりとりされはじめると、そのオブジェクトを安全に開放できるかどうか保証するのが難しくなります。自動ガーベジコレクションを適用することで、並列プログラミングのコードを書くのが極めて簡単になります。もちろん、並列環境でのガーベジコレクションを実装するのは、それ自身、一つのチャレンジではあるのですが、この一回の努力は、全てのプログラム、すべての人を助けることになると考えています。
+
+.. Finally, concurrency aside, garbage collection makes interfaces simpler because they don't need to specify how memory is managed across them.
+
+並列性の問題は置いておいても、ガーベジコレクタのおかげで、最終的にソースコード中のインタフェースはシンプルになっていきます。インタフェースのこちらと向こうで、メモリをどう管理するのか？というのを指定する必要がなくなるからです。
 
 What's up with Unicode identifiers?
 ===================================
