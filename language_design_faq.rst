@@ -126,7 +126,7 @@ C言語からの変化点
    -----------------------------------------------------
 
 なぜガーベジコレクタを動作させるのですか？実行コストが高いのではないですか？
--------------------------------------------------------------------------
+-----------------------------------------------------------------------------
 
 .. One of the biggest sources of bookkeeping in systems programs is memory management. We feel it's critical to eliminate that programmer overhead, and advances in garbage collection technology in the last few years give us confidence that we can implement it with low enough overhead and no significant latency. (The current implementation is a plain mark-and-sweep collector but a replacement is in the works.)
 
