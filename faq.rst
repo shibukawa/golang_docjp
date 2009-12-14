@@ -303,7 +303,7 @@ Goプロジェクトに貢献するために、どのな手順で進めたら良
 .. Where is assert?
 
 アサーション機能は無いのですか？
-----------------------------
+------------------------------------
 
 .. Go doesn't provide assertions. They are undeniably convenient, but our experience has been that programmers use them as a crutch to avoid thinking about proper error handling and reporting. Proper error handling means that servers continue operation after non-fatal errors instead of crashing. Proper error reporting means that errors are direct and to the point, saving the programmer from interpreting a large crash trace. Precise errors are particularly important when the programmer seeing the errors is not familiar with the code.
 
