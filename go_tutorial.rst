@@ -630,6 +630,7 @@ newFile関数は内部にあるため、エキスポートされません。エ�
 
 .. Now that we can build Files, we can write methods for them. To declare a method of a type, we define a function to have an explicit receiver of that type, placed in parentheses before the function name. Here are some methods for \*File, each of which declares a receiver variable file.
 これで、Fileを作成することが出来るようになったので、それらのメソッドを書くことができます。型のメソッドを記述するためには、定義する関数名の前のカッコ内に、レシーバを型を明示して記述します。以下に記述する\*Fileの各メソッドでは、それぞれfileレシーバ変数を宣言しています。
+
 .. code-block:: cpp
  
    38    func (file \*File) Close() os.Error {
