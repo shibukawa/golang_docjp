@@ -140,14 +140,23 @@ C言語からの変化点
 
 並列性の問題は置いておいても、ガーベジコレクタのおかげで、最終的にソースコード中のインタフェースはシンプルになっていきます。インタフェースのこちらと向こうで、メモリをどう管理するのか？というのを指定する必要がなくなるからです。
 
-What's up with Unicode identifiers?
-===================================
+.. What's up with Unicode identifiers?
+   ===================================
 
-It was important to us to extend the space of identifiers from the confines of ASCII. Go's rule—identifier characters must be letters or digits as defined by Unicode—is simple to understand and to implement but has restrictions. Combining characters are excluded by design, for instance. Until there is an agreed external definition of what an identifier might be, plus a definition of canonicalization of identifiers that guarantees no ambiguity, it seemed better to keep combining characters out of the mix. Thus we have a simple rule that can be expanded later without breaking programs, one that avoids bugs that would surely arise from a rule that admits ambiguous identifiers.
+ユニコード識別子って何のことですか？
+=====================================
 
-On a related note, since an exported identifier must begin with an upper-case letter, identifiers created from “letters” in some languages can, by definition, not be exported. For now the only solution is to use something like X日本語, which is clearly unsatisfactory; we are considering other options. The case-for-visibility rule is unlikely to change however; it's one of our favorite features of Go.
+.. It was important to us to extend the space of identifiers from the confines of ASCII. Go's rule—identifier characters must be letters or digits as defined by Unicode—is simple to understand and to implement but has restrictions. Combining characters are excluded by design, for instance. Until there is an agreed external definition of what an identifier might be, plus a definition of canonicalization of identifiers that guarantees no ambiguity, it seemed better to keep combining characters out of the mix. Thus we have a simple rule that can be expanded later without breaking programs, one that avoids bugs that would surely arise from a rule that admits ambiguous identifiers.
 
-Absent features[Top]
+ASCIIの範囲内の空間から識別子を広げるというのは私たちにとって重要な課題です。識別子の文字はユニコードで規定されている文字か数字でなければならないというGoのルールは理解しやすく、実装も簡単ですが、制限がいくつかあります。例えば、設計上、結合文字(ウムラウトなど)は除外されています。識別子が何であるかという外部定義があり、さらに正規化された識別しの定義があり、曖昧でないことが保証されるまでは、結合文字との組み合わせは除外しておいた方が良いと思っています。このため、文字空間をひろげつつ、あいまいな識別子を認めることによって発生しうるバグを避けるためのシンプルなルールを適用しています。
+
+.. On a related note, since an exported identifier must begin with an upper-case letter, identifiers created from “letters” in some languages can, by definition, not be exported. For now the only solution is to use something like X日本語, which is clearly unsatisfactory; we are considering other options. The case-for-visibility rule is unlikely to change however; it's one of our favorite features of Go.
+
+関連する項目として、exportされる識別子は大文字から始まってなければならないというものがあります。そのため、大文字や小文字がない言語の場合には、定義上、識別子をexportすることはできません。現状で唯一可能な解決策は ``X日本語`` というように定義することですが、明らかに良い方法とはいえません。私たちは現在別のオプションも検討しています。が、大文字にすると外部に見えるようになる、という識別子のルールは、私たちが気に入っているも機能でもあるので、今後も変わることはないでしょう。
+
+Absent features
+===============
+
 Why does Go not have generic types?
 Generics may well be added at some point. We don't feel an urgency for them, although we understand some programmers do.
 
@@ -163,7 +172,9 @@ Like generics, exceptions remain an open issue.
 Why does Go not have assertions?
 This is answered in the general FAQ.
 
-Types[Top]
+Types
+=====
+
 Why is there no type inheritance?
 Object-oriented programming, at least in the best-known languages, involves too much discussion of the relationships between types, relationships that often could be derived automatically. Go takes a different approach.
 
@@ -181,7 +192,9 @@ Method dispatch is simplified if it doesn't need to do type matching as well. Ex
 
 Regarding operator overloading, it seems more a convenience than an absolute requirement. Again, things are simpler without it.
 
-Values[Top]
+Values
+======
+
 Why does Go not provide implicit numeric conversions?
 The convenience of automatic conversion between numeric types in C is outweighed by the confusion it causes. When is an expression unsigned? How big is the value? Does it overflow? Is the result portable, independent of the machine on which it executes? It also complicates the compiler; “the usual arithmetic conversions” are not easy to implement and inconsistent across architectures. For reasons of portability, we decided to make things clear and straightforward at the cost of some explicit conversions in the code. The definition of constants in Go—arbitrary precision values free of signedness and size annotations—ameliorates matters considerably, though.
 
@@ -196,7 +209,9 @@ Map lookup requires an equality operator, which structs and arrays do not implem
 Why are maps, slices, and channels references while arrays are values?
 There's a lot of history on that topic. Early on, maps and channels were syntactically pointers and it was impossible to declare or use a non-pointer instance. Also, we struggled with how arrays should work. Eventually we decided that the strict separation of pointers and values made the language harder to use. Introducing reference types, including slices to handle the reference form of arrays, resolved these issues. Reference types add some regrettable complexity to the language but they have a large effect on usability: Go became a more productive, comfortable language when they were introduced.
 
-Concurrency[Top]
+Concurrency
+===========
+
 Why build concurrency on the ideas of CSP?
 Concurrency and multi-threaded programming have a reputation for difficulty. We believe the problem is due partly to complex designs such as pthreads and partly to overemphasis on low-level details such as mutexes, condition variables, and even memory barriers. Higher-level interfaces enable much simpler code, even if there are still mutexes and such under the covers.
 
