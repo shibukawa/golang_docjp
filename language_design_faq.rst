@@ -148,7 +148,7 @@ C言語からの変化点
 
 .. It was important to us to extend the space of identifiers from the confines of ASCII. Go's rule—identifier characters must be letters or digits as defined by Unicode—is simple to understand and to implement but has restrictions. Combining characters are excluded by design, for instance. Until there is an agreed external definition of what an identifier might be, plus a definition of canonicalization of identifiers that guarantees no ambiguity, it seemed better to keep combining characters out of the mix. Thus we have a simple rule that can be expanded later without breaking programs, one that avoids bugs that would surely arise from a rule that admits ambiguous identifiers.
 
-ASCIIの範囲内の空間から識別子を広げるというのは私たちにとって重要な課題です。識別子の文字はユニコードで規定されている文字か数字でなければならないというGoのルールは理解しやすく、実装も簡単ですが、制限がいくつかあります。例えば、設計上、結合文字(ウムラウトなど)は除外されています。識別子が何であるかという外部定義があり、さらに正規化された識別しの定義があり、曖昧でないことが保証されるまでは、結合文字との組み合わせは除外しておいた方が良いと思っています。このため、文字空間をひろげつつ、あいまいな識別子を認めることによって発生しうるバグを避けるためのシンプルなルールを適用しています。
+ASCIIの範囲内の空間から識別子を広げるというのは私たちにとって重要な課題です。識別子の文字はユニコードで規定されている文字か数字でなければならないというGoのルールは理解しやすく、実装も簡単ですが、制限がいくつかあります。例えば、設計上、 `合字 <http://ja.wikipedia.org/wiki/合字>`_ は除外されています。識別子が何であるかという外部定義があり、さらに正規化された識別しの定義があり、曖昧でないことが保証されるまでは、合字との組み合わせは除外しておいた方が良いと思っています。このため、文字空間をひろげつつ、あいまいな識別子を認めることによって発生しうるバグを避けるためのシンプルなルールを適用しています。
 
 .. On a related note, since an exported identifier must begin with an upper-case letter, identifiers created from “letters” in some languages can, by definition, not be exported. For now the only solution is to use something like X日本語, which is clearly unsatisfactory; we are considering other options. The case-for-visibility rule is unlikely to change however; it's one of our favorite features of Go.
 
