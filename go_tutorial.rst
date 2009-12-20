@@ -777,12 +777,11 @@ fileパッケージで作成した簡易版のUnixコマンドのcat(1)が :file
 
 .. By now this should be easy to follow, but the switch statement introduces some new features. Like a for loop, an if or switch can include an initialization statement. The switch on line 18 uses one to create variables nr and er to hold the return values from f.Read(). (The if on line 25 has the same idea.) The switch statement is general: it evaluates the cases from top to bottom looking for the first case that matches the value; the case expressions don't need to be constants or even integers, as long as they all have the same type.
 
-ここまでは簡単なはずでした。しかし、switch文はいくつかの新しい機能を提供します。forループのようにifやswitchは初期化を行うことができます。18行目のswitch文はf.Read()からの戻り値を保持する変数nrとerを作るために初期化します。（25行目のifも同じ意図です）switch文は通常通り、値に合致する最初のケースを探しながら上から下にケースを評価します。ケース式は同じ型を持っている限り、定数や整数でなくてもよいのです。
+ここまでは簡単なはずでした。しかし、switch文はいくつかの新しい機能を提供します。forループのようにifやswitchは初期化を行うことができます。18行目のswitch文はf.Read()からの戻り値を保持する変数nrとerを作るために初期化します。（25行目のifも同じ意図です）switch文は通常通り、値に合致する最初のケースを探しながら上から下にケースを評価します。ケース式は同じ型である限り、定数や整数でなくてもよいのです。
 
 .. Since the switch value is just true, we could leave it off?as is also the situation in a for statement, a missing value means true. In fact, such a switch is a form of if-else chain. While we're here, it should be mentioned that in switch statements each case has an implicit break.
 
 .. FIXME
-
 switch値は単なるtrueなのですが、抜けられるのでしょうか。for文と同じように、値がない場合はtrueを意味します。実際、このようなswitch文はif-else形式です。この間、各ケースは暗黙のbreakを持っていると言えます。
 
 .. Line 25 calls Write() by slicing the incoming buffer, which is itself a slice. Slices provide the standard Go way to handle I/O buffers.
@@ -872,7 +871,9 @@ cat()サブルーチンはfのRead()とString()という2つのメソッドの�
    72        }
    73    }
 
-(We could also do the wrapping in main and leave cat() mostly alone, except for changing the type of the argument; consider that an exercise.) Lines 56 through 58 set it all up: If the rot13 flag is true, wrap the reader we received into a rotate13 and proceed. Note that the interface variables are values, not pointers: the argument is of type reader, not \*reader, even though under the covers it holds a pointer to a struct.
+.. (We could also do the wrapping in main and leave cat() mostly alone, except for changing the type of the argument; consider that an exercise.) Lines 56 through 58 set it all up: If the rot13 flag is true, wrap the reader we received into a rotate13 and proceed. Note that the interface variables are values, not pointers: the argument is of type reader, not \*reader, even though under the covers it holds a pointer to a struct.
+
+（引数の型を変更することを除けば、mainでラップし、cat()サブルーチンをそのままにしておくことができます。エクササイズだと考えてください。）56-58行目で全てを設定しています。rot13フラグがtrueならば、受け取ったreaderをrotate13でラップし、処理を進めます。インタフェース変数は値であり、ポインタではないことに注意してください。つまり引数はreader型であり、*readerではありません。even though under the covers 構造体へのポインタを保持します。
 
 .. Here it is in action:
 
