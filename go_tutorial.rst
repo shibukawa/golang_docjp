@@ -887,7 +887,9 @@ cat()サブルーチンはfのRead()とString()という2つのメソッドの�
    nopqrstuvwxyzabcdefghijklm
    %
 
-Fans of dependency injection may take cheer from how easily interfaces allow us to substitute the implementation of a file descriptor.
+.. Fans of dependency injection may take cheer from how easily interfaces allow us to substitute the implementation of a file descriptor.
+
+依存性注入の愛好者は、インタフェースがファイル記述子の実装を代替する容易さに喜ぶかもしれません。
 
 Interfaces are a distinctive feature of Go. An interface is implemented by a type if the type implements all the methods declared in the interface. This means that a type may implement an arbitrary number of different interfaces. There is no type hierarchy; things can be much more ad hoc, as we saw with rot13. The type file.File implements reader; it could also implement a writer, or any other interface built from its methods that fits the current situation. Consider the empty interface
 
