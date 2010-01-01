@@ -35,9 +35,13 @@ Goは、既存のシステムプログラミング用言語と環境への欲求
 
 Goは、インタプリタ型の動的型付け言語の容易なプログラミングと、コンパイラ型の静的型付け言語の効率と安全性を兼ね備える試みです。また、現代的であり、ネットワークコンピューティングおよびマルチコアコンピューティングをサポートする狙いがあります。最後に、高速な実行を狙いとしています。その上で、1つのコンピュータで大きな実行可能ファイルをビルドすることが数秒で完了するのは当然のことです。これらの目標を実現するためには、数々の言語上の課題に取り組まなくてはなりません。表現力が豊かで軽量なシステム、同時並行性とガーベジコレクション、堅牢な依存関係の仕様、などなどを実現する必要があります。これらはライブラリやツールで上手に解決することは不可能です。ゆえに、新しい言語が生まれたのです。
 
-**What are Go's ancestors?**
+.. **What are Go's ancestors?**
 
-Go is mostly in the C family (basic syntax), with significant input from the Pascal/Modula/Oberon family (declarations, packages), plus some ideas from languages inspired by Tony Hoare's CSP, such as Newsqueak and Limbo (concurrency). However, it is a new language across the board. In every respect the language was designed by thinking about what programmers do and how to make programming, at least the kind of programming we do, more effective, which means more fun.
+**Goの祖先は何ですか？**
+
+.. Go is mostly in the C family (basic syntax), with significant input from the Pascal/Modula/Oberon family (declarations, packages), plus some ideas from languages inspired by Tony Hoare's CSP, such as Newsqueak and Limbo (concurrency). However, it is a new language across the board. In every respect the language was designed by thinking about what programmers do and how to make programming, at least the kind of programming we do, more effective, which means more fun.
+
+Goは基本的な文法の大部分はC言語系から受け継いでいます。また、宣言やパッケージについては、Pascal、Modula、Oberonから大きな影響を受けています。加えて、並行処理については、Tony HoareのCSP (Communicating Sequential Process) に影響を受けている言語であるNewsqueak、Limboから同じアイディアを取り入れています。しかしながら、全体としては新しい言語です。あらゆる点において、Goはプログラマが何をし、どうプログラムを作るのかということを考えられて設計されています。少なくとも私たち自身が行うプログラミングがより効率的に、より楽しくあるようにです。
 
 **What are the guiding principles in the design?**
 
