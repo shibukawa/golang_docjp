@@ -549,40 +549,31 @@ switchはインタフェース変数の動的な型を調べる時にも使わ�
 複数の戻り値
 ----------------------
 
-.. One of Go's unusual features is that functions and methods can return multiple values. 
-.. This can be used to improve on a couple of clumsy idioms in C programs: in-band error returns (such as -1 for EOF) and modifying an argument.
+.. One of Go's unusual features is that functions and methods can return multiple values. This can be used to improve on a couple of clumsy idioms in C programs: in-band error returns (such as -1 for EOF) and modifying an argument.
 
-Goでは、関数やメソッドは複数の値を返すことが出来ます。これは珍しい特徴ですが、C言語の(EOFをあらわす-1のような)in-bandエラーの戻り値や,
-引数の変更といったような醜い構文を改善することが出来ます。
+Goでは、関数やメソッドは複数の値を返すことが出来ます。これは珍しい特徴ですが、C言語の(EOFをあらわす-1のような)in-bandエラーの戻り値や、引数の変更といったような醜い構文を改善することが出来ます。
 
 
-.. In C, a write error is signaled by a negative count with the error code secreted away in a volatile location.
-.. In Go, Write can return a count and an error: “Yes, you wrote some bytes but not all of them because you filled the device”. 
-.. The signature of *File.Write in package os is::
+.. In C, a write error is signaled by a negative count with the error code secreted away in a volatile location. In Go, Write can return a count and an error: “Yes, you wrote some bytes but not all of them because you filled the device”.  The signature of *File.Write in package os is::
 
 .. C言語では、書き込みエラーは、負の数値と非永続領域に隠蔽されたエラーコードによって通知されます。
-C言語では、書き込みエラーは負の数値で通知され、エラーコードはどこかに隠されてしまいます。
 
-G言語では、Writeオブジェクトは、数値と ”デバイスが一杯になったので、データの一部は書き込まれませんでした”というエラーを返します。
-osパッケージの*File.Writeオブジェクトのシグネチャは以下のようになります。
+C言語では、書き込みエラーは負の数値で通知され、エラーコードはどこかに隠されてしまいます。G言語では、Writeオブジェクトは、数値と ”デバイスが一杯になったので、データの一部は書き込まれませんでした”というエラーを返します。osパッケージの*File.Writeオブジェクトのシグネチャは以下のようになります。
+
 
 .. code-block:: cpp
 
   func (file *File) Write(b []byte) (n int, err Error)
 
-.. and as the documentation says, it returns the number of bytes written and a non-nil Error when n != len(b).
-.. This is a common style; see the section on error handling for more examples.
+.. and as the documentation says, it returns the number of bytes written and a non-nil Error when n != len(b). This is a common style; see the section on error handling for more examples.
 
 ドキュメントによるとWriteは戻り値として、書き込まれたデータのバイト数と、
-もし全てが書き込まれなかった場合(n != len(b)のとき)にはnilでないエラーを返すと書かれています。
-これは共通のスタイルです。もしもっとたくさんの例を見たければ、エラーのセクションを参照してください。
+もし全てが書き込まれなかった場合(n != len(b)のとき)にはnilでないエラーを返すと書かれています。これは共通のスタイルです。もしもっとたくさんの例を見たければ、エラーのセクションを参照してください。
 
 
-.. A similar approach obviates the need to pass a pointer to a return value to simulate a reference parameter.
-.. Here's a simple-minded function to grab a number from a position in a byte array, returning the number and the next position::
+.. A similar approach obviates the need to pass a pointer to a return value to simulate a reference parameter. Here's a simple-minded function to grab a number from a position in a byte array, returning the number and the next position::
 
-似たようなアプローチをとることで、参照変数をシミュレートするために戻り値にポインタを渡す必要がなくなります。
-以下は、バイト配列の中から、指定した添え字の数値とその次の添え字を取り出す簡単な関数です。
+似たようなアプローチをとることで、参照変数をシミュレートするために戻り値にポインタを渡す必要がなくなります。以下は、バイト配列の中から、指定した添え字の数値とその次の添え字を取り出す簡単な関数です。
 
 .. code-block:: cpp
 
@@ -612,35 +603,21 @@ osパッケージの*File.Writeオブジェクトのシグネチャは以下の�
 名前付けされた戻り値
 -----------------------
 
-.. The return or result "parameters" of a Go function can be given names and used as regular variables, 
-.. just like the incoming parameters. When named, they are
+.. The return or result "parameters" of a Go function can be given names and used as regular variables, just like the incoming parameters. When named, they are initialized to the zero values for their types when the function begins; if the function executes a return statement with no arguments, the current values of the  result parameters are used as the returned values.
 
-Goの関数の”戻り値”は、ちょうど入力値のように、名前をつけ普通の変数として扱うことが出来ます。
+Goの関数の”戻り値”は、ちょうど入力値のように、名前をつけ普通の変数として扱うことが出来ます。名前がつけられると、関数が始まるときにそれらの変数は、型に合った初期値で初期化されます。もし、関数が実行された結果値を返さなかったら、その時点での変数の値が戻り値として返されます。
 
-.. initialized to the zero values for their types when the function begins; 
-.. if the function executes a return statement with no arguments, the current values of the 
-.. result parameters are used as the returned values.
+.. The names are not mandatory but they can make code shorter and clearer: they're documentation. If we name the results of nextInt it becomes obvious which returned int is which::
 
-名前がつけられると、関数が始まるときにそれらの変数は、型に合った初期値で初期化されます。
-もし、関数が実行された結果値を返さなかったら、その時点での変数の値が戻り値として返されます。
-
-.. The names are not mandatory but they can make code shorter and clearer: they're documentation. 
-.. If we name the results of nextInt it becomes obvious which returned int is which::
-
-名前は必須ではありませんが、記述することでコードを短く、読みやすく出来ます。
-ドキュメントには、nextIntの戻り値に名前をつけた例が載っています。
-
+名前は必須ではありませんが、記述することでコードを短く、読みやすく出来ます。ドキュメントには、nextIntの戻り値に名前をつけた例が載っています。
 
 .. code-block:: cpp
 
   func nextInt(b []byte, pos int) (value, nextPos int) {
 
-.. Because named results are initialized and tied to an unadorned return, they can simplify as well as clarify.
-.. Here's a version of io.ReadFull that uses them well::
+.. Because named results are initialized and tied to an unadorned return, they can simplify as well as clarify. Here's a version of io.ReadFull that uses them well:
 
-名前付けされた戻り値は初期化され、名前付けされていない変数と結び付けられます。
-これらはとてもシンプルに記述できるだけでなく、分かりやすくすることができます。
-以下は、io.ReadFullをこれらを上手く用いて書き直したものです。
+名前付けされた戻り値は初期化され、名前付けされていない変数と結び付けられます。これらはとてもシンプルに記述できるだけでなく、分かりやすくすることができます。以下は、io.ReadFullをこれらを上手く用いて書き直したものです。
 
 
 .. code-block:: cpp

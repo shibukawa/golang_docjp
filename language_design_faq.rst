@@ -176,25 +176,61 @@ Like generics, exceptions remain an open issue.
 Why does Go not have assertions?
 This is answered in the general FAQ.
 
-Types
+.. Types
+
+型
 =====
 
-Why is there no type inheritance?
-Object-oriented programming, at least in the best-known languages, involves too much discussion of the relationships between types, relationships that often could be derived automatically. Go takes a different approach.
+.. Why is there no type inheritance?
 
-Rather than requiring the programmer to declare ahead of time that two types are related, in Go a type automatically satisfies any interface that specifies a subset of its methods. Besides reducing the bookkeeping, this approach has real advantages. Types can satisfy many interfaces at once, without the complexities of traditional multiple inheritance. Interfaces can be very lightweight—having one or even zero methods in an interface can express useful concepts. Interfaces can be added after the fact if a new idea comes along or for testing—without annotating the original types. Because there are no explicit relationships between types and interfaces, there is no type hierarchy to manage or discuss.
+なぜ型の継承が無いのですか？
+-----------------------------
 
-It's possible to use these ideas to construct something analogous to type-safe Unix pipes. For instance, see how fmt.Fprintf enables formatted printing to any output, not just a file, or how the bufio package can be completely separate from file I/O, or how the crypto packages stitch together block and stream ciphers. All these ideas stem from a single interface (io.Writer) representing a single method (Write). And that's only scratching the surface.
+.. Object-oriented programming, at least in the best-known languages, involves too much discussion of the relationships between types, relationships that often could be derived automatically. Go takes a different approach.
 
-It takes some getting used to but this implicit style of type dependency is one of the most exciting things about Go.
+オブジェクト指向のプログラミングにおいて、少なくとも良く知られている言語では、ほとんどの場合自動的に導きだせる型同士の関係について、多くの議論がなされてきました。GOは別のアプローチを取ります。
 
-Why is len a function and not a method?
-We debated this issue but decided implementing len and friends as functions was fine in practice and didn't complicate questions about the interface (in the Go type sense) of basic types.
 
-Why does Go not support overloading of methods and operators?
-Method dispatch is simplified if it doesn't need to do type matching as well. Experience with other languages told us that having a variety of methods with the same name but different signatures was occasionally useful but that it could also be confusing and fragile in practice. Matching only by name and requiring consistency in the types was a major simplifying decision in Go's type system.
+.. Rather than requiring the programmer to declare ahead of time that two types are related, in Go a type automatically satisfies any interface that specifies a subset of its methods. Besides reducing the bookkeeping, this approach has real advantages. Types can satisfy many interfaces at once, without the complexities of traditional multiple inheritance. Interfaces can be very lightweight—having one or even zero methods in an interface can express useful concepts. Interfaces can be added after the fact if a new idea comes along or for testing—without annotating the original types. Because there are no explicit relationships between types and interfaces, there is no type hierarchy to manage or discuss.
 
-Regarding operator overloading, it seems more a convenience than an absolute requirement. Again, things are simpler without it.
+２種類の型の関係を宣言する時間はプログラマには必要なく、GOでは型は自動的にそのメソッドのサブセットが指定するインタフェースを全て満たします。設計書の削減に加え、このアプローチは実際に有利に働きます。型は伝統的な多重継承の複雑さを伴わずに、一度に多くのインタフェースを満たすことが出来ます。インタフェースはそのコンセプトを表現することができる１個ないし０個のメソッドを持つことで、とても軽量化することが出来ます。インタフェースは、新しいアイデアが出てたり、元の型の注釈を付けずにテストした後に、追加することが出来ます。なぜなら、型とインタフェースの間には明確な関係がありません、管理したり議論したりするための型の階層構造は存在しないのです。
+
+.. It's possible to use these ideas to construct something analogous to type-safe Unix pipes. For instance, see how fmt.Fprintf enables formatted printing to any output, not just a file, or how the bufio package can be completely separate from file I/O, or how the crypto packages stitch together block and stream ciphers. All these ideas stem from a single interface (io.Writer) representing a single method (Write). And that's only scratching the surface.
+
+これらのアイデアで、タイプセーフなUnixのパイプと類似したものを構築することが可能になります。例えば、fmt.Fprintfがどのようにファイルだけではない様々な出力に対してフォーマットを可能にしているのか、どのようにしてbufioパッケージがfile I/Oと完璧に区別されているか、どのようにしてcryptoパッケージがブロック暗号とストリーム暗号を縫い合わせているかを見てみてください。これら全てのアイデアは、単一のメソッド(Writer)を提供する単一のインタフェース(io.Writer)に根幹をなします。表面的な部分を触っているだけなのです。
+
+
+.. It takes some getting used to but this implicit style of type dependency is one of the most exciting things about Go.
+
+これはすこし慣れが必要かもしれませんが、この暗黙の型継承がこそがGOにおいて最もエキサイティングな点なのです。
+
+
+.. Why is len a function and not a method?
+
+なぜlenはメソッドではなく関数なのですか？
+-------------------------------------------
+
+.. We debated this issue but decided implementing len and friends as functions was fine in practice and didn't complicate questions about the interface (in the Go type sense) of basic types.
+
+私たちはこの問題について議論しましたが、lenとその仲間をを関数として実装することにしました。それは、経験的に分かりやすく、基本的な型(Goにおいての型の意味)のインタフェースの問題を複雑にしないからです。
+
+
+
+.. Why does Go not support overloading of methods and operators?
+
+なぜGoはメソッドと演算子のオーバーライドをサポートしないのですか？
+----------------------------------------------------------------------
+
+
+.. Method dispatch is simplified if it doesn't need to do type matching as well. with other languages told us that having a variety of methods with the same name but different signatures was occasionally useful but that it could also be confusing and fragile in practice. Matching only by name and requiring consistency in the types was a major simplifying decision in Go's type system.
+
+型のマッチングをする必要がない場合、メソッドの振り分けは簡素化できます。他の言語から分かることですが、同名で違う型宣言である関数は時として便利な反面、実際には混乱を招き、破綻しやすいことが有ります。型を名前のみでマッチングし、一貫性を必要とする方針は、Goの型システムを簡素化する主要な決定です。
+
+
+.. Regarding operator overloading, it seems more a convenience than an absolute requirement. Again, things are simpler without it.
+
+演算子のオーバーライドについては、絶対的な要件というよりも便利機能なように思えます。何度も言うように、無い方がシンプルになるということです。
+
 
 Values
 ======

@@ -566,9 +566,11 @@ I/O Package
 つまり、大文字にしなければ、それらが宣言されたパッケージ内でのみ参照できません。このルールはコンパイラによって行われます。Go言語では、外部から参照出来る状態であることを"エクスポートされた(exported)"と呼びます。
 
 .. In the case of File, all its fields are lower case and so invisible to users, but we will soon give it some exported, upper-case methods.
+
 \ ``File型``\ の場合、そのフィールドが全て小文字のためパッケージの利用側から参照出来ませんが、大文字で始まるエクスポートされたメソッドを後程追加します。
 
 .. First, though, here is a factory to create a File:
+
 まず、これはFile型のオブジェクトをを生成するファクトリです。
 
 .. code-block:: cpp
@@ -581,6 +583,7 @@ I/O Package
    22    }
 
 .. This returns a pointer to a new File structure with the file descriptor and name filled in. This code uses Go's notion of a ''composite literal'', analogous to the ones used to build maps and arrays, to construct a new heap-allocated object. We could write
+
 この関数の戻り値は、新しく作られたFile構造体のポインタで、フィールドにファイル記述子とファイル名が格納されています。このコードはマップや配列を作成する際の書き方に似ています。これはGo言語の”複合リテラルCcomposite literal”という概念で、これを使ってオブジェクトに新しいヒープ領域を割り当てます。次のような書き方もできます。
 
 .. code-block:: cpp
@@ -592,9 +595,11 @@ I/O Package
 
 
 .. but for simple structures like File it's easier to return the address of a nonce composite literal, as is done here on line 21.
+
 Fileのような単純構造でなければ、21行目で行っているように複合リテラルでアドレスを返す方が、より簡単です。
 
 .. We can use the factory to construct some familiar, exported variables of type \*File:
+
 エクスポートされた\*File型の変数を作成するためには、ファクトリ関数を使用することができます。
 
 .. code-block:: cpp
@@ -606,6 +611,7 @@ Fileのような単純構造でなければ、21行目で行っているよう�
    28    )
 
 .. The newFile function was not exported because it's internal. The proper, exported factory to use is Open:
+
 newFile関数は内部にあるため、エキスポートされません。エクスポートするべきものはOpen関数です。
 
 .. code-block:: cpp 
@@ -619,6 +625,7 @@ newFile関数は内部にあるため、エキスポートされません。エ�
    36    }
 
 .. There are a number of new things in these few lines. First, Open returns multiple values, an File and an error (more about errors in a moment). We declare the multi-value return as a parenthesized list of declarations; syntactically they look just like a second parameter list. The function syscall.Open also has a multi-value return, which we can grab with the multi-variable declaration on line 31; it declares r and e to hold the two values, both of type int (although you'd have to look at the syscall package to see that). Finally, line 35 returns two values: a pointer to the new File and the error. If syscall.Open fails, the file descriptor r will be negative and NewFile will return nil.
+
 この数行には、新しく出てきた要素が多くあります。まず、Open関数は、Fileやエラー(エラーについては後述)といった複数の値を返します。複数の値を返す場合には、カッコで囲んだリストで記述します。構文的には第2引数のリストのように見えます。
 
 \ ``syscall.Open``\ 関数も、31行目の様に複数の変数に代入できるような、複数の返却値を持ちます。\ ``r``\ と\ ``e``\ が2つのint型の値(syscallパッケージを参照する必要があります)を保持するということです。
@@ -626,9 +633,11 @@ newFile関数は内部にあるため、エキスポートされません。エ�
 最後は、35行目で新しいファイルへのポインタとエラーの2つの値を返している点です。もし、\ ``syscall.Open``\ が失敗した場合に、ファイル記述子である\ ``r``\ は負の値となり、\ ``NewFile``\ 関数はnilを返します。
 
 .. About those errors: The os library includes a general notion of an error. It's a good idea to use its facility in your own interfaces, as we do here, for consistent error handling throughout Go code. In Open we use a conversion to translate Unix's integer errno value into the integer type os.Errno, which implements os.Error.
+
 これらのエラーについては、OSライブラリは包括的な概念が含まれています。 ここで示す様に、関数間でエラー情報を受け渡す際に、共通のエラー機能を仕様するのは、Goコード内で一貫したエラー処理を行うための良い方法です。Openメソッドでは、Unixの整数で表されるerrno値を、os.Error型を使用し、os.Errno型に変換します。
 
 .. Now that we can build Files, we can write methods for them. To declare a method of a type, we define a function to have an explicit receiver of that type, placed in parentheses before the function name. Here are some methods for \*File, each of which declares a receiver variable file.
+
 これで、Fileを作成することが出来るようになったので、それらのメソッドを書くことができます。型のメソッドを記述するためには、定義する関数名の前のカッコ内に、レシーバを型を明示して記述します。以下に記述する\*Fileの各メソッドでは、それぞれfileレシーバ変数を宣言しています。
 
 .. code-block:: cpp
@@ -675,15 +684,19 @@ newFile関数は内部にあるため、エキスポートされません。エ�
    74    }
 
 .. There is no implicit this and the receiver variable must be used to access members of the structure. Methods are not declared within the struct declaration itself. The struct declaration defines only data members. In fact, methods can be created for almost any type you name, such as an integer or array, not just for structs. We'll see an example with arrays later.
+
 レシーバ変数は明示的に定義する必要があり、構造体のメンバにアクセスするためには、レシーバ変数を使用する必要があります。メソッドは構造体内では宣言しません。構造体の宣言内で定義するのはデータメンバのみです。実際はメソッドは構造体だけではなく、整数や配列などほぼすべての型に作成することができます。配列を使った例は後で記述します。
 
 .. The String method is so called because of a printing convention we'll describe later.
+
 Stringメソッドは、後ほど説明する文字出力変換に利用されるメソッドです。
 
 .. The methods use the public variable os.EINVAL to return the (os.Error version of the) Unix error code EINVAL. The os library defines a standard set of such error values.
+
 これらのメソッドはUnixのエラーコードEINVAL(これをos.Errorに変換したもの)を返すためパブリックな変数であるos.EINVALを使用しています。osライブラリにはこのような標準的なエラー値が定義されています。
 
 .. We can now use our new package:
+
 以下の例では、新しいパッケージを使用します。
 
 .. code-block:: cpp
@@ -709,9 +722,11 @@ Stringメソッドは、後ほど説明する文字出力変換に利用され�
    21    }
 
 .. The ''./'' in the import of ''./file'' tells the compiler to use our own package rather than something from the directory of installed packages.
+
 \ ``import``\ 内の、\ ``./file``\ の\ ``./``\ の部分は、コンパイラに対して、パッケージがインストールされているディレクトリからではなく、このパッケージ自身のディレクトリからインポートするように指示しています。
 
 .. Finally we can run the program:
+
 最後にプログラムを実行してみましょう。
 
 .. code-block:: sh
@@ -782,6 +797,7 @@ fileパッケージで作成した簡易版のUnixコマンドのcat(1)が :file
 .. Since the switch value is just true, we could leave it off?as is also the situation in a for statement, a missing value means true. In fact, such a switch is a form of if-else chain. While we're here, it should be mentioned that in switch statements each case has an implicit break.
 
 .. FIXME
+
 switch値は単なるtrueなのですが、抜けられるのでしょうか。for文と同じように、値がない場合はtrueを意味します。実際、このようなswitch文はif-else形式です。この間、各ケースは暗黙のbreakを持っていると言えます。
 
 .. Line 25 calls Write() by slicing the incoming buffer, which is itself a slice. Slices provide the standard Go way to handle I/O buffers.
