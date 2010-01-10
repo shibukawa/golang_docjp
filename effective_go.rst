@@ -1232,8 +1232,10 @@ init 関数
 
 .. Methods
 
-関数
-=======
+.. 関数
+
+メソッド
+=========
 
 .. Pointers vs. Values
 
@@ -1242,14 +1244,21 @@ init 関数
 
 .. Methods can be defined for any named type that is not a pointer or an interface; the receiver does not have to be a struct.
 
-関数は、ポインタ型・インターフェースでない任意の型で定義することができます。受け側は、構造体でなければ定義する必要はありません。
+.. 関数は、ポインタ型・インターフェースでない任意の型で定義することができます。受け側は、構造体でなければ定義する必要はありません。
+
+メソッドは、ポインタ型・インターフェースでない任意の型で定義することができます。受け側は、必ずしも構造体である必要は有りません。
 
 .. In the discussion of slices above, we wrote an Append function. We can define it as a method on slices instead. 
 
 .. To do this, we first declare a named type to which we can bind the method, and then make the receiver for the method a value of that type::
 
-以下のサンプルは、スライスに追加する関数です。 我々のスライス上のメソッドの代わりとして定義することができます。
-これを行うには、まず名前付き型を宣言します、これを関数に結びつけます。受け側は、関数の返り値の型を定義します。
+.. 以下のサンプルは、スライスに追加する関数です。 我々のスライス上のメソッドの代わりとして定義することができます。
+
+前述のスライスの議論で、私たちはAppend関数を書きました。私たちは同じものをslicesのメソッドとして定義できます。
+
+.. これを行うには、まず名前付き型を宣言します、これを関数に結びつけます。受け側は、関数の返り値の型を定義します。
+
+これを行うには、まずメソッドを結びつけられる名前付きの型を定義します。そして関数がその型の値を受け取るように定義します。
 
 .. type ByteSlice []byte
   
@@ -1268,9 +1277,10 @@ init 関数
 
 .. This still requires the method to return the updated slice.  We can eliminate that clumsiness by redefining the method to take a pointer to a ByteSlice as its receiver, so the method can overwrite the caller's slice::
 
-まだ関数には、更新したスライスを返す処理が必要です。
-メソッドの再定義をすることで、受信側はByteSliceへのポインタを取ることができ、ぎこちなさを排除することができます
-この関数は、呼び出し元スライスを上書きすることができます。
+.. まだ関数には、更新したスライスを返す処理が必要です。メソッドの再定義をすることで、受信側はByteSliceへのポインタを取ることができ、ぎこちなさを排除することができます。この関数は、呼び出し元スライスを上書きすることができます。
+
+これはまだ、更新されたスライスを返すメソッドを必要とします。私たちは、受信側としてByteSliceのポインタを取得するようにメソッドを再定義することで、ぎこちなさを排除することができます。そうすることで、メソッドは呼び出し元のスライスを上書きすることが出来ます。
+
 
 ..  func (p *ByteSlice) Append(data []byte) {
       slice := *p;
@@ -1282,13 +1292,16 @@ init 関数
 
   func (p *ByteSlice) Append(data []byte) {
       slice := *p;
-      // 返り値は省略しています。
+..      // 返り値は省略しています。
+	  // return文が無い以外上記と同じ。
       *p = slice;
   }
 
 .. In fact, we can do even better. If we modify our function so it looks like a standard Write method, like this::
 
-実際、我々もよく使います。 もし、標準的なWriteメソッドを修正する場合は、
+.. 実際、我々もよく使います。 もし、標準的なWriteメソッドを修正する場合は、
+
+実は、もっと良くすることも出来ます。私たちの関数は標準のWriteメソッド似ているので、もし変更するならこうなります。
 
 ..  func (p *ByteSlice) Write(data []byte) (n int, err os.Error) {
       slice := *p;
@@ -1308,8 +1321,9 @@ init 関数
 
 .. then the type \*ByteSlice satisfies the standard interface io.Writer, which is handy. For instance, we can print into one::
 
-\*ByteSlice型を満たす標準的なインターフェースでは、io.Writerが便利です。
-例えば、スライスを一つとして表示することができます。
+.. \*ByteSlice型を満たす標準的なインターフェースでは、io.Writerが便利です。例えば、スライスを一つとして表示することができます。
+
+\*ByteSlice型は標準インタフェースのio.Writerを満たす便利な型です。例えば、例えば、スライスを一つとして表示することができます。
 
 ..  var b ByteSlice;
     fmt.Fprintf(&b, "This hour has %d days\n", 7);
@@ -1325,13 +1339,23 @@ init 関数
 
 .. This is because pointer methods can modify the receiver; invoking them on a copy of the value would cause those modifications to be discarded.
 
-io.Writerの*ByteSliceを渡す要求を満たすために、ByteSliceを渡す必要があります。
-受け側で、ポインタ型と値のどちらを使うかというと、値を受け取る関数は、ポインタ型と値を受け取りますが、ポインタ関数は、ポインタのみ受け取ります。
-ポインタ関数では、受け側を修正することができます。理由は、値のコピーによる変更の破棄を引き起こす恐れがあるためです。
+.. io.Writerの*ByteSliceを渡す要求を満たすために、ByteSliceを渡す必要があります。
+
+io.Writerを満たすのは\*ByteSliceだけなので、ByteSliceのアドレスを渡す必要があります。
+
+.. 受け側で、ポインタ型と値のどちらを使うかというと、値を受け取る関数は、ポインタ型と値を受け取りますが、ポインタ関数は、ポインタのみ受け取ります。
+
+受け側で、ポインタ型と値のどちらを使うかというと、値を受け取るメソッドは、ポインタ型と値を受け取りますが、ポインタ関数は、ポインタのみ受け取ります。
+
+.. ポインタ関数では、受け側を修正することができます。理由は、値のコピーによる変更の破棄を引き起こす恐れがあるためです。
+
+ポインタメソッドでは、受け側を修正することができます。理由は、値のコピーによる変更の破棄を引き起こす恐れがあるためです。
 
 .. By the way, the idea of using Write on a slice of bytes is implemented by bytes.Buffer.
 
-ところで、bytes.Bufferは、このアイデアを使って、バイト単位でのスライス書き込みを実装しました。
+.. ところで、bytes.Bufferは、このアイデアを使って、バイト単位でのスライス書き込みを実装しました。
+
+ところで、バイト単位のスライスをWriteを使って行うというアイデアは、bytes.Bufferで実装しています。
 
 Interfaces and other types
 ==========================
