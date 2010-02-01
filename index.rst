@@ -98,6 +98,7 @@ http://bitbucket.org/shibu/golang-docjp/
 * MURAKAMI Masahiro / murapong
 * Y K / Jxck\_
 * KOMATSU Seiji / comutt
+* Mitsuru IWASAKI / iwasaki
 
 ライセンス
 ----------
