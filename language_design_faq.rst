@@ -232,22 +232,51 @@ This is answered in the general FAQ.
 演算子のオーバーライドについては、絶対的な要件というよりも便利機能なように思えます。何度も言うように、無い方がシンプルになるということです。
 
 
-Values
+.. Values
+
+値
 ======
 
-Why does Go not provide implicit numeric conversions?
-The convenience of automatic conversion between numeric types in C is outweighed by the confusion it causes. When is an expression unsigned? How big is the value? Does it overflow? Is the result portable, independent of the machine on which it executes? It also complicates the compiler; “the usual arithmetic conversions” are not easy to implement and inconsistent across architectures. For reasons of portability, we decided to make things clear and straightforward at the cost of some explicit conversions in the code. The definition of constants in Go—arbitrary precision values free of signedness and size annotations—ameliorates matters considerably, though.
+.. Why does Go not provide implicit numeric conversions?
 
-A related detail is that, unlike in C, int and int64 are distinct types even if int is a 64-bit type. The int type is generic; if you care about how many bits an integer holds, Go encourages you to be explicit.
+なぜGoには暗黙的な数値変換がないのですか？
+----------------------------------------------
 
-Why are maps built in?
-The same reason strings are: they are such a powerful and important data structure that providing one excellent implementation with syntactic support makes programming more pleasant. We believe that Go's implementation of maps is strong enough that it will serve for the vast majority of uses. If a specific application can benefit from a custom implementation, it's possible to write one but it will not be as convenient syntactically; this seems a reasonable tradeoff.
+.. The convenience of automatic conversion between numeric types in C is outweighed by the confusion it causes. When is an expression unsigned? How big is the value? Does it overflow? Is the result portable, independent of the machine on which it executes? It also complicates the compiler; “the usual arithmetic conversions” are not easy to implement and inconsistent across architectures. For reasons of portability, we decided to make things clear and straightforward at the cost of some explicit conversions in the code. The definition of constants in Go—arbitrary precision values free of signedness and size annotations—ameliorates matters considerably, though.
 
-Why don't maps allow structs and arrays as keys?
-Map lookup requires an equality operator, which structs and arrays do not implement. They don't implement equality because equality is not well defined on such types; there are multiple considerations involving shallow vs. deep comparison, pointer vs. value comparison, how to deal with recursive structures, and so on. We may revisit this issue—and implementing equality for structs and arrays will not invalidate any existing programs—but without a clear idea of what equality of structs and arrays should mean, it was simpler to leave it out for now.
+C言語における数値型での自動型変換の利便性は過剰であり、混乱を招く原因となっています。式が符号無しなのはいつか？ 値の大きさはどの位？ オーバーフローする？ 型変換の結果はポータブルで実行されるマシンに非依存？ これはコンパイラも複雑にします。「通常の算術変換」の実装は簡単ではなく、アーキテクチャ間で一貫性を保つことも簡単ではありません。私たちは移植性の理由から、コード中で明示的に型変換をする労力を払うことによって、明確で解り易くする決断をしました。それでも、Go言語での定数の定義(符号およびサイズのアノテーションの要らない任意精度の値)は問題をかなり改善しています。
 
-Why are maps, slices, and channels references while arrays are values?
-There's a lot of history on that topic. Early on, maps and channels were syntactically pointers and it was impossible to declare or use a non-pointer instance. Also, we struggled with how arrays should work. Eventually we decided that the strict separation of pointers and values made the language harder to use. Introducing reference types, including slices to handle the reference form of arrays, resolved these issues. Reference types add some regrettable complexity to the language but they have a large effect on usability: Go became a more productive, comfortable language when they were introduced.
+.. A related detail is that, unlike in C, int and int64 are distinct types even if int is a 64-bit type. The int type is generic; if you care about how many bits an integer holds, Go encourages you to be explicit.
+
+これと関連しますが、C言語とは違い、仮にintが64ビットだったとしても、intとint64は明確に別の型となります。int型はジェネリックです。整数が何ビットあるのかを気にしたい場合、Go言語では明示的に指定することが推奨されます。
+
+.. Why are maps built in?
+
+なぜmapは組み込みなのですか？
+-----------------------------
+
+.. The same reason strings are: they are such a powerful and important data structure that providing one excellent implementation with syntactic support makes programming more pleasant. We believe that Go's implementation of maps is strong enough that it will serve for the vast majority of uses. If a specific application can benefit from a custom implementation, it's possible to write one but it will not be as convenient syntactically; this seems a reasonable tradeoff.
+
+stringと同じ理由です。これらは強力で重要なデータ構造であり、構文によるサポートがある優れた実装は、プログラミングをより快適にします。私たちはほぼすべての用途において、Go言語のmapの実装が十分に強力だと確信しています。特定のアプリケーション向けにカスタム実装が有益かもしれない場合、それを書くことはできるでしょうが、構文的に便利にはならないでしょう。妥当なトレードオフのようです。
+
+
+.. Why don't maps allow structs and arrays as keys?
+
+なぜmapは構造体や配列をキーとして許可していないのですか？
+---------------------------------------------------------
+
+.. Map lookup requires an equality operator, which structs and arrays do not implement. They don't implement equality because equality is not well defined on such types; there are multiple considerations involving shallow vs. deep comparison, pointer vs. value comparison, how to deal with recursive structures, and so on. We may revisit this issue—and implementing equality for structs and arrays will not invalidate any existing programs—but without a clear idea of what equality of structs and arrays should mean, it was simpler to leave it out for now.
+
+mapのルックアップには等価演算子が必要となりますが、構造体および配列はこれを実装していません。実装していない理由は、このような型では等価演算子がwell-definedで無いためです。shallowあるいはdeepな比較か、ポインタあるいは値の比較か、再帰的な構造体をどう扱うか、などといった考慮すべき点が多数存在します。私たちはこの問題を再考(そして既存のプログラムを無効にすることのない構造体と配列用の等価演算子を実装)してもよいのですが、構造体や配列の等価演算子が何を意味すべきかについて明確なアイデアが無いので、いまのところ単に放置しておきます。
+
+.. Why are maps, slices, and channels references while arrays are values?
+
+なぜ配列は値なのに、map、slice、channelは参照なのですか？
+---------------------------------------------------------
+
+.. There's a lot of history on that topic. Early on, maps and channels were syntactically pointers and it was impossible to declare or use a non-pointer instance. Also, we struggled with how arrays should work. Eventually we decided that the strict separation of pointers and values made the language harder to use. Introducing reference types, including slices to handle the reference form of arrays, resolved these issues. Reference types add some regrettable complexity to the language but they have a large effect on usability: Go became a more productive, comfortable language when they were introduced.
+
+この話題については多くの過去があります。初期の段階では、mapおよびchannelは構文的にはポインタであり、非ポインタのインスタンスとしての宣言や使用はできませんでした。また私たちは、配列がどう動作すべきか苦心していました。最終的には、ポインタと値を厳密に分離すると、言語が使いにくくなると判断しました。配列を参照の形で扱うsliceを含めて、参照型を導入することでこれらの問題を解決しました。参照型によって、言語に残念な複雑さが加わりましたが、使い易さにおいて大きな効果がありました。これらが導入された時点で、Go言語はより生産的で快適な言語になりました。
 
 Concurrency
 ===========
