@@ -278,20 +278,46 @@ mapのルックアップには等価演算子が必要となりますが、構�
 
 この話題については多くの過去があります。初期の段階では、mapおよびchannelは構文的にはポインタであり、非ポインタのインスタンスとしての宣言や使用はできませんでした。また私たちは、配列がどう動作すべきか苦心していました。最終的には、ポインタと値を厳密に分離すると、言語が使いにくくなると判断しました。配列を参照の形で扱うsliceを含めて、参照型を導入することでこれらの問題を解決しました。参照型によって、言語に残念な複雑さが加わりましたが、使い易さにおいて大きな効果がありました。これらが導入された時点で、Go言語はより生産的で快適な言語になりました。
 
-Concurrency
+.. Concurrency
+
+並列処理
 ===========
 
-Why build concurrency on the ideas of CSP?
-Concurrency and multi-threaded programming have a reputation for difficulty. We believe the problem is due partly to complex designs such as pthreads and partly to overemphasis on low-level details such as mutexes, condition variables, and even memory barriers. Higher-level interfaces enable much simpler code, even if there are still mutexes and such under the covers.
+.. Why build concurrency on the ideas of CSP?
 
-One of the most successful models for providing high-level linguistic support for concurrency comes from Hoare's Communicating Sequential Processes, or CSP. Occam and Erlang are two well known languages that stem from CSP. Go's concurrency primitives derive from a different part of the family tree whose main contribution is the powerful notion of channels as first class objects.
+なぜ並列処理はCPSのアイデアを元にしたのでしょうか？
+---------------------------------------------------
 
-Why goroutines instead of threads?
-Goroutines are part of making concurrency easy to use. The idea, which has been around for a while, is to multiplex independently executing functions—coroutines, really—onto a set of threads. When a coroutine blocks, such as by calling a blocking system call, the run-time automatically moves other coroutines on the same operating system thread to a different, runnable thread so they won't be blocked. The programmer sees none of this, which is the point. The result, which we call goroutines, can be very cheap: unless they spend a lot of time in long-running system calls, they cost little more than the memory for the stack.
+.. Concurrency and multi-threaded programming have a reputation for difficulty. We believe the problem is due partly to complex designs such as pthreads and partly to overemphasis on low-level details such as mutexes, condition variables, and even memory barriers. Higher-level interfaces enable much simpler code, even if there are still mutexes and such under the covers.
 
-To make the stacks small, Go's run-time uses segmented stacks. A newly minted goroutine is given a few kilobytes, which is almost always enough. When it isn't, the run-time allocates (and frees) extension segments automatically. The overhead averages about three cheap instructions per function call. It is practical to create hundreds of thousands of goroutines in the same address space. If goroutines were just threads, system resources would run out at a much smaller number.
+並列処理やマルチスレッドのプログラミングは難しいと言われています。私たちはこの問題がpthreadなどの複雑な設計や、mutex、条件変数、果てはメモリバリアといった低位レベルの詳細が強調され過ぎていることに、ある程度起因すると思っています。mutexなどが依然としてその裏に隠れていたとしても、高位レベルのインタフェースはコードをずっと単純にします。
 
-Why are map operations not defined to be atomic?
-After long discussion it was decided that the typical use of maps did not require safe access from multiple threads, and in those cases where it did, the map was probably part of some larger data structure or computation that was already synchronized. Therefore requiring that all map operations grab a mutex would slow down most programs and add safety to few. This was not an easy decision, however, since it means uncontrolled map access can crash the program.
+.. One of the most successful models for providing high-level linguistic support for concurrency comes from Hoare's Communicating Sequential Processes, or CSP. Occam and Erlang are two well known languages that stem from CSP. Go's concurrency primitives derive from a different part of the family tree whose main contribution is the powerful notion of channels as first class objects.
 
-The language does not preclude atomic map updates. When required, such as when hosting an untrusted program, the implementation could interlock map access.
+言語上で高位レベルな並列処理のサポートを提供するモデルの最たる成功例に、HoareのCommunicating Sequential Processes(CSP)があります。OccamおよびErlangの２つは、CSPに由来するよく知られた言語です。Go言語の並列処理プリミティブは、これらと違う系統に由来するものであり、そのメインの提案はチャネルをファーストクラスオブジェクトとする強力な概念です。 
+
+.. Why goroutines instead of threads?
+
+なぜスレッドではなくgotoutineなのでしょうか？
+----------------------------------------------
+
+.. Goroutines are part of making concurrency easy to use. The idea, which has been around for a while, is to multiplex independently executing functions—coroutines, really—onto a set of threads. When a coroutine blocks, such as by calling a blocking system call, the run-time automatically moves other coroutines on the same operating system thread to a different, runnable thread so they won't be blocked. The programmer sees none of this, which is the point. The result, which we call goroutines, can be very cheap: unless they spend a lot of time in long-running system calls, they cost little more than the memory for the stack.
+
+goroutineは並列処理を使い易くします。少し前からあたためていたそのアイデアとは、独立に実行する複数の関数(コルーチン)を、スレッドの集合に多重化することでした。ブロッキングするシステムコールを呼んだ場合などでコルーチンがブロックされる際に、ランタイムは同一スレッドにある他のコルーチンたちを別の実行可能なスレッドに自動的に移動して、それらがブロックされないようにします。プログラマはこの場面を見ることはありませんが、これこそが重要なのです。私たちがgoroutineと呼ぶこの仕組みは、非常に軽い処理にすることができます。実行時間の長いシステムコールで長時間費やさなければ、そのコストはスタック用のメモリ処理にかかるものより少し多い程度で済みます。
+
+.. To make the stacks small, Go's run-time uses segmented stacks. A newly minted goroutine is given a few kilobytes, which is almost always enough. When it isn't, the run-time allocates (and frees) extension segments automatically. The overhead averages about three cheap instructions per function call. It is practical to create hundreds of thousands of goroutines in the same address space. If goroutines were just threads, system resources would run out at a much smaller number.
+
+スタックを小さくするため、Go言語のランタイムはセグメント化されたスタックを使います。新しい出来立てのgoroutineでは数キロバイトが割り当てられますが、それはほとんどの場合で充分な大きさです。充分でない場合でも、ランタイムは追加でセグメントを自動的に割り当て(そして解放)します。関数呼び出しごとのオーバヘッドは、処理の軽い命令３つ分ぐらいが平均的なものです。同一アドレス空間で数十万規模のgoroutineを生成できるほど実用的なのです。もしgoroutineが単なるスレッドであったら、システムリソースはもっと小さな規模で枯渇してしまったでしょう。
+
+.. Why are map operations not defined to be atomic?
+
+なぜmapの処理はアトミックとして定義されていないのでしょうか？
+-------------------------------------------------------------
+
+.. After long discussion it was decided that the typical use of maps did not require safe access from multiple threads, and in those cases where it did, the map was probably part of some larger data structure or computation that was already synchronized. Therefore requiring that all map operations grab a mutex would slow down most programs and add safety to few. This was not an easy decision, however, since it means uncontrolled map access can crash the program.
+
+長い議論の末、mapの典型的な使用では複数スレッドからのアクセスを安全に保護する必要性は無いと判断しました。そのような状況では、mapはほぼ確実に大きなデータ構造か計算の一部であり、すでに同期されています。そのためmapの処理すべてにおいてmutexを獲得すると、ほとんどのプログラムでスローダウンするものの、安全性の向上はあまり期待できません。しかしながら、mapへの制御されていないアクセスはプログラムをクラッシュさせ得ることを意味するため、簡単な議論ではありませんでした。
+
+.. The language does not preclude atomic map updates. When required, such as when hosting an untrusted program, the implementation could interlock map access.
+
+言語仕様上ではアトミックなmapの更新を排除していません。信頼できないプログラムを稼動させるなど、その必要性がある場合、mapへのアクセスを実装によって安全のためにインターロックすることも可能です。
