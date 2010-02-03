@@ -85,6 +85,15 @@ C++のライブラリとコミュニケーションを行うために、なぜ�
 
    訳注) Windowsに限らず、 `様々な環境への移植 <http://go-lang.cat-v.org/os-ports>`_ が行われています。
 
+.. What's the origin of the mascot?
+
+マスコットの由来は何ですか？
+----------------------------
+
+.. The mascot and logo were designed by `Renée French <http://reneefrench.blogspot.com/>`_ , who also designed `Glenda <http://plan9.bell-labs.com/plan9/glenda.html>`_ , the Plan 9 bunny. The gopher is derived from one she used for an `WFMU <http://wfmu.org/>`_ T-shirt design some years ago. The logo and mascot are covered by the `Creative Commons Attribution 3.0 <http://creativecommons.org/licenses/by/3.0/>`_ license. 
+
+マスコットとロゴはPlan 9 bunnyとして知られる `Glenda <http://plan9.bell-labs.com/plan9/glenda.html>`_ をデザインした `Renée French <http://reneefrench.blogspot.com/>`_ によるものです。gopherは何年か前に `WFMU <http://wfmu.org/>`_ Tシャツに使用されていたものから派生しました。ロゴとマスコットには `Creative Commons Attribution 3.0 <http://creativecommons.org/licenses/by/3.0/>`_ ライセンスが適用されています。
+
 .. Usage
 
 扱い方
@@ -153,6 +162,14 @@ Protocol buffers は、サポートします。
 我々の計画では、次のリリースに、"protocol buffer"のライブラリとジェネレータを取り込みます。
 データリフレクションを使っていますので処理時間は遅いです。しかし、新しい実装を計画しています。
 
+.. Can I translate the Go home page into another language?
+
+Goのホームページを他の言語に翻訳してもいいですか？
+--------------------------------------------------
+
+.. Absolutely. We encourage developers to make Go Language sites in their own languages. However, if choose to add the Google logo or branding to your site (it does not appear on golang.org), you will need to abide by the guidelines at http://www.google.com/permissions/guidelines.html
+
+もちろんです。私たちは開発者たちにGo言語のサイトを彼ら自身の言語に翻訳することを推奨しています。しかし、Googleのロゴあるいはブランド(golang.orgには出てきません)をあなたのサイトに追加する場合、 http://www.google.com/permissions/guidelines.html にあるガイドラインを遵守する必要があるでしょう。
 
 .. Design
 
