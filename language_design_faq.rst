@@ -298,7 +298,7 @@ mapのルックアップには等価演算子が必要となりますが、構�
 
 .. Why goroutines instead of threads?
 
-なぜスレッドではなくgotoutineなのでしょうか？
+なぜスレッドではなくgoroutineなのでしょうか？
 ----------------------------------------------
 
 .. Goroutines are part of making concurrency easy to use. The idea, which has been around for a while, is to multiplex independently executing functions—coroutines, really—onto a set of threads. When a coroutine blocks, such as by calling a blocking system call, the run-time automatically moves other coroutines on the same operating system thread to a different, runnable thread so they won't be blocked. The programmer sees none of this, which is the point. The result, which we call goroutines, can be very cheap: unless they spend a lot of time in long-running system calls, they cost little more than the memory for the stack.
