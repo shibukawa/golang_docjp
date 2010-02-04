@@ -66,6 +66,27 @@ funcキーワードを使用することで、関数を定義することが出�
 
 後の方の説明では、画面表示に関しても、もっと詳しく説明していきます。
 
+.. Semicolons
+
+セミコロン
+==========
+
+.. You might have noticed that our program has no semicolons. In Go code, the only place you typically see semicolons is separating the clauses of for loops and the like; they are not necessary after every statement.
+
+プログラムにセミコロンが無いことに気付いたでしょうか。Go言語のコードでは、通常セミコロンが見られるのはループの節を分けるなどの場面だけです。１行ごとに行末に書く必要はありません。
+
+.. In fact, what happens is that the formal language uses semicolons, much as in C or Java, but they are inserted automatically at the end of every line that looks like the end of a statement. You don't need to type them yourself.
+
+実際、まさにCやJavaといったお堅い言語ではセミコロンを使いますが、ステートメントの終わりの様に見えるすべての行の末尾に自動的にセミコロンが挿入されます。あなた自身がタイプする必要はありません。
+
+.. For details about how this is done you can see the language specification, but in practice all you need to know is that you never need to put a semicolon at the end of a line. (You can put them in if you want to write multiple statements per line.) As an extra help, you can also leave out a semicolon immediately before a closing brace.
+
+詳細については言語仕様を参照してもらうとして、実際には「行末にセミコロンを置く必要は無い」というとだけを覚えておけば充分でしょう(１行に複数ステートメントを記述したい場合は、セミコロンを置くことも可能です)。蛇足ですが、閉じ中括弧("}")の直前のセミコロンは省略しても構いません。
+
+.. This approach makes for clean-looking, semicolon-free code. The one surprise is that it's important to put the opening brace of a construct such as an if statement on the same line as the if; if you don't, there are situations that may not compile or may give the wrong result. The language forces the brace style to some extent. 
+
+このアプローチはセミコロン無しのコードになり、見た目がすっきりします。意外かもしれませんが、ifステートメントなどでその構成体の中括弧("{")を同じ行に記述することは重要です。そうしなければ、コンパイルできないか不正な結果となる状況になります。この言語は、中括弧のスタイルを強要するところがあります。
+
 .. Compiling
    =========
 
