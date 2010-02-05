@@ -47,6 +47,14 @@ FAQ
 
    language_design_faq
 
+Memory Model
+------------
+
+.. toctree::
+   :maxdepth: 2
+
+   go_mem
+
 Programming
 ---------------
 
