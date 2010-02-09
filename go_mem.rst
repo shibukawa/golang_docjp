@@ -1,37 +1,70 @@
-===================
-The Go Memory Model
-===================
+.. The Go Memory Model
 
-Introduction
-============
+====================
+Go言語のメモリモデル
+====================
 
-The Go memory model specifies the conditions under which reads of a variable in one goroutine can be guaranteed to observe values produced by writes to the same variable in a different goroutine. 
+.. Introduction
 
-Happens Before
+イントロダクション
+==================
+
+.. The Go memory model specifies the conditions under which reads of a variable in one goroutine can be guaranteed to observe values produced by writes to the same variable in a different goroutine.
+
+Go言語のメモリモデルは、goroutineでの変数の更新結果が別のgoroutineでの同一変数の参照に認識される保証の条件を示します。
+
+.. Happens Before
+
+Happens-Before
 ==============
-Within a single goroutine, reads and writes must behave as if they executed in the order specified by the program. That is, compilers and processors may reorder the reads and writes executed within a single goroutine only when the reordering does not change the behavior within that goroutine as defined by the language specification. Because of this reordering, the execution order observed by one goroutine may differ from the order perceived by another. For example, if one goroutine executes ``a = 1; b = 2;``, another might observe the updated value of ``b`` before the updated value of ``a``. 
 
-To specify the requirements of reads and writes, we define *happens before*, a partial order on the execution of memory operations in a Go program. If event *e* 1 happens before event *e* 2, then we say that *e* 2 happens after *e* 1. Also, if *e* 1 does not happen before *e* 2 and does not happen after *e* 2, then we say that *e* 1 and *e* 2 happen concurrently. 
+.. Within a single goroutine, reads and writes must behave as if they executed in the order specified by the program. That is, compilers and processors may reorder the reads and writes executed within a single goroutine only when the reordering does not change the behavior within that goroutine as defined by the language specification. Because of this reordering, the execution order observed by one goroutine may differ from the order perceived by another. For example, if one goroutine executes ``a = 1; b = 2;``, another might observe the updated value of ``b`` before the updated value of ``a``. 
 
-Within a single goroutine, the happens before order is the order expressed by the program.
+単一のgoroutine内での参照および更新は、プログラムによって指定された順序通りに実行されるよう振る舞うでしょう。参照および更新の並べ替えが言語仕様で定義された挙動を変えない限りにおいては、コンパイラとプロセッサは単一のgoroutine内での並べ替えをおこなっても構いません。この並べ替えによって、goroutineが認識している実行順序が別のgoroutineが認識する順序と異なっていてもいいのです。例えば、goroutineが ``a = 1; b = 2;`` を実行する場合、別のgoroutineが ``a`` の前に ``b`` の更新結果を認識するかもしれません。
 
-A read *r* of a variable ``v`` is *allowed* to observe a write *w* to ``v`` if both of the following hold: 
+.. To specify the requirements of reads and writes, we define *happens before*, a partial order on the execution of memory operations in a Go program. If event *e* 1 happens before event *e* 2, then we say that *e* 2 happens after *e* 1. Also, if *e* 1 does not happen before *e* 2 and does not happen after *e* 2, then we say that *e* 1 and *e* 2 happen concurrently. 
 
-1. *w* happens before *r*.
-2. There is no other write *w'* to ``v`` that happens after *w* but before *r*.
+参照および更新の要求仕様を示すため、Go言語プログラムでのメモリ操作実行に関する部分的な順序関係、 *happens-before* を定義します。イベント *e* 1がイベント *e* 2より前に発生する場合、 *e* 2は *e* 1の後に発生すると言えます。また、 *e* 1が *e* 2の前に発生せず、 *e* 2の後に発生しない場合、 *e* 1と *e* 2は同時に発生すると言えます。
 
-To guarantee that a read *r* of a variable ``v`` observes a particular write *w* to ``v``, ensure that *w* is the only write *r* is allowed to observe. That is, *r* is *guaranteed* to observe *w* if both of the following hold:
+.. Within a single goroutine, the happens before order is the order expressed by the program.
 
-1. *w* happens before *r*.
-2. Any other write to the shared variable ``v`` either happens before *w* or after *r*.
+単一のgoroutine内では、このhappens-beforeの順序関係はプログラムで記述された通りとなります。
 
-This pair of conditions is stronger than the first pair; it requires that there are no other writes happening concurrently with *w* or *r*.
+.. A read *r* of a variable ``v`` is *allowed* to observe a write *w* to ``v`` if both of the following hold: 
 
-Within a single goroutine, there is no concurrency, so the two definitions are equivalent: a read *r* observes the value written by the most recent write *w* to ``v``. When multiple goroutines access a shared variable ``v``, they must use synchronization events to establish happens-before conditions that ensure reads observe the desired writes.
+変数 ``v`` の更新 *w* を参照 *r* が *認識できる* のは、以下の２つが成り立つ場合です。
 
-The initialization of variable ``v`` with the zero value for ``v``'s type behaves as a write in the memory model.
+.. 1. *w* happens before *r*.
+.. 2. There is no other write *w'* to ``v`` that happens after *w* but before *r*.
 
-Reads and writes of values larger than a single machine word behave as multiple machine-word-sized operations in an unspecified order. 
+1. *w* は *r* の前に発生する
+2. *w* の後、 *r* の前に発生するような、 ``v`` に対する別の更新 *w'* が無い
+
+.. To guarantee that a read *r* of a variable ``v`` observes a particular write *w* to ``v``, ensure that *w* is the only write *r* is allowed to observe. That is, *r* is *guaranteed* to observe *w* if both of the following hold:
+
+変数 ``v`` の参照 *r* が特定の更新 *w* を認識することを保証するためには、 *r* が認識できる唯一の更新が *w* であることを確実にする必要があります。つまり、 *r* が *w* を認識することが保証されるのは、以下の２つが成り立つ場合です。
+
+.. 1. *w* happens before *r*.
+.. 2. Any other write to the shared variable ``v`` either happens before *w* or after *r*.
+
+1. *w* は *r* の前に発生する
+2. 共有変数 ``v`` への他の更新すべてが、 *w* の前に発生するか *r* の後に発生する
+
+.. This pair of conditions is stronger than the first pair; it requires that there are no other writes happening concurrently with *w* or *r*.
+
+このペアの条件は最初のペアより優先されます。 *w* あるいは *r* と同時に発生する他の更新が無いことが必要です。
+
+.. Within a single goroutine, there is no concurrency, so the two definitions are equivalent: a read *r* observes the value written by the most recent write *w* to ``v``. When multiple goroutines access a shared variable ``v``, they must use synchronization events to establish happens-before conditions that ensure reads observe the desired writes.
+
+単一のgoroutine内では並列処理は無いため、この２つの定義は同じ意味になります。参照 *r* は ``v`` に対する最新の更新 *w* の値を認識します。複数のgoroutineが共有変数 ``v`` にアクセスする場合、必ず同期イベントを使用して、望ましい更新結果を参照が確実に認識するよう「happens-before」の条件を成立させます。
+
+.. The initialization of variable ``v`` with the zero value for ``v``'s type behaves as a write in the memory model.
+
+変数 ``v`` をその型に合わせたゼロ値に初期化する処理は、メモリモデルの中では更新として振舞います。
+
+.. Reads and writes of values larger than a single machine word behave as multiple machine-word-sized operations in an unspecified order. 
+
+そのマシンの１ワードより大きい値の参照および更新は、順不同の複数のマシンワードサイズの処理として振舞います。
 
 Synchronization
 ===============

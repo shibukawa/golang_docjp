@@ -47,7 +47,7 @@ FAQ
 
    language_design_faq
 
-Memory Model
+メモリモデル
 ------------
 
 .. toctree::
