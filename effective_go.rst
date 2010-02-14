@@ -1841,12 +1841,21 @@ map同様、チャンネルは参照型であり\ :keyword:`make`\ によって�
 ..      // Start handlers
 ..      <-quit;    // Wait to be told to exit.
 
-Channels of channels
---------------------
+.. Channels of channels
+   --------------------
 
-One of the most important properties of Go is that a channel is a first-class value that can be allocated and passed around like any other. A common use of this property is to implement safe, parallel demultiplexing.
+チャンネルのチャンネル
+----------------------
 
-In the example in the previous section, handle was an idealized handler for a request but we didn't define the type it was handling. If that type includes a channel on which to reply, each client can provide its own path for the answer. Here's a schematic definition of type Request::
+.. One of the most important properties of Go is that a channel is a first-class value that can be allocated and passed around like any other. A common use of this property is to implement safe, parallel demultiplexing.
+
+Goの重要な性質のひとつとして、チャンネルは他のものと同じように割り当て、受け渡しが行なえるファーストクラス値であるということがあげられます。これは安全かつ並列な多重分離の実装でよく使用されます。
+
+.. In the example in the previous section, handle was an idealized handler for a request but we didn't define the type it was handling. If that type includes a channel on which to reply, each client can provide its own path for the answer. Here's a schematic definition of type Request::
+
+前節の例で\ :func:`handle`\ は理想的なリクエストハンドラでしたが、それが何の型を処理するかを定義しませんでした。もしその型が返信に使用するチャンネルを含んでいれば、クライアントは答えを受け取る口を渡すことが出来ます。これの略図として\ :class:`Request`\ の定義を次に示します。
+
+.. code-block:: cpp
 
   type Request struct {
       args  []int;
@@ -1854,7 +1863,11 @@ In the example in the previous section, handle was an idealized handler for a re
       resultChan    chan int;
   }
 
-The client provides a function and its arguments, as well as a channel inside the request object on which to receive the answer::
+.. The client provides a function and its arguments, as well as a channel inside the request object on which to receive the answer::
+
+クライアントはリクエストオブジェクト内に関数とその引数、そして答えを受け取るチャンネルを用意します。
+
+.. code-block:: cpp
 
   func sum(a []int) (s int) {
       for _, v := range a {
@@ -1864,12 +1877,21 @@ The client provides a function and its arguments, as well as a channel inside th
   }
   
   request := &Request{[]int{3, 4, 5}, sum, make(chan int)}
-  // Send request
+  // リクエストを送信
   clientRequests <- request;
-  // Wait for response.
+  // レスポンスを待つ
   fmt.Printf("answer: %d\n", <-request.resultChan);
 
-On the server side, the handler function is the only thing that changes::
+..  // Send request
+    clientRequests <- request;
+    // Wait for response.
+    fmt.Printf("answer: %d\n", <-request.resultChan);
+
+.. On the server side, the handler function is the only thing that changes::
+
+サーバーサイド側では\ :func:`handler`\ 関数だけがそれを変更します。
+
+.. code-block:: cpp
 
   func handle(queue chan *Request) {
       for req := range queue {
@@ -1877,7 +1899,9 @@ On the server side, the handler function is the only thing that changes::
       }
   }
 
-There's clearly a lot more to do to make it realistic, but this code is a framework for a rate-limited, parallel, non-blocking RPC system, and there's not a mutex in sight.
+.. There's clearly a lot more to do to make it realistic, but this code is a framework for a rate-limited, parallel, non-blocking RPC system, and there's not a mutex in sight.
+
+これを現実的なものとするためにやるべきことがあるのは明らかですが、このコードは速度制限付きの並列ノンブロッキングRPCシステムのフレームワークであり、ミューテックスは見当りません。
 
 Parallelization
 ---------------
